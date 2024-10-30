@@ -1,9 +1,7 @@
 package com.walking.project_walking.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 public class Users {
@@ -73,4 +73,22 @@ public class Users {
 
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
     private String profileImage;
+
+    public Users(
+            String email,
+            String password,
+            String name,
+            String phone,
+            String nickname,
+            Boolean gender,
+            LocalDate birth
+    ) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.nickname = nickname;
+        this.gender = gender;
+        this.birth = birth;
+    }
 }

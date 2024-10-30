@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor // 기본 생성자
 @AllArgsConstructor
 public class Roles {
 

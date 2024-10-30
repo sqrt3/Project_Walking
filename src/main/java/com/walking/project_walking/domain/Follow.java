@@ -5,8 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Follow {
 
     @Id
@@ -18,30 +26,4 @@ public class Follow {
 
     @Column(name = "following_user_id", nullable = false)
     private Long followingUserId;
-
-
-    public Follow() {}
-
-
-    public Follow(Long followUserId, Long followingUserId) {
-        this.followUserId = followUserId;
-        this.followingUserId = followingUserId;
-    }
-
-
-    public Long getFollowUserId() {
-        return followUserId;
-    }
-
-    public void setFollowUserId(Long followUserId) {
-        this.followUserId = followUserId;
-    }
-
-    public Long getFollowingUserId() {
-        return followingUserId;
-    }
-
-    public void setFollowingUserId(Long followingUserId) {
-        this.followingUserId = followingUserId;
-    }
 }

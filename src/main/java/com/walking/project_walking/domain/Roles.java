@@ -1,9 +1,16 @@
 package com.walking.project_walking.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Roles {
 
     @Id
@@ -16,33 +23,6 @@ public class Roles {
     @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)
     private RolesType roles;
-
-
-    public Roles() {}
-
-
-    public Roles(Long level, RolesType role) {
-        this.level = level;
-        this.roles = role;
-    }
-
-
-    public Long getLevel() {
-        return level;
-    }
-
-    public void setLevel(Long level) {
-        this.level = level;
-    }
-
-    public RolesType getRole() {
-        return roles;
-    }
-
-    public void setRole(RolesType role) {
-        this.roles = roles;
-    }
-
 
     public enum RolesType {
         ROLE_1,

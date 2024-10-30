@@ -53,10 +53,10 @@ public class Users {
     @Column(name = "last_login")
     private LocalDateTime lastLogin; // TIMESTAMP 형식이기 때문에 LocalDateTime으로 둠.
 
-    @Column(name = "login_count", nullable = false)
+    @Column(name = "login_count")
     private Long loginCount;
 
-    @Column(name = "login_browser", nullable = false, length = 512)
+    @Column(name = "login_browser", length = 512)
     private String loginBrowser;
 
     @Column(name = "user_level")
@@ -81,7 +81,16 @@ public class Users {
             String phone,
             String nickname,
             Boolean gender,
-            LocalDate birth
+            LocalDate birth,
+            LocalDate joinDate,
+            LocalDateTime lastLogin,
+            Long loginCount,
+            String loginBrowser,
+            Integer userLevel,
+            Long userExp,
+            Integer point,
+            Boolean isActive,
+            String profileImage
     ) {
         this.email = email;
         this.password = password;
@@ -90,5 +99,14 @@ public class Users {
         this.nickname = nickname;
         this.gender = gender;
         this.birth = birth;
+        this.joinDate = joinDate;
+        this.lastLogin = lastLogin;
+        this.loginCount = loginCount;
+        this.loginBrowser = loginBrowser;
+        this.userLevel = userLevel;
+        this.userExp = userExp;
+        this.point = point;
+        this.isActive = isActive;
+        this.profileImage = profileImage;
     }
 }

@@ -10,8 +10,7 @@ public class PointLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fake_pk", nullable = false)
-    private Long fakePk;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

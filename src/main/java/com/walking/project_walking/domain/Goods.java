@@ -18,10 +18,10 @@ public class Goods {
     @Column(name = "goods_id", nullable = false)
     private Long goodsId;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 64)
     private String name;
 
-    @Column(name = "description", nullable = false, length = 255)
+    @Column(name = "description", nullable = false, length = 256)
     private String description;
 
     @Column(name = "price", nullable = false)

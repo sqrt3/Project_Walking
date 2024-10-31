@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/goods")
 public class GoodsController {
     private final GoodsService goodsService;
 
@@ -23,20 +23,20 @@ public class GoodsController {
         this.goodsService = goodsService;
     }
 
-    @GetMapping("/goods")
+    @GetMapping
     public List<Goods> getAllGoods() {
         return goodsService.getAllGoods();
     }
 
     // Admin Only
-    @PostMapping("/goods")
+    @PostMapping
     public ResponseEntity<String> addGoods(@RequestBody Goods goods) {
         goodsService.addGoods(goods);
         return ResponseEntity.status(HttpStatus.CREATED).body("굿즈가 추가되었습니다.\nID: " + goods.getGoodsId());
     }
 
     // Admin Only
-    @PutMapping("/goods/{goodsId}")
+    @PutMapping("/{goodsId}")
     public ResponseEntity<String> updateGoods(@RequestBody Goods goods, @PathVariable Long goodsId) {
         Goods newGoods = goodsService.updateGoods(goodsId, goods);
         if (newGoods != null)
@@ -45,7 +45,7 @@ public class GoodsController {
     }
 
     // Admin Only
-    @DeleteMapping("/goods/{goodsId}")
+    @DeleteMapping("/{goodsId}")
     public ResponseEntity<String> deleteGoods(@PathVariable Long goodsId) {
         Boolean isGoodsExists = goodsService.deleteGoods(goodsId);
         if (isGoodsExists == Boolean.FALSE)
@@ -53,7 +53,7 @@ public class GoodsController {
         return ResponseEntity.status(HttpStatus.OK).body("굿즈가 삭제 되었습니다.\nID: " + goodsId);
     }
 
-    @PostMapping("/goods/{goodsId}/{userId}/purchase")
+    @PostMapping("/{goodsId}/{userId}/purchase")
     public ResponseEntity<String> purchaseGoods(@RequestBody Goods goods, @PathVariable Long goodsId, @PathVariable Long userId) {
         Boolean isSuccessful = goodsService.purchaseGoods(goodsId, userId);
         if (isSuccessful == Boolean.FALSE)
@@ -61,7 +61,7 @@ public class GoodsController {
         return ResponseEntity.status(HttpStatus.OK).body("굿즈를 성공적으로 구매하셨습니다.");
     }
 
-    @GetMapping("/goods/{goodsId}/description")
+    @GetMapping("/{goodsId}/description")
     public ResponseEntity<String> getGoodsDescription(@PathVariable Long goodsId) {
         Goods goods = goodsService.getGoodsById(goodsId);
         if (goods.getGoodsId() != null)

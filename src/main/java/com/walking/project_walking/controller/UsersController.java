@@ -2,12 +2,11 @@ package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.UserResponse;
+import com.walking.project_walking.domain.userdto.UserUpdate;
 import com.walking.project_walking.service.UserService;
 import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,6 +32,15 @@ public class UsersController {
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long usersId) {
         Users users = service.findById(usersId);
         return ResponseEntity.ok(new UserResponse(users));
+    }
+
+    // User 정보 수정
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<String> modifyUsersById(
+            @PathVariable Long userId,
+            @RequestBody  UserUpdate update
+            ) {
+        return service.updateById(userId, update);
     }
 
 }

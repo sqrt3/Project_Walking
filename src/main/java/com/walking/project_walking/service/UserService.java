@@ -18,6 +18,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository repository;
     private final BCryptPasswordEncoder encoder;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository repository, BCryptPasswordEncoder encoder) {
         this.repository = repository;
@@ -53,12 +54,22 @@ public class UserService {
     // 유저 정보 전체 조회
     public List<Users> findAll() {
         return repository.findAll();
+    public UserService(UserRepository repository) {
+        this.userRepository = repository;
     }
 
     // 유저 한 명 조회
     public Users findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    // 유저 생성
+    public Users saveUser(AddUserRequest request) {
+        return userRepository.save(request.toEntity());
+    }
+
+    // 실제 존재하는 userId인지 검증하는 메소드
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
     }
 
     // 유저 정보 수정

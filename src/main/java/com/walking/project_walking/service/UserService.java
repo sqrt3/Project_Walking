@@ -42,5 +42,12 @@ public class UserService {
         return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
+    @Transactional
+    public void softDeleteUser(Long id) {
+        Users user = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 앟는 유저입니다."));
+        user.deactivate();
+        repository.save(user);
+    }
 
 }

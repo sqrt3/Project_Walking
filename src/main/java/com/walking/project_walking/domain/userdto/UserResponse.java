@@ -31,6 +31,8 @@ public class UserResponse {
     private Integer point;
     private Boolean isActive;
     private String profileImage;
+    private Users user;
+    private String redirectUri;
 
     public UserResponse(Users users) {
         id = users.getUserId();
@@ -50,5 +52,10 @@ public class UserResponse {
         point = users.getPoint();
         isActive = users.getIsActive();
         profileImage = users.getProfileImage();
+    }
+
+    public UserResponse(Users user, String redirectUri) {
+        this.user = user;
+        this.redirectUri = redirectUri;
     }
 }

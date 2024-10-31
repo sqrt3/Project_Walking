@@ -3,7 +3,6 @@ package com.walking.project_walking.service;
 import com.walking.project_walking.domain.Users;
 
 import com.walking.project_walking.domain.userdto.UserSignUpDto;
-import com.walking.project_walking.exception.UserAlreadyExistsException;
 import com.walking.project_walking.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,10 +30,6 @@ public class UserService {
 
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
-        if (repository.existsByEmail(dto.getEmail())) {
-            throw new UserAlreadyExistsException("이미 사용 중인 이메일입니다.");
-        }
-
         String encodedPassword = encoder.encode(dto.getPassword());
 
         Users user = Users.builder()
@@ -45,7 +40,7 @@ public class UserService {
                 .nickname(dto.getNickname())
                 .gender(dto.getGender())
                 .birth(dto.getBirth())
-                .joinDate(LocalDate.now()) // 현재 날짜로 설정
+                .joinDate(LocalDate.now())
                 .build();
 
         return repository.save(user);

@@ -15,11 +15,13 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
     private final MyGoodsRepository myGoodsRepository;
+    private final PointService pointService;
 
-    public GoodsService(GoodsRepository goodsRepository, UserRepository userRepository, MyGoodsRepository myGoodsRepository) {
+    public GoodsService(GoodsRepository goodsRepository, UserRepository userRepository, MyGoodsRepository myGoodsRepository, PointService pointService) {
         this.goodsRepository = goodsRepository;
         this.userRepository = userRepository;
         this.myGoodsRepository = myGoodsRepository;
+        this.pointService = pointService;
     }
 
     public List<Goods> getAllGoods() {
@@ -27,7 +29,7 @@ public class GoodsService {
     }
 
     public Goods getGoodsById(Long id) {
-        return goodsRepository.findById(id).get();
+        return goodsRepository.findById(id).orElse(null);
     }
 
     public Goods addGoods(Goods goods) {
@@ -74,6 +76,7 @@ public class GoodsService {
             MyGoods myGoods = new MyGoods(userId, goodsId, 1);
             myGoodsRepository.save(myGoods);
         }
+        pointService.deductPoints(user.getUserId(), goods.getPrice(), "아이템 구매로 인한 포인트 차감");
         userRepository.save(user);
         return Boolean.TRUE;
     }

@@ -109,4 +109,17 @@ public class Users {
         this.isActive = isActive;
         this.profileImage = profileImage;
     }
+
+    // 패스워드, 전화번호, 닉네임만 변경 가능 (나머지는 불가능)
+    public void update(
+            String password,
+            String phone,
+            String nickname,
+            String profileImage
+    ) {
+        this.password = password;
+        this.phone = phone;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+    }
 }

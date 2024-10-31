@@ -5,6 +5,8 @@ import com.walking.project_walking.domain.userdto.AddUserRequest;
 import com.walking.project_walking.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private final UserRepository repository;
@@ -13,8 +15,14 @@ public class UserService {
         this.repository = repository;
     }
 
-    // 유저 생성
-    public Users saveUser(AddUserRequest request) {
-        return repository.save(request.toEntity());
+    // 유저 정보 전체 조회
+    public List<Users> findAll() {
+        return repository.findAll();
     }
+
+    // 유저 한 명 조회
+
+    // 유저 정보 수정
+
+
 }

@@ -21,6 +21,14 @@ public class UserService {
         this.encoder = encoder;
     }
 
+    public boolean checkEmailExists(String email) {
+        return repository.existsByEmail(email);
+    }
+
+    public boolean checkNicknameExists(String nickname) {
+        return repository.existsByNickname(nickname);
+    }
+
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
         if (repository.existsByEmail(dto.getEmail())) {

@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-//@Setter <- 필요할 시 활성화
+@Setter // <- 필요할 시 활성화
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "goods")

@@ -54,6 +54,8 @@ public class UserResponse {
         profileImage = users.getProfileImage();
     }
 
+
+
     public UserResponse(Users user, String redirectUri) {
         this.user = user;
         this.redirectUri = redirectUri;

@@ -77,7 +77,7 @@ public class UserService {
     @Transactional
     public void softDeleteUser(Long id) {
         Users user = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 앟는 유저입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         user.deactivate();
         repository.save(user);
     }

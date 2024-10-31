@@ -21,6 +21,10 @@ public class UserService {
     }
 
     // 유저 한 명 조회
+    public Users findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
 
     // 유저 정보 수정
 

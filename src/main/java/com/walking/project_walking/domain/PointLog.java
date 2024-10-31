@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class PointLog {
@@ -31,8 +32,4 @@ public class PointLog {
     @CreatedDate
     @Column(name = "time")
     private LocalDateTime time;
-
-    public PointLog() {
-        this.time = LocalDateTime.now();
-    }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -73,6 +74,14 @@ public class Users {
 
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
     private String profileImage;
+
+
+    // 팔로우 관련 필드
+    @OneToMany(mappedBy = "followingUser")
+    private List<Follow> followers; // 현재 사용자의 id
+
+    @OneToMany(mappedBy = "followUser")
+    private List<Follow> followings; // 현재 사용자가 팔로잉 (-> 이후 상대 사용자의 팔로워)
 
     public Users(
             String email,

@@ -1,10 +1,6 @@
 package com.walking.project_walking.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +12,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Follow {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "follow_user_id", nullable = false)
-    private Long followUserId;
+    @ManyToOne
+    @JoinColumn(name = "follow_user_id", nullable = false)
+    private Users followUser;  // 팔로우하는 주체
 
-    @Column(name = "following_user_id", nullable = false)
-    private Long followingUserId;
+    @ManyToOne
+    @JoinColumn(name = "following_user_id", nullable = false)
+    private Users followingUser;   // 팔로우하는 대상
+
+
 }

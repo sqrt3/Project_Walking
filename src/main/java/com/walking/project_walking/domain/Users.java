@@ -122,4 +122,8 @@ public class Users {
         this.nickname = nickname;
         this.profileImage = profileImage;
     }
+
+    public void deactivate() {
+        this.isActive = false;
+    }
 }

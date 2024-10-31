@@ -5,6 +5,7 @@ import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.domain.userdto.UserUpdate;
 import com.walking.project_walking.service.UserService;
 import org.apache.catalina.User;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +43,15 @@ public class UsersController {
             ) {
         return service.updateById(userId, update);
     }
+
+    // User Soft Delete
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<String> deleteUserById(
+            @PathVariable Long userId
+    ) {
+        service.softDeleteUser(userId);
+        return ResponseEntity.ok("사용자가 비활성화 되었습니다");
+    }
+
 
 }

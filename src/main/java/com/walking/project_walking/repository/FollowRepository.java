@@ -17,4 +17,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             "(f.followingUser.nickname, f.followingUser.profileImage) " +
             "FROM Follow f WHERE f.followUser.userId = :followerId")
     List<FollowProfileDto> findFollowingByFollowerId(Long followerId);
+
+    // 헷갈림 주의, followingUser -> 팔로우 당하는 사용자 / followUser -> 팔로우 하는 사용자
+    @Query("SELECT new com.walking.project_walking.domain.followdto.FollowProfileDto" +
+            "(f.followUser.nickname, f.followUser.profileImage) " +
+            "FROM Follow f WHERE f.followingUser.userId = :followingId")
+    List<FollowProfileDto> findFollowersByFollowingId(Long followingId);
 }

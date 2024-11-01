@@ -35,12 +35,17 @@ public class FollowService {
     }
 
     // 팔로우 조회 (현재 사용자의 팔로잉 목록)
-    public List<FollowProfileDto> getFollowing(Long followerId) {
-        Users users = userRepository.findById(followerId)
+    public List<FollowProfileDto> getFollowing(Long userId) {
+        Users users = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        return followRepository.findFollowingByFollowerId(followerId);
+        return followRepository.findFollowingByFollowerId(userId);
     }
 
     // 팔로워 조회 (현재 사용자의 팔로워 목록)
+    public List<FollowProfileDto> getFollower(Long userId) {
+        Users users = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        return followRepository.findFollowersByFollowingId(userId);
+    }
 
 }

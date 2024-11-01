@@ -26,11 +26,21 @@ public class FollowController {
     }
 
     // 팔로잉을 조회
-    @GetMapping("/users/{followerId}/following")
+    @GetMapping("/users/{userId}/following")
     public ResponseEntity<List<FollowProfileDto>> getFollowing(
-            @PathVariable Long followerId
+            @PathVariable Long userId
     ) {
-        List<FollowProfileDto> followings = followService.getFollowing(followerId);
+        List<FollowProfileDto> followings = followService.getFollowing(userId);
         return ResponseEntity.ok(followings);
     }
+
+    // 팔로워를 조회
+    @GetMapping("/users/{userId}/follower")
+    public ResponseEntity<List<FollowProfileDto>> getFollower(
+            @PathVariable Long userId
+    ) {
+        List<FollowProfileDto> followers = followService.getFollower(userId);
+        return ResponseEntity.ok(followers);
+    }
+
 }

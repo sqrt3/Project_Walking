@@ -8,21 +8,16 @@ import com.walking.project_walking.repository.MyGoodsRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final UserRepository userRepository;
     private final MyGoodsRepository myGoodsRepository;
     private final PointService pointService;
-
-    public GoodsService(GoodsRepository goodsRepository, UserRepository userRepository, MyGoodsRepository myGoodsRepository, PointService pointService) {
-        this.goodsRepository = goodsRepository;
-        this.userRepository = userRepository;
-        this.myGoodsRepository = myGoodsRepository;
-        this.pointService = pointService;
-    }
 
     public List<Goods> getAllGoods() {
         return goodsRepository.findAll();
@@ -39,16 +34,20 @@ public class GoodsService {
     @Transactional
     public Goods updateGoods(Long orgGoodsId, Goods newGoods) {
         Goods orgGoods = getGoodsById(orgGoodsId);
-        orgGoods.setName(newGoods.getName());
-        orgGoods.setDescription(newGoods.getDescription());
-        orgGoods.setPrice(newGoods.getPrice());
-        return goodsRepository.save(orgGoods);
+        if (orgGoods != null) {
+            orgGoods.setName(newGoods.getName());
+            orgGoods.setDescription(newGoods.getDescription());
+            orgGoods.setPrice(newGoods.getPrice());
+            goodsRepository.save(orgGoods);
+            return orgGoods;
+        }
+        return null;
     }
 
     @Transactional
     public Boolean deleteGoods(Long id) {
         Goods goods = getGoodsById(id);
-        if (goods.getGoodsId() != null) {
+        if (goods != null) {
             goodsRepository.deleteById(id);
             return Boolean.TRUE;
         }
@@ -57,11 +56,13 @@ public class GoodsService {
 
     @Transactional
     public Boolean purchaseGoods(Long userId, Long goodsId) {
-        Users user = userRepository.findById(userId).orElse(null);
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 유저 ID 입니다."));
         if (user == null)                       // 유저가 null 일때
             return Boolean.FALSE;
 
         Goods goods = getGoodsById(goodsId);
+        if (goods == null)
+            return Boolean.FALSE;
         if (user.getPoint() < goods.getPrice()) // 유저의 포인트보다 굿즈의 가격이 높을 때
             return Boolean.FALSE;
 

@@ -5,19 +5,17 @@ import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.domain.userdto.UserSignUpDto;
 import com.walking.project_walking.domain.userdto.UserUpdate;
 import com.walking.project_walking.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class UserController {
     private final UserService userservice;
-
-    public UserController(UserService userservice) {
-        this.userservice = userservice;
-    }
 
     @PostMapping("/users")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserSignUpDto request) {

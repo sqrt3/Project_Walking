@@ -5,6 +5,7 @@ import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.repository.FollowRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FollowService {
-
-    @Autowired
     private FollowRepository followRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     // 사용자 팔로우 기능

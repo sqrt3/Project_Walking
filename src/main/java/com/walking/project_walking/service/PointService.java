@@ -1,19 +1,15 @@
 package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.PointLog;
-import com.walking.project_walking.repository.MyGoodsRepository;
 import com.walking.project_walking.repository.PointLogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class PointService {
     private final PointLogRepository pointLogRepository;
-
-    public PointService(PointLogRepository pointLogRepository) {
-        this.pointLogRepository = pointLogRepository;
-    }
 
     @Transactional
     public void addPoints(Long userId, Integer amount, String description) {

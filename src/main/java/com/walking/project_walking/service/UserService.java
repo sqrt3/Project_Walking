@@ -6,6 +6,7 @@ import com.walking.project_walking.domain.userdto.UserUpdate;
 
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,14 +16,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.encoder = encoder;
-    }
 
     @Transactional
     public Users saveUser(UserSignUpDto dto) {

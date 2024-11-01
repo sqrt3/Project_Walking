@@ -1,5 +1,6 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.Board;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.repository.BoardRepository;
@@ -36,4 +37,12 @@ public class BoardService {
     public boolean existsById(Long boardId) {
         return boardRepository.existsById(boardId);
     }
+
+    public Board addBoard(Board board) { return boardRepository.save(board); }
+
+    public Board getBoard(Long boardId) { return boardRepository.findById(boardId).orElse(null); }
+
+    public Board updateBoard(Board board) { return boardRepository.save(board); }
+
+    public void deleteBoard(Long boardId) { boardRepository.deleteById(boardId); }
 }

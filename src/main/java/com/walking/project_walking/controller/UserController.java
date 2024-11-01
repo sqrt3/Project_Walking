@@ -1,14 +1,12 @@
 package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.userdto.UserDetailDto;
-import com.walking.project_walking.domain.userdto.UserResponse;
-import com.walking.project_walking.domain.userdto.UserSignUpDto;
-import com.walking.project_walking.domain.userdto.UserUpdate;
+import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,5 +98,16 @@ public class UserController {
         UserDetailDto userDetail = userservice.userDetail(userId);
         return ResponseEntity.ok(userDetail);
     }
+
+    // myPage 조회
+    @GetMapping("/users/{userId}/mypage")
+    public ResponseEntity<UserPageDto> getMyPage(
+            @PathVariable Long userId
+    ) {
+        UserPageDto userPageDto = userservice.getInfo(userId);
+
+        return ResponseEntity.ok(userPageDto);
+    }
+
 
 }

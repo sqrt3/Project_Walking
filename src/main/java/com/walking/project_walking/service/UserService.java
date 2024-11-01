@@ -2,14 +2,13 @@ package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
-import com.walking.project_walking.domain.userdto.UserDetailDto;
-import com.walking.project_walking.domain.userdto.UserProfileDto;
-import com.walking.project_walking.domain.userdto.UserSignUpDto;
-import com.walking.project_walking.domain.userdto.UserUpdate;
+import com.walking.project_walking.domain.userdto.*;
 
 import com.walking.project_walking.repository.FollowRepository;
+import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +24,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final PointLogRepository pointLogRepository;
 
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
@@ -100,5 +100,17 @@ public class UserService {
 
         return new UserDetailDto(user.getNickname(), user.getProfileImage(), followers, following);
     }
+
+    // mypage에서 정보 반환
+    public UserPageDto getInfo(Long userId) {
+        Users users = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
+        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+
+        return new UserPageDto(users, followers, following);
+    }
+
 
 }

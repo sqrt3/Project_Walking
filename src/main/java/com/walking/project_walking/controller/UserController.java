@@ -1,5 +1,6 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.service.UserService;
@@ -107,6 +108,18 @@ public class UserController {
         UserPageDto userPageDto = userservice.getInfo(userId);
 
         return ResponseEntity.ok(userPageDto);
+    }
+
+    // 유저 포인트 로그 조회
+    @GetMapping("/users/{userId}/points")
+    public ResponseEntity<List<UserPointLogDto>> getPointView(
+            @PathVariable Long userId
+    ) {
+        List<PointLog> pointLogs = userservice.getPointLog(userId);
+        List<UserPointLogDto> userPointLogDtos = pointLogs.stream()
+                .map(UserPointLogDto::new)
+                .toList();
+        return ResponseEntity.ok(userPointLogDtos);
     }
 
 

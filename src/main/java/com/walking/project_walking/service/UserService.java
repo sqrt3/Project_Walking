@@ -1,5 +1,6 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.domain.userdto.*;
@@ -8,7 +9,6 @@ import com.walking.project_walking.repository.FollowRepository;
 import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,6 +110,11 @@ public class UserService {
         List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
 
         return new UserPageDto(users, followers, following);
+    }
+
+    // 사용자 포인트 조회 서비스
+    public List<PointLog> getPointLog(Long userId) {
+        return pointLogRepository.findByUserId(userId);
     }
 
 

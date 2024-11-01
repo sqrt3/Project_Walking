@@ -3,10 +3,13 @@ package com.walking.project_walking.controller;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.domain.userdto.UserSignUpDto;
+import com.walking.project_walking.domain.userdto.UserUpdate;
 import com.walking.project_walking.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -54,5 +57,39 @@ public class UserController {
 //        userservice.sendPasswordRecoveryEmail(email);
 
         return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
+    }
+
+    // (Admin only) User 전체 조회
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> findUsers() {
+        List<UserResponse> list = userservice.findAll().stream()
+                .map(UserResponse::new)
+                .toList();
+        return ResponseEntity.ok(list);
+    }
+
+    // (Admin only) User 한 명 조회
+    @GetMapping("/users/{usersId}")
+    public ResponseEntity<UserResponse> findUserById(@PathVariable Long usersId) {
+        Users users = userservice.findById(usersId);
+        return ResponseEntity.ok(new UserResponse(users));
+    }
+
+    // User 정보 수정
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<String> modifyUsersById(
+            @PathVariable Long userId,
+            @RequestBody UserUpdate update
+    ) {
+        return userservice.updateById(userId, update);
+    }
+
+    // User Soft Delete
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<String> deleteUserById(
+            @PathVariable Long userId
+    ) {
+        userservice.softDeleteUser(userId);
+        return ResponseEntity.ok("사용자가 비활성화 되었습니다");
     }
 }

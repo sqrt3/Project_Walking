@@ -92,6 +92,7 @@ public class UserController {
     }
 
     // (User) 유저 조회
+    // todo 팔로잉, 팔로워 수 카운트 처리하기
     @GetMapping("/users/{userId}/info")
     public ResponseEntity<UserDetailDto> getUserDetail(
             @PathVariable Long userId
@@ -111,6 +112,7 @@ public class UserController {
     }
 
     // 유저 포인트 로그 조회
+    // todo 포인트 획득, 감소 시 코드상에서 처리?
     @GetMapping("/users/{userId}/points")
     public ResponseEntity<List<UserPointLogDto>> getPointView(
             @PathVariable Long userId

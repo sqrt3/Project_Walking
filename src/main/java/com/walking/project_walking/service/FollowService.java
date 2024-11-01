@@ -22,6 +22,8 @@ public class FollowService {
     private final UserRepository userRepository;
 
     // 사용자 팔로우 기능
+    // todo 자기 자신은 팔로되지 않도록 수정
+    // todo Alert 메시지 사용자에게 출력되도록 html에서 수정
     public void followUser(Long followerId, Long followingId) {
         Users follower = userRepository.findById(followerId)
                 .orElseThrow(() -> new RuntimeException("팔로워를 찾을 수 없습니다."));

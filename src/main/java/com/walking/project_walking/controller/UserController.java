@@ -1,6 +1,7 @@
 package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.userdto.UserDetailDto;
 import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.domain.userdto.UserSignUpDto;
 import com.walking.project_walking.domain.userdto.UserUpdate;
@@ -90,4 +91,14 @@ public class UserController {
         userservice.softDeleteUser(userId);
         return ResponseEntity.ok("사용자가 비활성화 되었습니다");
     }
+
+    // (User) 유저 조회
+    @GetMapping("/users/{userId}/info")
+    public ResponseEntity<UserDetailDto> getUserDetail(
+            @PathVariable Long userId
+    ) {
+        UserDetailDto userDetail = userservice.userDetail(userId);
+        return ResponseEntity.ok(userDetail);
+    }
+
 }

@@ -1,9 +1,12 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.userdto.UserSignUpDto;
-import com.walking.project_walking.domain.userdto.UserUpdate;
+import com.walking.project_walking.domain.followdto.FollowProfileDto;
+import com.walking.project_walking.domain.userdto.*;
 
+import com.walking.project_walking.repository.FollowRepository;
+import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import java.util.List;
 public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
+    private final PointLogRepository pointLogRepository;
 
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
@@ -76,6 +81,7 @@ public class UserService {
         return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
+    // 유저 soft delete
     @Transactional
     public void softDeleteUser(Long id) {
         Users user = userRepository.findById(id)
@@ -83,5 +89,33 @@ public class UserService {
         user.deactivate();
         userRepository.save(user);
     }
+
+    // (Users) 유저 1명 조회
+    public UserDetailDto userDetail(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
+        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+
+        return new UserDetailDto(user.getNickname(), user.getProfileImage(), followers, following);
+    }
+
+    // mypage에서 정보 반환
+    public UserPageDto getInfo(Long userId) {
+        Users users = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
+        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+
+        return new UserPageDto(users, followers, following);
+    }
+
+    // 사용자 포인트 조회 서비스
+    public List<PointLog> getPointLog(Long userId) {
+        return pointLogRepository.findByUserId(userId);
+    }
+
 
 }

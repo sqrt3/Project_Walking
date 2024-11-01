@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.catalina.User;
 
 @Entity
 @Getter
@@ -26,15 +27,9 @@ public class MyGoods {
     @Column(name = "amount", nullable = false)
     private Integer amount;
 
-    public MyGoods(Long userId, Long goodsId, Integer amount) {
-        this.setUserId(userId);
+    public MyGoods(Long users, Long goodsId, Integer amount) {
+        this.setUserId(users);
         this.setGoodsId(goodsId);
         this.amount = amount;
     }
-
-//    MyGoods (User user, Goods goods, int amount) {
-//        this.userId = user.getUserId();
-//        this.goodsId = goods.getGoodsId();
-//        this.amount = amount;
-//    }
 }

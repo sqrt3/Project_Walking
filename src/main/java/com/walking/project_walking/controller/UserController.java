@@ -1,19 +1,19 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.userdto.UserResponse;
-import com.walking.project_walking.domain.userdto.UserSignUpDto;
-import com.walking.project_walking.domain.userdto.UserUpdate;
+import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userservice;
 
@@ -90,4 +90,39 @@ public class UserController {
         userservice.softDeleteUser(userId);
         return ResponseEntity.ok("사용자가 비활성화 되었습니다");
     }
+
+    // (User) 유저 조회
+    // todo 팔로잉, 팔로워 수 카운트 처리하기
+    @GetMapping("/users/{userId}/info")
+    public ResponseEntity<UserDetailDto> getUserDetail(
+            @PathVariable Long userId
+    ) {
+        UserDetailDto userDetail = userservice.userDetail(userId);
+        return ResponseEntity.ok(userDetail);
+    }
+
+    // myPage 조회
+    @GetMapping("/users/{userId}/mypage")
+    public ResponseEntity<UserPageDto> getMyPage(
+            @PathVariable Long userId
+    ) {
+        UserPageDto userPageDto = userservice.getInfo(userId);
+
+        return ResponseEntity.ok(userPageDto);
+    }
+
+    // 유저 포인트 로그 조회
+    // todo 포인트 획득, 감소 시 코드상에서 처리?
+    @GetMapping("/users/{userId}/points")
+    public ResponseEntity<List<UserPointLogDto>> getPointView(
+            @PathVariable Long userId
+    ) {
+        List<PointLog> pointLogs = userservice.getPointLog(userId);
+        List<UserPointLogDto> userPointLogDtos = pointLogs.stream()
+                .map(UserPointLogDto::new)
+                .toList();
+        return ResponseEntity.ok(userPointLogDtos);
+    }
+
+
 }

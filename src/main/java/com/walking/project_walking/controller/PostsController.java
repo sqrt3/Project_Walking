@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/posts")
-@RequiredArgsConstructor
 public class PostsController {
     private final PostsService postsService;
     private final BoardService boardService;

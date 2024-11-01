@@ -3,6 +3,7 @@ package com.walking.project_walking.controller;
 import com.walking.project_walking.domain.Goods;
 import com.walking.project_walking.service.GoodsService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,14 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/goods")
 public class GoodsController {
     private final GoodsService goodsService;
-
-    public GoodsController(GoodsService goodsService) {
-        this.goodsService = goodsService;
-    }
 
     @GetMapping
     public List<Goods> getAllGoods() {

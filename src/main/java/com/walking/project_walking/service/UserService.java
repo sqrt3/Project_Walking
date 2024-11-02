@@ -1,5 +1,6 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
@@ -95,10 +96,10 @@ public class UserService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
-        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+        Long followerCount = followRepository.countFollowers(userId);
+        Long followingCount = followRepository.countFollowing(userId);
 
-        return new UserDetailDto(user.getNickname(), user.getProfileImage(), followers, following);
+        return new UserDetailDto(user.getNickname(), user.getProfileImage(), followerCount, followingCount);
     }
 
     // mypage에서 정보 반환
@@ -106,10 +107,10 @@ public class UserService {
         Users users = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
-        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+        Long followerCount = followRepository.countFollowers(userId);
+        Long followingCount = followRepository.countFollowing(userId);
 
-        return new UserPageDto(users, followers, following);
+        return new UserPageDto(users, followerCount, followingCount);
     }
 
     // 사용자 포인트 조회 서비스

@@ -8,11 +8,10 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserDetailDto {
-    private String nickname;
-    private String profileImage;
-    private List<FollowProfileDto> followers;
-    private List<FollowProfileDto> following;
+    private final String nickname;
+    private final String profileImage;
+    private final Long followerCount;
+    private final Long followingCount;
 }

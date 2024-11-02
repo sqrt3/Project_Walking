@@ -92,7 +92,6 @@ public class UserController {
     }
 
     // (User) 유저 조회
-    // todo 팔로잉, 팔로워 수 카운트 처리하기
     @GetMapping("/users/{userId}/info")
     public ResponseEntity<UserDetailDto> getUserDetail(
             @PathVariable Long userId

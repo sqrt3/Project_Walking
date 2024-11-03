@@ -25,6 +25,17 @@ public class BoardService {
         return postsPage.getTotalPages();
     }
 
+    // 현재 페이지를 반환하는 메소드
+    public int getCurrentPage(Long boardId, int requestedPage) {
+        int totalPageCount = getPageCount(boardId);
+        if (requestedPage < 1) {
+            return 1;
+        } else if (requestedPage > totalPageCount) {
+            return totalPageCount;
+        }
+        return requestedPage;
+    }
+
     // 모든 게시판의 boardId와 name을 조회하는 메소드
     public List<BoardResponseDto> getBoardsList() {
         return boardRepository.findAll().stream()

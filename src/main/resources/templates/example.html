@@ -9,6 +9,7 @@
             font-weight: bold;
             color: red; /* 활성 페이지 강조를 위한 스타일 */
         }
+
         .pagination a {
             margin: 0 5px; /* 페이지 링크 간격 */
         }
@@ -97,21 +98,25 @@
     <button class="button">검색</button>
 </div>
 
-<!-- 페이지 네비게이션 -->
 <div class="pagination">
-    <!-- 페이지 번호 표시 -->
+    <!-- 이전 블록 링크 -->
+    <span th:if="${startPage > 1}">
+        <a th:href="@{/board/{boardId}(boardId=${boardId}, page=${startPage - 10})}">이전</a>
+    </span>
+
+    <!-- 현재 블록의 페이지 번호 표시 -->
     <div>
-        <span th:each="pageNum : ${#numbers.sequence(1, pageCount > 10 ? 10 : pageCount)}">
+        <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
             <a th:href="@{/board/{boardId}(boardId=${boardId}, page=${pageNum})}"
                th:text="${pageNum}"
-               th:class="${pageNum == currentPage} ? 'active' : ''"></a>
-            <span th:if="${pageNum < (pageCount > 10 ? 10 : pageCount)}"> | </span>
+               th:classappend="${pageNum == currentPage} ? 'active' : ''"></a>
+            <span th:if="${pageNum < endPage}"> | </span>
         </span>
     </div>
 
-    <!-- 다음 페이지 링크 -->
-    <span th:if="${currentPage < pageCount}">
-        <a th:href="@{/board/{boardId}(boardId=${boardId}, page=${currentPage + 1})}">다음</a>
+    <!-- 다음 블록 링크 -->
+    <span th:if="${endPage < pageCount}">
+        <a th:href="@{/board/{boardId}(boardId=${boardId}, page=${startPage + 10})}">다음</a>
     </span>
 </div>
 </body>

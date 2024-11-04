@@ -38,7 +38,6 @@ public class BoardViewController {
 
         List<PostResponseDto> postsList;
 
-        // 검색 조건이 있을 경우
         if (searchKeyword != null && !searchKeyword.isEmpty()) {
             switch (searchCategory) {
                 case "title":
@@ -75,5 +74,12 @@ public class BoardViewController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         return "example";
+    }
+
+    @GetMapping("/board2")
+    public String getBoard2(@RequestParam(defaultValue = "1") Long boardId,
+                            Model model) {
+        model.addAttribute("boardId", boardId);
+        return "example2";
     }
 }

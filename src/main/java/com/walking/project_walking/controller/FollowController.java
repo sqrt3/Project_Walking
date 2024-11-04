@@ -1,5 +1,6 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.service.FollowService;
@@ -25,22 +26,32 @@ public class FollowController {
         return ResponseEntity.ok("해당 유저를 팔로우 합니다.");
     }
 
-    // 팔로잉을 조회
+    // 팔로잉을 조회 - 에러메시지 프로트에서 출력되도록 하기!
     @GetMapping("/users/{userId}/following")
     public ResponseEntity<List<FollowProfileDto>> getFollowing(
             @PathVariable Long userId
     ) {
-        List<FollowProfileDto> followings = followService.getFollowing(userId);
-        return ResponseEntity.ok(followings);
+        List<Follow> followings = followService.getFollowing(userId);
+
+        List<FollowProfileDto> followingDto = followings.stream()
+                .map(FollowProfileDto::new) // Follow 객체를 이용해 FollowProfileDto 생성
+                .toList();
+
+        return ResponseEntity.ok(followingDto);
     }
 
-    // 팔로워를 조회
+    // 팔로워를 조회 - "
     @GetMapping("/users/{userId}/follower")
     public ResponseEntity<List<FollowProfileDto>> getFollower(
             @PathVariable Long userId
     ) {
-        List<FollowProfileDto> followers = followService.getFollower(userId);
-        return ResponseEntity.ok(followers);
+        List<Follow> followers = followService.getFollower(userId);
+
+        List<FollowProfileDto> followerDto = followers.stream()
+                .map(FollowProfileDto::new)
+                .toList();
+
+        return ResponseEntity.ok(followerDto);
     }
 
 }

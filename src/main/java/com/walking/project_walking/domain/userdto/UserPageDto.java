@@ -11,17 +11,16 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserPageDto {
-    private String nickname;
-    private String email;
-    private String name;
-    private String profileImage;
-    private List<FollowProfileDto> followers;
-    private List<FollowProfileDto> following;
+    private final String nickname;
+    private final String email;
+    private final String name;
+    private final String profileImage;
+    private final Long followers;
+    private final Long following;
 
-    public UserPageDto(Users user, List<FollowProfileDto> followers, List<FollowProfileDto> following) {
+    public UserPageDto(Users user, Long followers, Long following) {
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.name = user.getName();

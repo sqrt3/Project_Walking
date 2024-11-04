@@ -1,11 +1,14 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.Follow;
+import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.domain.userdto.*;
 
 import com.walking.project_walking.repository.FollowRepository;
+import com.walking.project_walking.repository.MyGoodsRepository;
 import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PointLogRepository pointLogRepository;
+    private final MyGoodsRepository myGoodsRepository;
 
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
@@ -95,10 +99,10 @@ public class UserService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
-        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+        Long followerCount = followRepository.countFollowers(userId);
+        Long followingCount = followRepository.countFollowing(userId);
 
-        return new UserDetailDto(user.getNickname(), user.getProfileImage(), followers, following);
+        return new UserDetailDto(user.getNickname(), user.getProfileImage(), followerCount, followingCount);
     }
 
     // mypage에서 정보 반환
@@ -106,15 +110,24 @@ public class UserService {
         Users users = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        List<FollowProfileDto> followers = followRepository.findFollowersByFollowingId(userId);
-        List<FollowProfileDto> following = followRepository.findFollowingByFollowerId(userId);
+        Long followerCount = followRepository.countFollowers(userId);
+        Long followingCount = followRepository.countFollowing(userId);
 
-        return new UserPageDto(users, followers, following);
+        return new UserPageDto(users, followerCount, followingCount);
     }
 
     // 사용자 포인트 조회 서비스
     public List<PointLog> getPointLog(Long userId) {
         return pointLogRepository.findByUserId(userId);
+    }
+
+    // 사용자 아이템 조회 서비스
+    public List<MyGoods> getGoods(Long userId) {
+        List<MyGoods> myGoods = myGoodsRepository.findByUserId(userId);
+        if (myGoods.isEmpty()) {
+            throw new IllegalArgumentException("등록된 아이템이 없습니다.");
+        }
+        return myGoods;
     }
 
 

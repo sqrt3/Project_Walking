@@ -1,5 +1,6 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
@@ -92,7 +93,6 @@ public class UserController {
     }
 
     // (User) 유저 조회
-    // todo 팔로잉, 팔로워 수 카운트 처리하기
     @GetMapping("/users/{userId}/info")
     public ResponseEntity<UserDetailDto> getUserDetail(
             @PathVariable Long userId
@@ -122,6 +122,15 @@ public class UserController {
                 .map(UserPointLogDto::new)
                 .toList();
         return ResponseEntity.ok(userPointLogDtos);
+    }
+
+    // 유저 아이템 조회
+    @GetMapping("/users/{userId}/items")
+    public ResponseEntity<List<MyGoods>> getMyItems(
+            @PathVariable Long userId
+    ) {
+        List<MyGoods> myGoods = userservice.getGoods(userId);
+        return ResponseEntity.ok(myGoods);
     }
 
 

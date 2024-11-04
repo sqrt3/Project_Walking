@@ -40,15 +40,15 @@ public class AdminController {
     }
 
     @PostMapping("/boards")
-    public ResponseEntity<String> addBoard(@RequestBody Board board) {
+    public ResponseEntity<Board> addBoard(@RequestBody Board board) {
         Board newBoard = boardService.addBoard(board);
-        return ResponseEntity.ok().body(newBoard.getName() + " 게시판이 생성 되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(newBoard);
     }
 
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
         Board board = boardService.getBoard(boardId);
-        if (board.getBoardId() == null) {
+        if (board == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
         }
         boardService.deleteBoard(board.getBoardId());
@@ -58,7 +58,7 @@ public class AdminController {
     @PutMapping("/boards/{boardId}")
     public ResponseEntity<String> updateBoard(@PathVariable Long boardId, @RequestBody Board board) {
         Board orgBoard = boardService.getBoard(boardId);
-        if (orgBoard.getBoardId() == null) {
+        if (orgBoard == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
         }
         boardService.updateBoard(board);

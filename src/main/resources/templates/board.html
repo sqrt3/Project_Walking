@@ -1,31 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>게시판 관리</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
-<body>
-<div>
+<div style="width: 100%;">
   <table class="table table-dark table-striped">
     <thead>
     <tr>
       <th scope="col">#</th>
       <th scope="col">게시판 이름</th>
       <th scope="col"></th>
-      <th scope="col"></th>
+      <th scope="col"><a href="#" class="btn btn-primary add-button">게시판 추가</a></th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="board : ${boardList}">
       <td th:text="${board.getBoardId()}"></td>
       <td th:text="${board.getName()}"></td>
-      <td><a class="btn btn-success">수정</a></td>
-      <td><a class="btn btn-danger">삭제</a></td>
+      <td>
+        <a href="#" class="btn btn-success edit-button" th:data-board-id="${board.getBoardId()}">수정</a>
+      </td>
+      <td>
+        <a href="#" class="btn btn-danger delete-button" th:data-board-id="${board.getBoardId()}">삭제</a>
+      </td>
     </tr>
     </tbody>
   </table>
 </div>
-</body>
-</html>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">수정하기</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="editBoardName" class="form-control" placeholder="새 게시판의 이름을 입력하세요">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" id="saveChanges">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">게시판 삭제 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        정말로 게시판을 삭제 하시겠습니까?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-danger" id="confirmDelete">삭제</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">게시판 추가</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="newBoardName" class="form-label">게시판 이름</label>
+          <input type="text" class="form-control" id="newBoardName" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" id="addBoard">추가하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    let currentBoardId;
+
+    $(document).on('click', '.edit-button', function(e) {
+      e.preventDefault();
+      currentBoardId = $(this).data('board-id');
+
+      $('#editBoardName').val($(this).closest('tr').find('td:nth-child(2)').text());
+      $('#editModal').modal('show');
+    });
+
+    $('#saveChanges').on('click', function() {
+      const newName = $('#editBoardName').val();
+
+      $.ajax({
+        url: '/api/admin/boards/' + currentBoardId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ boardId: currentBoardId, name: newName }),
+        success: function() {
+          $('#editModal').modal('hide');
+
+          const row = $('tr').filter(function() {
+            return $(this).find('.edit-button').data('board-id') === currentBoardId;
+          });
+
+          row.find('td:nth-child(2)').text(newName);
+        },
+        error: function(xhr, status, error) {
+          console.error('수정 오류:', error);
+        }
+      });
+    });
+  });
+
+  $(document).on('click', '.delete-button', function(e) {
+    e.preventDefault();
+    currentBoardId = $(this).data('board-id');
+    $('#deleteModal').modal('show');
+  });
+
+  $('#confirmDelete').on('click', function() {
+    $.ajax({
+      url: '/api/admin/boards/' + currentBoardId,
+      method: 'DELETE',
+      success: function() {
+        $('tr').has('a[data-board-id="' + currentBoardId + '"]').remove();
+        $('#deleteModal').modal('hide');
+      },
+      error: function(xhr, status, error) {
+        console.error('삭제 오류:', error);
+      }
+    });
+  });
+
+  $(document).on('click', '.add-button', function(e) {
+    e.preventDefault();
+    $('#addModal').modal('show');
+  });
+
+  $('#addBoard').on('click', function() {
+    const newBoardName = $('#newBoardName').val();
+
+    $.ajax({
+      url: '/api/admin/boards',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ name: newBoardName }),
+      success: function(response) {
+        $('#addModal').modal('hide');
+
+        const newRow = `
+        <tr>
+          <td>${response.boardId}</td>
+          <td>${newBoardName}</td>
+          <td><a href="#" class="btn btn-success edit-button" data-board-id="${response.boardId}">수정</a></td>
+          <td><a href="#" class="btn btn-danger delete-button" data-board-id="${response.boardId}">삭제</a></td>
+        </tr>`;
+
+        $('table tbody').append(newRow);
+      },
+      error: function(xhr, status, error) {
+        console.error('추가 오류:', error);
+      }
+    });
+  });
+
+</script>

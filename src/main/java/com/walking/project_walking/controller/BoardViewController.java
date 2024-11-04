@@ -25,7 +25,10 @@ public class BoardViewController {
     private static final int BLOCK_SIZE = 10; // 페이지 블록 크기
 
     @GetMapping("/board/{boardId}")
-    public String getBoard(Model model, @PathVariable Long boardId, @RequestParam(defaultValue = "1") int page) {
+    public String getBoard(Model model, @PathVariable Long boardId,
+                           @RequestParam(defaultValue = "1") int page,
+                           @RequestParam(required = false) String searchCategory,
+                           @RequestParam(required = false) String searchKeyword) {
         List<BoardResponseDto> boardList = boardService.getBoardsList();
         model.addAttribute("boardList", boardList);
         model.addAttribute("boardId", boardId);
@@ -33,7 +36,28 @@ public class BoardViewController {
         PostResponseDto hotPost = postsService.getOneHotPost(boardId);
         model.addAttribute("hotPost", hotPost);
 
-        List<PostResponseDto> postsList = postsService.getPostsByBoardId(boardId, PageRequest.of(page - 1, PAGE_SIZE));
+        List<PostResponseDto> postsList;
+
+        // 검색 조건이 있을 경우
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            switch (searchCategory) {
+                case "title":
+                    postsList = postsService.searchPosts(boardId, searchKeyword, null, null, PageRequest.of(0, PAGE_SIZE));
+                    break;
+                case "content":
+                    postsList = postsService.searchPosts(boardId, null, searchKeyword, null, PageRequest.of(0, PAGE_SIZE));
+                    break;
+                case "title-content":
+                    postsList = postsService.searchPosts(boardId, searchKeyword, searchKeyword, null, PageRequest.of(0, PAGE_SIZE));
+                    break;
+                default:
+                    postsList = postsService.getPostsByBoardId(boardId, PageRequest.of(page - 1, PAGE_SIZE));
+                    break;
+            }
+        } else {
+            postsList = postsService.getPostsByBoardId(boardId, PageRequest.of(page - 1, PAGE_SIZE));
+        }
+
         model.addAttribute("postsList", postsList);
 
         int pageCount = boardService.getPageCount(boardId);

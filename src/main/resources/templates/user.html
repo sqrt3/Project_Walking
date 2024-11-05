@@ -1,0 +1,55 @@
+<div class="card">
+  <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+    <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+      <img src="https://placehold.co/150x150"
+           alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+           style="width: 150px; z-index: 1">
+    </div>
+    <div class="ms-3" style="margin-top: 130px;">
+      <h5>[[${user.getNickname()}]] ([[${user.getGender()} ? '남' : '여']])</h5>
+      <p th:text="${user.getName()}"></p>
+    </div>
+  </div>
+  <div class="p-4 text-black bg-body-tertiary">
+    <div class="d-flex justify-content-end text-center py-1 text-body">
+      <div class="px-3">
+        <p class="small text-muted mb-0">레벨</p>
+        <p class="mb-1 h5" th:text="${user.getUserLevel()}"></p>
+      </div>
+      <div class="px-3">
+        <p class="small text-muted mb-0">경험치</p>
+        <p class="mb-1 h5" th:text="${user.getUserExp()}"></p>
+      </div>
+      <div class="px-3">
+        <p class="small text-muted mb-0">포인트</p>
+        <p class="mb-1 h5" th:text="${user.getPoint()}"></p>
+      </div>
+      <div class="px-3">
+        <p class="small text-muted mb-0">게시물 수</p>
+        <p class="mb-1 h5">0</p>
+      </div>
+      <div class="px-3">
+        <p class="small text-muted mb-0">팔로워 수</p>
+        <p class="mb-1 h5">0</p>
+      </div>
+      <div>
+        <p class="small text-muted mb-0">팔로잉한 유저 수</p>
+        <p class="mb-1 h5">0</p>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-4 text-black">
+    <div class="mb-5  text-body">
+      <p class="lead fw-normal mb-1">상세 정보</p>
+      <div class="p-4 bg-body-tertiary">
+        <p class="font-italic mb-1">이메일: [[${user.getEmail()}]]</p>
+        <p class="font-italic mb-1">전화번호: [[${user.getPhone()}]]</p>
+        <p class="font-italic mb-1">생일: [[${user.getBirth()}]]</p>
+        <p class="font-italic mb-1">가입일: [[${user.getJoinDate()}]]</p>
+        <p class="font-italic mb-1">최근 로그인: [[${user.getLastLogin()}]]</p>
+        <p class="font-italic mb-1">로그인 횟수: [[${user.getLoginCount()}]]</p>
+        <p class="font-italic mb-1">접속 브라우저 정보: [[${user.getLoginBrowser()}]]</p>
+      </div>
+    </div>
+  </div>
+</div>

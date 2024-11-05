@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,19 +39,29 @@ public class AdminController {
         return ResponseEntity.ok(user);
     }
 
-//    @PostMapping("/boards")
-//    public ResponseEntity<String> addBoard(@RequestBody Board board) {
-//        Board newBoard = boardService.addBoard(board);
-//        return ResponseEntity.ok().body(newBoard.getName() + " 게시판이 생성 되었습니다.");
-//    }
-//
-//    @DeleteMapping("/boards/{boardId}")
-//    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
-//        Board board = boardService.getBoard(boardId);
-//        if (board.getBoardId() == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
-//        }
-//        boardService.deleteBoard(board);
-//        return ResponseEntity.ok().body(board.getName() + " 게시판이 삭제 되었습니다.");
-//    }
+    @PostMapping("/boards")
+    public ResponseEntity<Board> addBoard(@RequestBody Board board) {
+        Board newBoard = boardService.addBoard(board);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newBoard);
+    }
+
+    @DeleteMapping("/boards/{boardId}")
+    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
+        Board board = boardService.getBoard(boardId);
+        if (board == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
+        }
+        boardService.deleteBoard(board.getBoardId());
+        return ResponseEntity.ok().body(board.getName() + " 게시판이 삭제 되었습니다.");
+    }
+
+    @PutMapping("/boards/{boardId}")
+    public ResponseEntity<String> updateBoard(@PathVariable Long boardId, @RequestBody Board board) {
+        Board orgBoard = boardService.getBoard(boardId);
+        if (orgBoard == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
+        }
+        boardService.updateBoard(board);
+        return ResponseEntity.ok().body(board.getName() + " 게시판으로 변경 되었습니다.");
+    }
 }

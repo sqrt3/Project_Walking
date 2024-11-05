@@ -55,7 +55,7 @@ public class GoodsService {
     }
 
     @Transactional
-    public Boolean purchaseGoods(Long userId, Long goodsId) {
+    public Boolean purchaseGoods(Long goodsId, Long userId) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 유저 ID 입니다."));
         if (user == null)                       // 유저가 null 일때
             return Boolean.FALSE;

@@ -15,7 +15,6 @@
       <th scope="col" class="text-center">계정 활성화 여부</th>
       <th scope="col"></th>
       <th scope="col"></th>
-      <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -35,8 +34,9 @@
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"
                 th:data-user-id="${user.getUserId()}">자세히</button>
       </td>
-      <td><a class="btn btn-success">수정</a></td>
-      <td><a class="btn btn-danger">삭제</a></td>
+      <td>
+        <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getUserId()}" th:disabled="${!user.getIsActive()}">비활성화</button>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -59,6 +59,25 @@
   </div>
 </div>
 
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserModalLabel">사용자 비활성화 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>정말로 이 사용자를 비활성화 하시겠습니까?</p>
+        <p id="userInfo"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">삭제</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $('#userModal').on('show.bs.modal', function(event) {
     const button = $(event.relatedTarget);
@@ -73,6 +92,36 @@
       error: function(xhr, status, error) {
         $('#modalContent').html('<p class="text-danger">오류: ' + error + '</p>');
       }
+    });
+  });
+
+  $(document).ready(function() {
+    $('.disable-user-btn').click(function() {
+      let userId = $(this).data('user-id');
+      let userRow = $(this).closest('tr');
+      let userEmail = userRow.find('td').eq(1).text();
+
+      $('#userInfo').text('이 사용자의 이메일: ' + userEmail);
+
+      $('#confirmDeleteBtn').off('click').on('click', function() {
+        $.ajax({
+          url: '/users/' + userId,
+          type: 'DELETE',
+          success: function(response) {
+            alert('사용자가 비활성화되었습니다.');
+
+            userRow.find('td').eq(10).text('비활성화');
+            userRow.find('.disable-user-btn').prop('disabled', true).text('비활성화');
+
+            $('#deleteUserModal').modal('hide');
+          },
+          error: function(xhr, status, error) {
+            alert('사용자 비활성화 실패: ' + xhr.responseText);
+          }
+        });
+      });
+
+      $('#deleteUserModal').modal('show');
     });
   });
 </script>

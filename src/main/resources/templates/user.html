@@ -18,11 +18,11 @@
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">경험치</p>
-        <p class="mb-1 h5" th:text="${user.getUserExp()}"></p>
+        <p class="mb-1 h5" th:text="${#numbers.formatInteger(user.getUserExp(), 0, 'COMMA')}"></p>
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">포인트</p>
-        <p class="mb-1 h5" th:text="${user.getPoint()}"></p>
+        <p class="mb-1 h5" th:text="${#numbers.formatInteger(user.getPoint(), 0, 'COMMA')} + 'P'"></p>
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">게시물 수</p>
@@ -47,7 +47,7 @@
         <p class="font-italic mb-1">생일: [[${user.getBirth()}]]</p>
         <p class="font-italic mb-1">가입일: [[${user.getJoinDate()}]]</p>
         <p class="font-italic mb-1">최근 로그인: [[${user.getLastLogin()}]]</p>
-        <p class="font-italic mb-1">로그인 횟수: [[${user.getLoginCount()}]]</p>
+        <p class="font-italic mb-1">로그인 횟수: [[${#numbers.formatInteger(user.getLoginCount(), 0, 'COMMA')}]]</p>
         <p class="font-italic mb-1">접속 브라우저 정보: [[${user.getLoginBrowser()}]]</p>
       </div>
     </div>

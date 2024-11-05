@@ -1,8 +1,10 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.Goods;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.service.BoardService;
+import com.walking.project_walking.service.GoodsService;
 import com.walking.project_walking.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminViewController {
     private final UserService userService;
     private final BoardService boardService;
+    private final GoodsService goodsService;
 
     @GetMapping
     public String adminView(Model model) {
@@ -44,5 +47,12 @@ public class AdminViewController {
         List<BoardResponseDto> boardList = boardService.getBoardsList();
         model.addAttribute("boardList", boardList);
         return "board";
+    }
+
+    @GetMapping("/goods")
+    public String manageGoods(Model model) {
+        List<Goods> goodsList = goodsService.getAllGoods();
+        model.addAttribute("goodsList", goodsList);
+        return "goods-manager";
     }
 }

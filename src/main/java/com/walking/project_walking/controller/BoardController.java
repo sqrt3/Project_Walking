@@ -1,6 +1,7 @@
 package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.dto.BoardResponseDto;
+import com.walking.project_walking.domain.dto.NoticeResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.PostsService;
@@ -33,7 +34,7 @@ public class BoardController {
         return ResponseEntity.ok(boardList);
     }
 
-    // 특정 게시판, 특정 페이지의 게시글 조회(공지사항 포함)
+    // 특정 게시판, 특정 페이지의 게시글 조회
     @GetMapping("/posts")
     public ResponseEntity<List<PostResponseDto>> getPostsByBoard(
             @RequestParam Long boardId,
@@ -48,7 +49,23 @@ public class BoardController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
         List<PostResponseDto> postsList = postsService.getPostsByBoardId(boardId, pageRequest);
 
+        if (postsList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
+        }
+
         return ResponseEntity.ok(postsList);
+    }
+
+    // 공지사항 조회
+    @GetMapping("/notices")
+    public ResponseEntity<List<NoticeResponseDto>> getNoticesByBoard(){
+        PageRequest pageRequest = PageRequest.of(0, 2);
+        List<NoticeResponseDto> noticesList = postsService.getNoticePosts(pageRequest);
+
+        if (noticesList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(noticesList);
     }
 
     // 특정 게시판의 페이지 갯수 조회

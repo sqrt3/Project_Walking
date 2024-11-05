@@ -24,4 +24,13 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     List<Posts> findHotPosts(@Param("threshold") double threshold);
 
     List<Posts> findByUserId(Long userId);
+
+    @Query("SELECT COUNT(p) FROM Posts p WHERE p.boardId = :boardId AND " +
+            "(:title IS NULL OR p.title LIKE %:title%) AND " +
+            "(:content IS NULL OR p.content LIKE %:content%) AND " +
+            "(:userId IS NULL OR p.userId = :userId)")
+    long countBySearchCriteria(@Param("boardId") Long boardId,
+                                @Param("title") String title,
+                                @Param("content") String content,
+                                @Param("userId") Long userId);
 }

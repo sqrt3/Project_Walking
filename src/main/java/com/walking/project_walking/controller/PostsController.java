@@ -38,18 +38,18 @@ public class PostsController {
                     .build();
         }
 
-        int totalPages = postsService.getTotalPages(boardId, title, content, nickname, PAGE_SIZE);
-
-        if (page < 1 || page > totalPages) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
         List<PostResponseDto> postList = postsService.searchPosts(boardId, title, content, nickname, pageRequest);
 
         if (postList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+        int totalPages = postsService.getTotalPages(boardId, title, content, nickname, PAGE_SIZE);
+
+        if (page < 1 || page > totalPages) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         PostSearchResultDto result = new PostSearchResultDto(postList, totalPages);
         return ResponseEntity.ok(result);
     }

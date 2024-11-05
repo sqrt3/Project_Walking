@@ -20,7 +20,8 @@ public class AdminViewController {
     private final BoardService boardService;
 
     @GetMapping
-    public String adminView() {
+    public String adminView(Model model) {
+        model.addAttribute("user", userService.findById(2L)); // 테스트용, 삭제 필요
         return "admin";
     }
 

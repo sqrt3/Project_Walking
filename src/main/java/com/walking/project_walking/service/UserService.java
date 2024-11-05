@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,10 @@ public class UserService {
     private final FollowRepository followRepository;
     private final PointLogRepository pointLogRepository;
     private final MyGoodsRepository myGoodsRepository;
+    private final JavaMailSender mailSender;
+    private final TokenService tokenService;
 
+    // 회원 가입
     @Transactional
     public Users saveUser(UserSignUpDto dto) {
         String encodedPassword = encoder.encode(dto.getPassword());
@@ -48,13 +53,42 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // 비밀번호 재설정 이메일 전송
+    @Transactional
+    public void sendPasswordRecoveryEmail(String email) {
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        String token = tokenService.createToken(user.getEmail());
+        String recoveryLink = "http://yourdomain.com/auth/reset-password?token=" + token;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("비밀번호 재설정");
+        message.setText("비밀번호를 재설정하려면 아래 링크를 클릭하세요:\n" + recoveryLink);
+        mailSender.send(message);
+    }
+
+    // 토큰으로 유저 검증
+    public Users findUserByToken(String token) {
+        String email = tokenService.extractEmail(token);
+        if (email == null || !tokenService.isTokenValid(token, email)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+
+    // 이메일 등록 여부 확인
     public boolean checkEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
 
+    // 닉네임 등록 여부 확인
     public boolean checkNicknameExists(String nickname) {
         return userRepository.existsByNickname(nickname);
     }
+
 
     // 유저 정보 전체 조회
     public List<Users> findAll() {

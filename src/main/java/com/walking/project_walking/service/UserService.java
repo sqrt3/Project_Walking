@@ -12,6 +12,8 @@ import com.walking.project_walking.repository.MyGoodsRepository;
 import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -159,10 +161,17 @@ public class UserService {
     public List<MyGoods> getGoods(Long userId) {
         List<MyGoods> myGoods = myGoodsRepository.findByUserId(userId);
         if (myGoods.isEmpty()) {
-            throw new IllegalArgumentException("등록된 아이템이 없습니다.");
+            System.out.println("등록된 아이템이 없습니다.");
         }
         return myGoods;
     }
 
-
+    // 이메일로 사용자 userId 조회 (JWT용)
+    public Long getUserIdByEmail(
+            @Email(message = "유효한 이메일 형식이 아닙니다.")String email
+    ) {
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일 입니다."));
+        return user.getUserId();
+    }
 }

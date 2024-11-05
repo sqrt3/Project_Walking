@@ -1,6 +1,6 @@
-let currentPage = 1; // 현재 페이지 추적
-let pageCount = 0; // 총 페이지 수
-const pagesToShow = 10; // 한 번에 표시할 페이지 수
+let currentPage = 1;
+let pageCount = 0;
+const pagesToShow = 10;
 
 document.addEventListener('DOMContentLoaded', function () {
     const boardIdInput = document.getElementById('boardId');
@@ -29,41 +29,49 @@ document.addEventListener('DOMContentLoaded', function () {
     // 초기 로딩 시 데이터 가져오기
     updateBoardContent(boardIdInput.value);
 
-    // 검색 기능
     document.getElementById('search-form').addEventListener('submit', function (event) {
         event.preventDefault();
-        const formData = new FormData(this); // 현재 form의 데이터를 가져옴 (검색 옵션, 내용)
-        const boardId = boardIdInput.value;
-        const searchCategory = formData.get('searchCategory');
-        const searchKeyword = formData.get('searchKeyword');
-        let searchParams = `boardId=${boardId}&page=1`;
-
-        if (searchCategory === 'title') {
-            searchParams += `&title=${searchKeyword}`;
-        } else if (searchCategory === 'content') {
-            searchParams += `&content=${searchKeyword}`;
-        } else if (searchCategory === 'title-content') {
-            searchParams += `&title=${searchKeyword}&content=${searchKeyword}`;
-        } else if (searchCategory === 'nickname') {
-            searchParams += `&nickname=${searchKeyword}`;
-        }
-
-        fetch(`/api/posts/search?${searchParams}`)
-            .then(handleResponse)
-            .then(data => {
-                if (!data || data.length === 0) {
-                    displayNoPostsMessage('검색 결과가 없습니다.');
-                } else {
-                    displayPosts(data);
-                }
-            })
-            .catch(error => handleError(error, '게시물을 검색하는 중에 문제가 발생했습니다.'));
+        performSearch(boardIdInput.value);
     });
 });
 
+function performSearch(boardId, page = 1) {
+    const formData = new FormData(document.getElementById('search-form'));
+    const searchCategory = formData.get('searchCategory');
+    const searchKeyword = formData.get('searchKeyword');
+    let searchParams = `boardId=${boardId}&page=${page}`;
+
+    if (searchCategory === 'title') {
+        searchParams += `&title=${searchKeyword}`;
+    } else if (searchCategory === 'content') {
+        searchParams += `&content=${searchKeyword}`;
+    } else if (searchCategory === 'title-content') {
+        searchParams += `&title=${searchKeyword}&content=${searchKeyword}`;
+    } else if (searchCategory === 'nickname') {
+        searchParams += `&nickname=${searchKeyword}`;
+    }
+
+    fetch(`/api/posts/search?${searchParams}`)
+        .then(response => {
+            if (response.status === 204) {
+                displayNoPostsMessage('검색 결과가 없습니다.');
+                return null;
+            }
+            return handleResponse(response);
+        })
+        .then(data => {
+            if (data) {
+                displayPosts(data.posts); // 게시물 목록 표시
+                pageCount = data.totalPages; // 총 페이지 수 설정
+                displayPagination(true);
+            }
+        })
+        .catch(error => handleError(error, '게시물을 검색하는 중에 문제가 발생했습니다.'));
+}
+
 function updateBoardContent(boardId) {
     fetchPopularPosts(boardId);
-    fetchRecentPosts(boardId); // 초기 게시물 가져오기
+    fetchRecentPosts(boardId);
     updatePagination(boardId);
     fetchNotices();
 }
@@ -133,72 +141,69 @@ function updatePagination(boardId) {
     fetch(`/api/boards/${boardId}/pagescount`)
         .then(handleResponse)
         .then(count => {
-            pageCount = count; // 총 페이지 수 업데이트
-            displayPagination(); // 페이지네이션 표시
+            pageCount = count;
+            displayPagination(false);
         })
         .catch(error => handleError(error, '페이지 수를 가져오는 중에 문제가 발생했습니다.'));
 }
 
-function displayPagination() {
+function displayPagination(searchMode) {
     const pagination = document.getElementById('pagination');
-    pagination.innerHTML = ''; // 이전 페이지네이션 내용 지우기
+    pagination.innerHTML = '';
 
-    // 이전 버튼 추가
-    if (currentPage > 1) {
+    if (pageCount > pagesToShow && currentPage > 10) {
         const prevButton = document.createElement('a');
         prevButton.href = `#`;
         prevButton.textContent = '이전';
         prevButton.addEventListener('click', function (event) {
             event.preventDefault();
-            currentPage -= pagesToShow; // 이전 세트로 이동
+            currentPage -= pagesToShow;
             if (currentPage < 1) {
-                currentPage = 1; // 1 페이지 이상으로 내려가지 않도록 보장
+                currentPage = 1;
             }
-            fetchRecentPosts(document.getElementById('boardId').value, currentPage);
-            displayPagination(); // 페이지네이션 표시 갱신
+            searchMode ? performSearch(document.getElementById('boardId').value, currentPage) : fetchRecentPosts(document.getElementById('boardId').value, currentPage);
+            displayPagination(searchMode);
         });
-        pagination.appendChild(prevButton); // 이전 버튼을 페이지네이션에 추가
+        pagination.appendChild(prevButton);
     }
 
     const startPage = Math.floor((currentPage - 1) / pagesToShow) * pagesToShow + 1;
     const endPage = Math.min(startPage + pagesToShow - 1, pageCount);
 
-    // 페이지 번호 표시
     for (let i = startPage; i <= endPage; i++) {
         const a = document.createElement('a');
         a.href = `#`;
         a.textContent = i;
-        a.className = i === currentPage ? 'active' : ''; // 현재 페이지 강조
+        a.className = i === currentPage ? 'active' : '';
         a.addEventListener('click', function (event) {
             event.preventDefault();
-            currentPage = i; // 현재 페이지 업데이트
-            fetchRecentPosts(document.getElementById('boardId').value, currentPage);
-            displayPagination(); // 페이지네이션 표시 갱신
+            currentPage = i;
+            searchMode ? performSearch(document.getElementById('boardId').value, currentPage) : fetchRecentPosts(document.getElementById('boardId').value, currentPage);
+            displayPagination(searchMode);
         });
         pagination.appendChild(a);
     }
 
-    // 다음 버튼 표시
     if (endPage < pageCount) {
         const nextButton = document.createElement('a');
         nextButton.href = `#`;
         nextButton.textContent = '다음';
         nextButton.addEventListener('click', function (event) {
             event.preventDefault();
-            currentPage += pagesToShow; // 다음 세트로 이동
+            currentPage += pagesToShow;
             if (currentPage > pageCount) {
-                currentPage = pageCount; // 총 페이지를 초과하지 않도록 보장
+                currentPage = pageCount;
             }
-            fetchRecentPosts(document.getElementById('boardId').value, currentPage);
-            displayPagination(); // 페이지네이션 표시 갱신
+            searchMode ? performSearch(document.getElementById('boardId').value, currentPage) : fetchRecentPosts(document.getElementById('boardId').value, currentPage);
+            displayPagination(searchMode);
         });
-        pagination.appendChild(nextButton); // 다음 버튼을 페이지네이션에 추가
+        pagination.appendChild(nextButton);
     }
 }
 
 function displayPosts(posts) {
     const postList = document.getElementById('post-list');
-    postList.innerHTML = ''; // 이전 게시물 지우기
+    postList.innerHTML = '';
 
     posts.forEach(post => {
         const li = document.createElement('li');
@@ -215,18 +220,6 @@ function displayPosts(posts) {
     });
 }
 
-function handleResponse(response) {
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-}
-
-function handleError(error, contextMessage) {
-    console.error('Error:', error);
-    displayNoPostsMessage(`${contextMessage} - ${error.message}`);
-}
-
 function displayNoPostsMessage(message) {
     const postList = document.getElementById('post-list');
     postList.innerHTML = `<p>${message}</p>`;
@@ -235,4 +228,16 @@ function displayNoPostsMessage(message) {
 function displayNoPopularPostsMessage(message) {
     const popularPosts = document.getElementById('popular-posts');
     popularPosts.innerHTML = `<p>${message}</p>`;
+}
+
+function handleResponse(response) {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+
+function handleError(error, message) {
+    console.error(error);
+    alert(message);
 }

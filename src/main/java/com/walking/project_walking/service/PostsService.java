@@ -33,7 +33,8 @@ public class PostsService {
             List<Posts> topPosts = postsRepository.findByBoardId(1L, PageRequest.of(0, 2)).getContent();
             for (Posts post : topPosts) {
                 Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                result.add(PostResponseDto.fromEntity(post, commentsNumber));
+                String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+                result.add(PostResponseDto.fromEntity(post, commentsNumber, postNickname));
             }
         }
 
@@ -41,7 +42,8 @@ public class PostsService {
         List<PostResponseDto> posts = postsRepository.findByBoardId(boardId, pageRequest)
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                    return PostResponseDto.fromEntity(post, commentsNumber);
+                    String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
                 }).toList();
 
         result.addAll(posts);
@@ -55,7 +57,8 @@ public class PostsService {
         return postsPage.getContent().stream()
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                    return PostResponseDto.fromEntity(post, commentsNumber);
+                    String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
                 })
                 .toList();
     }
@@ -66,7 +69,8 @@ public class PostsService {
         return hotPosts.stream()
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                    return PostResponseDto.fromEntity(post, commentsNumber);
+                    String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
                 })
                 .toList();
     }
@@ -80,7 +84,8 @@ public class PostsService {
                 .max(Comparator.comparing(Posts::getWeightValue))
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                    return PostResponseDto.fromEntity(post, commentsNumber);
+                    String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
                 })
                 .orElse(null);
     }

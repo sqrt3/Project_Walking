@@ -23,7 +23,7 @@ public class BoardService {
     // 특정 게시판의 총 페이지 개수를 조회하는 메소드
     public int getPageCount(Long boardId) {
         Page<Posts> postsPage = postsRepository.findByBoardId(boardId, PageRequest.of(0, PAGE_SIZE));
-        return postsPage.getTotalPages();
+        return postsPage.getTotalPages() > 0 ? postsPage.getTotalPages() : 1;
     }
 
     // 현재 페이지를 반환하는 메소드

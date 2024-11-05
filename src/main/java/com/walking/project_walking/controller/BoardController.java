@@ -49,6 +49,10 @@ public class BoardController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
         List<PostResponseDto> postsList = postsService.getPostsByBoardId(boardId, pageRequest);
 
+        if (postsList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
+        }
+
         return ResponseEntity.ok(postsList);
     }
 

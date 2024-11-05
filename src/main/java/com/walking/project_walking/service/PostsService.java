@@ -1,6 +1,7 @@
 package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.Posts;
+import com.walking.project_walking.domain.dto.NoticeResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
 import com.walking.project_walking.domain.dto.PostSummuryResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,28 +28,20 @@ public class PostsService {
 
     // 특정 게시판, 특정 페이지의 게시물을 가져오는 메소드 (가져오는 게시글 갯수는 6개로 정의)
     public List<PostResponseDto> getPostsByBoardId(Long boardId, PageRequest pageRequest) {
-        List<PostResponseDto> result = new ArrayList<>();
 
-        if (boardId != 1L) {
-            // boardId가 1인 게시글 2개를 먼저 추가
-            List<Posts> topPosts = postsRepository.findByBoardId(1L, PageRequest.of(0, 2)).getContent();
-            for (Posts post : topPosts) {
-                Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-                String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                result.add(PostResponseDto.fromEntity(post, commentsNumber, postNickname));
-            }
-        }
-
-        // 특정 boardId의 게시글 추가
-        List<PostResponseDto> posts = postsRepository.findByBoardId(boardId, pageRequest)
+        return postsRepository.findByBoardId(boardId, pageRequest)
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
                 }).toList();
+    }
 
-        result.addAll(posts);
-        return result;
+    // 공지사항만 불러오는 메소드 (2개)
+    public List<NoticeResponseDto> getNoticePosts(PageRequest pageRequest) {
+        return postsRepository.findByBoardId(1L, pageRequest)
+                .map(NoticeResponseDto::fromEntity).toList();
+
     }
 
     // boardId와 제목, 내용, 글쓴이를 통해 특정 게시물을 조회하는 메소드

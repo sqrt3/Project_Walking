@@ -1,49 +1,51 @@
-<div th:fragment="fragment-header">
-  <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Project Icon</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">홈</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">포인트 상점</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              게시판
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">걷기 인증 게시판</a></li>
-              <li><a class="dropdown-item" href="#">자유 게시판</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              문의하기
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">1대1 문의</a></li>
-              <li><a class="dropdown-item" href="#">자주 묻는 질문</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Test님 반갑습니다!
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item disabled" href="#">내 포인트: 5000</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">마이 페이지</a></li>
-              <li><a class="dropdown-item" href="#">로그아웃</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+<nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary container" th:fragment="fragment-header">
+  <div class="container-fluid d-flex justify-content-between">
+    <a class="navbar-brand" href="#">Project Icon</a>
+
+    <div class="mx-auto d-flex justify-content-center">
+      <ul class="navbar-nav">
+        <li class="nav-item mx-3">
+          <a class="nav-link active" aria-current="page" th:href="@{/}">홈</a>
+        </li>
+        <li class="nav-item mx-3">
+          <a class="nav-link" th:href="@{/goods}">포인트 상점</a>
+        </li>
+        <li class="nav-item dropdown mx-3">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            게시판
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">걷기 인증 게시판</a></li>
+            <li><a class="dropdown-item" href="#">자유 게시판</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown mx-3">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            문의하기
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">1대1 문의</a></li>
+            <li><a class="dropdown-item" href="#">자주 묻는 질문</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
-  </nav>
-</div>
+
+    <div class="d-flex align-items-center">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            [[${user.getNickname()}]]님 반갑습니다!
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item disabled" href="#">내 포인트: [[${#numbers.formatInteger(user.point, 0, 'COMMA')}]]P</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">마이 페이지</a></li>
+            <li><a class="dropdown-item" th:href="@{/auth/logout}">로그아웃</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <link th:href="@{/css/bootstrap-addon.css}" rel="stylesheet" />
+</nav>

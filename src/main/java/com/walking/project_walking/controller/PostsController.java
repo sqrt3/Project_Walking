@@ -1,6 +1,7 @@
 package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.dto.PostResponseDto;
+import com.walking.project_walking.domain.dto.PostSearchResultDto;
 import com.walking.project_walking.domain.dto.PostSummuryResponseDto;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.PostsService;
@@ -25,7 +26,7 @@ public class PostsController {
 
     // 제목, 글쓴이, 내용을 조합하여 특정 게시글 조회
     @GetMapping("/search")
-    public ResponseEntity<List<PostResponseDto>> searchPosts(
+    public ResponseEntity<PostSearchResultDto> searchPosts(
             @RequestParam Long boardId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
@@ -37,9 +38,9 @@ public class PostsController {
                     .build();
         }
 
-        int board_page = boardService.getPageCount(boardId);
+        int totalPages = postsService.getTotalPages(boardId, title, content, nickname, PAGE_SIZE);
 
-        if (page < 1 || page > board_page) {
+        if (page < 1 || page > totalPages) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
@@ -49,8 +50,8 @@ public class PostsController {
         if (postList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
-        return ResponseEntity.ok(postList);
+        PostSearchResultDto result = new PostSearchResultDto(postList, totalPages);
+        return ResponseEntity.ok(result);
     }
 
     // 인기 게시판 전용

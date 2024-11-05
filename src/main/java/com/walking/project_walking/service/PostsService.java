@@ -12,10 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,5 +91,11 @@ public class PostsService {
                     return PostSummuryResponseDto.fromEntity(post, commentsNumber);
                 })
                 .toList();
+    }
+
+    public int getTotalPages(Long boardId, String title, String content, String nickname, int pageSize) {
+        Long userId = userRepository.getUserIdByNickname(nickname);
+        long totalPosts = postsRepository.countBySearchCriteria(boardId, title, content, userId);
+        return (int) Math.ceil((double) totalPosts / pageSize);
     }
 }

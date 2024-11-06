@@ -4,9 +4,11 @@ import com.walking.project_walking.domain.Posts;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,4 +35,12 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
                                 @Param("title") String title,
                                 @Param("content") String content,
                                 @Param("userId") Long userId);
+
+    @Query("SELECT p.viewCount FROM Posts p WHERE p.postId = :postId")
+    int getViewCountByPostId(Long postId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Posts p SET p.viewCount = p.viewCount + 1 WHERE p.postId = :postId")
+    void incrementViewCount(Long postId);
 }

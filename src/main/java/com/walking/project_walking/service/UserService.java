@@ -1,10 +1,8 @@
 package com.walking.project_walking.service;
 
-import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.domain.userdto.*;
 
 import com.walking.project_walking.repository.FollowRepository;
@@ -12,7 +10,6 @@ import com.walking.project_walking.repository.MyGoodsRepository;
 import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -114,6 +112,8 @@ public class UserService {
         Users users = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
+        // todo 필요한 부분만 변경할 수 있도록 수정할 것 
+        // todo 값들을 넣어두고 필요한 부분만 수정하도록
         users.update(update.getPassword(), update.getPhone(), update.getNickname(), update.getProfileImage());
 
         userRepository.save(users);
@@ -173,5 +173,11 @@ public class UserService {
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일 입니다."));
         return user.getUserId();
+    }
+
+    // 로그인 (임시)
+    public Optional<Users> authenticate(String email, String password) {
+        return userRepository.findByEmail(email)
+                .filter(user -> user.getPassword().equals(password));
     }
 }

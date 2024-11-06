@@ -1,0 +1,246 @@
+<div style="width: 100%;">
+  <table class="table table-dark table-striped" id="goodsTable">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col" class="text-center">이름</th>
+      <th scope="col" class="text-center">설명</th>
+      <th scope="col" class="text-center">가격</th>
+      <th scope="col"></th>
+      <th scope="col"><a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGoodsModal">추가하기</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="goods : ${goodsList}" th:id="'GoodsRow' + ${goods.getGoodsId()}">
+      <td th:text="${goods.getGoodsId()}"></td>
+      <td th:text="${goods.getName()}"></td>
+      <td th:text="${goods.getDescription()}"></td>
+      <td th:text="${#numbers.formatInteger(goods.getPrice(), 0, 'COMMA')}"></td>
+      <td><a href="#" class="btn btn-success" th:onclick="'editGoods(' + ${goods.goodsId} + ')'">수정</a></td>
+      <td><a href="#" class="btn btn-danger" th:onclick="'deleteGoods(' + ${goods.goodsId} + ')'">삭제</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="addGoodsModal" tabindex="-1" aria-labelledby="addGoodsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addGoodsModalLabel">아이템 추가</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addGoodsForm">
+          <div class="mb-3">
+            <label for="GoodsType" class="form-label">아이템 종류</label>
+            <select class="form-select" id="GoodsType" required>
+              <option value="1">소모성</option>
+              <option value="2">치장</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="GoodsCode" class="form-label">아이템 코드</label>
+            <input type="text" class="form-control" id="GoodsCode" required>
+          </div>
+          <div class="mb-3">
+            <label for="GoodsName" class="form-label">아이템 이름</label>
+            <input type="text" class="form-control" id="GoodsName" required>
+          </div>
+          <div class="mb-3">
+            <label for="GoodsDescription" class="form-label">아이템 설명</label>
+            <input type="text" class="form-control" id="GoodsDescription" required>
+          </div>
+          <div class="mb-3">
+            <label for="GoodsPrice" class="form-label">가격</label>
+            <input type="number" class="form-control" id="GoodsPrice" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" id="submitGoods">추가하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="failureModalLabel">오류 발생</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="failureMessage">처리 중 오류가 발생했습니다. 다시 시도해 주세요.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteGoodsModal" tabindex="-1" aria-labelledby="deleteGoodsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteGoodsModalLabel">삭제 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>정말로 이 아이템을 삭제하시겠습니까?</p>
+        <p>삭제 후에는 복구할 수 없습니다.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">삭제하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editGoodsModal" tabindex="-1" aria-labelledby="editGoodsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editGoodsModalLabel">아이템 수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editGoodsForm">
+          <input type="hidden" id="editGoodsId">
+
+          <div class="mb-3">
+            <label for="editGoodsName" class="form-label">아이템 이름</label>
+            <input type="text" class="form-control" id="editGoodsName" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editGoodsDescription" class="form-label">아이템 설명</label>
+            <input type="text" class="form-control" id="editGoodsDescription" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editGoodsPrice" class="form-label">가격</label>
+            <input type="number" class="form-control" id="editGoodsPrice" required>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="saveEditBtn">수정하기</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function editGoods(goodsId) {
+    $.ajax({
+      url: `/api/goods/${goodsId}`,
+      type: 'GET',
+      success: function(response) {
+        $('#editGoodsName').val(response.name);
+        $('#editGoodsDescription').val(response.description);
+        $('#editGoodsPrice').val(response.price);
+
+        $('#saveEditBtn').off('click').on('click', function() {
+          var updatedData = {
+            name: $('#editGoodsName').val(),
+            description: $('#editGoodsDescription').val(),
+            price: $('#editGoodsPrice').val()
+          };
+
+          $.ajax({
+            url: `/api/goods/${goodsId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function(response) {
+              $(`#GoodsRow${goodsId} td:nth-child(2)`).text(response.name);
+              $(`#GoodsRow${goodsId} td:nth-child(3)`).text(response.description);
+              $(`#GoodsRow${goodsId} td:nth-child(4)`).text(Intl.NumberFormat().format(response.price));
+
+              $('#editGoodsModal').modal('hide');
+            },
+            error: function(xhr, status, error) {
+              $('#failureMessage').text(`아이템 수정 실패: ${error}`);
+              $('#failureModal').modal('show');
+            }
+          });
+        });
+
+        $('#editGoodsModal').modal('show');
+      }
+    });
+  }
+
+  function deleteGoods(goodsId) {
+    $('#deleteGoodsModal').modal('show');
+
+    $('#confirmDeleteBtn').off('click').on('click', function() {
+      $.ajax({
+        url: `/api/goods/${goodsId}`,
+        type: 'DELETE',
+        success: function(response) {
+          $(`#GoodsRow${goodsId}`).remove();
+          $('#deleteGoodsModal').modal('hide');
+        },
+        error: function(xhr, status, error) {
+          $('#failureMessage').text(`아이템 삭제 실패: ${error}`);
+          $('#failureModal').modal('show');
+          $('#deleteGoodsModal').modal('hide');
+        }
+      });
+    });
+  }
+
+  $(document).ready(function() {
+    $('#submitGoods').click(function() {
+      const GoodsType = $('#GoodsType').val();
+      const GoodsCode = $('#GoodsCode').val();
+      const GoodsName = $('#GoodsName').val();
+      const GoodsDescription = $('#GoodsDescription').val();
+      const GoodsPrice = $('#GoodsPrice').val();
+
+      if (!GoodsCode || !GoodsName || !GoodsDescription || !GoodsPrice) {
+        alert('모든 필드를 채워주세요.');
+        return;
+      }
+
+      const newGoods = {
+        goodsId: Number(GoodsType * 100000) + Number(GoodsCode),
+        name: GoodsName,
+        description: GoodsDescription,
+        price: GoodsPrice
+      };
+
+      $.ajax({
+        url: '/api/goods',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(newGoods),
+        success: function(response) {
+          const newRow = `
+            <tr id="GoodsRow${response.goodsId}">
+              <td>${response.goodsId}</td>
+              <td>${response.name}</td>
+              <td>${response.description}</td>
+              <td>${Intl.NumberFormat().format(response.price)}</td>
+              <td><a href="#" class="btn btn-success" onclick="editGoods(${response.goodsId})">수정</a></td>
+              <td><a href="#" class="btn btn-danger" onclick="deleteGoods(${response.goodsId})">삭제</a></td>
+            </tr>
+          `;
+          $('#goodsTable tbody').append(newRow);
+
+          $('#addGoodsModal').modal('hide');
+          $('#addGoodsForm')[0].reset();
+        },
+        error: function(xhr, status, error) {
+          $('#failureMessage').text(`아이템 추가 실패: ${error}`);
+          $('#failureModal').modal('show');
+        }
+      });
+    });
+  });
+</script>

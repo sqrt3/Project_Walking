@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 목록 페이지</title>
+    <link rel="stylesheet" href="/css/board-list.css">
+</head>
+<body>
+<!-- 헤더 영역 -->
+<header>
+    <div>로고</div>
+    <div>메뉴 아이템들</div>
+    <div>로그아웃, 마이페이지</div>
+</header>
+
+<!-- 사이드바 -->
+<div class="sidebar">
+    <h3>게시판 목록</h3>
+    <ul id="board-list"></ul>
+</div>
+
+<!-- 메인 콘텐츠 -->
+<div class="main-content">
+    <!-- 주간 인기글 -->
+    <div class="popular-post">
+        <h3>주간 인기글</h3>
+        <div id="popular-posts"></div>
+    </div>
+
+    <div class="recent-post">
+        <h3>최근 게시글</h3>
+
+        <!-- 검색 영역 -->
+        <div class="search-bar">
+            <form id="search-form">
+                <input type="hidden" name="boardId" th:value="${boardId}" id="boardId"/>
+                <select name="searchCategory" id="searchCategory">
+                    <option value="title">제목</option>
+                    <option value="content">내용</option>
+                    <option value="title-content">제목 + 내용</option>
+                    <option value="nickname">글쓴이</option>
+                </select>
+                <input type="text" name="searchKeyword" placeholder="검색어 입력" required>
+                <button type="submit" class="button">검색</button>
+            </form>
+        </div>
+
+        <!-- 공지사항 목록 -->
+        <div class="notice-section">
+            <h4>공지사항</h4>
+            <ul id="notice-list"></ul>
+        </div>
+
+        <!-- 일반 게시글 목록 -->
+        <div id="recent-posts">
+            <h4>일반 게시글</h4>
+            <ul id="post-list"></ul>
+        </div>
+    </div>
+</div>
+
+<div class="pagination" id="pagination"></div>
+
+<script src="/js/board-list.js"></script>
+</body>
+</html>

@@ -1,8 +1,7 @@
 package com.walking.project_walking.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,6 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
@@ -20,7 +22,7 @@ import java.util.List;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-public class Users {
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -77,6 +79,8 @@ public class Users {
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
     private String profileImage;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     // 팔로우 관련 필드
     @OneToMany(mappedBy = "followingUser")
@@ -84,6 +88,44 @@ public class Users {
 
     @OneToMany(mappedBy = "followUser")
     private List<Follow> followings; // 현재 사용자가 팔로잉 (-> 이후 상대 사용자의 팔로워)
+
+    @Override
+    public List<GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.role.name()));
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.getIsActive();
+    }
+
+    public Users(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public Users(
             String email,

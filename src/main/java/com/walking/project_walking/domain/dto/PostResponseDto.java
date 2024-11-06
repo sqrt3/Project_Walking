@@ -14,9 +14,9 @@ public class PostResponseDto {
     private String content;
     private Integer viewCount;
     private Integer likes;
-    private Long userId;
+    private String nickname;
 
-    public static PostResponseDto fromEntity(Posts post, Integer commentsNumber) {
+    public static PostResponseDto fromEntity(Posts post, Integer commentsNumber, String nickname) {
         PostResponseDto dto = new PostResponseDto();
         dto.boardId = post.getBoardId();
         dto.createdAt = post.getCreatedAt();
@@ -26,7 +26,7 @@ public class PostResponseDto {
         dto.content = post.getContent();
         dto.viewCount = post.getViewCount();
         dto.likes = post.getLikes();
-        dto.userId = post.getUserId();
+        dto.nickname = nickname;
         return dto;
     }
 

@@ -155,4 +155,5 @@ public class UserController {
     public Long getLastViewedPost(@PathVariable Long userId) {
         return userService.getLastViewPost(userId);
     }
+
 }

@@ -33,6 +33,11 @@ function loadFollowerList() {
                 name.textContent = follower.nickname;
                 name.classList.add("nickname");
 
+                // 클릭 시 해당 사용자의 마이페이지로 이동
+                div.addEventListener("click", () => {
+                    window.location.href = `/info/${follower.userId}`;
+                });
+
                 div.appendChild(img);
                 div.appendChild(name);
                 followerList.appendChild(div);
@@ -57,6 +62,11 @@ function loadFollowingList() {
                 const name = document.createElement("span");
                 name.textContent = following.nickname;
                 name.classList.add("nickname");
+
+                // 클릭 시 해당 사용자의 마이페이지로 이동
+                div.addEventListener("click", () => {
+                    window.location.href = `/info/${following.userId}`;
+                });
 
                 div.appendChild(img);
                 div.appendChild(name);

@@ -54,13 +54,20 @@ public class UserViewController {
     public String getMyPage(@PathVariable Long userId, HttpSession session, Model model) {
         session.setAttribute("userId", userId);
 
-        if (userId == null) {
-            // 세션에 userId가 없으면 로그인 페이지로 리다이렉트
-            return "redirect:/auth/login";
-        }
+//        if (userId == null) {
+//            // 세션에 userId가 없으면 로그인 페이지로 리다이렉트
+//            return "redirect:/auth/login";
+//        }
 
         // 세션에서 가져온 userId를 모델에 추가
         model.addAttribute("userId", userId);
         return "myPageView";
+    }
+
+    // 유저 상세 페이지 뷰
+    @GetMapping("/info/{userId}")
+    public String getUserDetailPage(@PathVariable Long userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "followPage";
     }
 }

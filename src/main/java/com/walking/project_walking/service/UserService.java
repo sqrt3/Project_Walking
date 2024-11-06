@@ -1,9 +1,6 @@
 package com.walking.project_walking.service;
 
-import com.walking.project_walking.domain.MyGoods;
-import com.walking.project_walking.domain.PointLog;
-import com.walking.project_walking.domain.RecentPost;
-import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.*;
 import com.walking.project_walking.domain.userdto.*;
 
 import com.walking.project_walking.repository.*;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,6 @@ public class UserService {
     private final PointLogRepository pointLogRepository;
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
-    private final TokenService tokenService;
     private final RecentPostRepository recentPostRepository;
 
     // 회원 가입
@@ -58,7 +55,8 @@ public class UserService {
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        String token = tokenService.createToken(user.getEmail());
+        String token = generateToken(user.getEmail());
+
         String recoveryLink = "http://yourdomain.com/auth/reset-password?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
@@ -68,14 +66,40 @@ public class UserService {
         mailSender.send(message);
     }
 
-    // 토큰으로 유저 검증
-    public Users findUserByToken(String token) {
-        String email = tokenService.extractEmail(token);
-        if (email == null || !tokenService.isTokenValid(token, email)) {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+    // UUID로 이메일 재설정 주소용 토큰 생성
+    private String generateToken(String email) {
+        String uuid = UUID.randomUUID().toString();
+        long expiryTime = System.currentTimeMillis() + 1000 * 60 * 60;
+        String token = uuid + ":" + email + ":" + expiryTime;
+        return token;
+    }
+
+    public boolean validateToken(String token, String email) {
+        try {
+            // 토큰을 ":"으로 분리
+            String[] parts = token.split(":");
+            if (parts.length != 3) {
+                return false; // 잘못된 토큰 형식
+            }
+
+            String uuid = parts[0];      // UUID
+            String tokenEmail = parts[1]; // 이메일
+            long expiryTime = Long.parseLong(parts[2]); // 만료 시간
+
+            // 토큰 만료 시간 검사
+            if (expiryTime < System.currentTimeMillis()) {
+                return false; // 토큰이 만료됨
+            }
+
+            // 이메일 검사
+            if (!email.equals(tokenEmail)) {
+                return false; // 이메일 불일치
+            }
+
+            return true; // 모든 검증을 통과하면 유효한 토큰
+        } catch (Exception e) {
+            return false; // 예외가 발생하면 유효하지 않은 토큰으로 간주
         }
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 
     // 이메일 등록 여부 확인

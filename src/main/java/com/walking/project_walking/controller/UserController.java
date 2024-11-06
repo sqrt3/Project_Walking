@@ -22,7 +22,7 @@ public class UserController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    @PostMapping("/users")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserSignUpDto request) {
         Users user = userService.saveUser(request);
         String redirectUri = "/auth/login";
@@ -61,19 +61,19 @@ public class UserController {
         return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
     }
 
-    @PostMapping("/auth/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        try {
-            Users user = userService.findUserByToken(resetPasswordDto.getToken());
-            user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
-            userRepository.save(user);
-            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
-        }
-    }
+//    @PostMapping("api/auth/reset-password")
+//    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+//        try {
+//            Users user = userService.findUserByToken(resetPasswordDto.getToken());
+//            user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+//            userRepository.save(user);
+//            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
+//        }
+//    }
 
     // (Admin only) User 전체 조회
     @GetMapping("/users")

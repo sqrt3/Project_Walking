@@ -8,6 +8,9 @@ import com.walking.project_walking.service.GoodsService;
 import com.walking.project_walking.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,16 @@ public class AdminViewController {
     private final BoardService boardService;
     private final GoodsService goodsService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public String adminView(Model model) {
-        model.addAttribute("user", userService.findById(2L)); // 테스트용, 삭제 필요
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
+            Users user = userService.findById(currentUser.getUserId());
+            model.addAttribute("user", user);
+        }
+
         return "admin";
     }
 

@@ -11,9 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/goods")
-@RequiredArgsConstructor
 public class GoodsViewController {
     private final GoodsService goodsService;
     private final UserService userService;

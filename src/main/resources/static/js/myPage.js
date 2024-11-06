@@ -1,8 +1,7 @@
-// URL에서 userId 추출
 const userId = window.location.pathname.split("/")[2];  // '/mypage/{userId}'에서 userId 가져오기
 
 function loadUserInfo() {
-    fetch(`/api/users/${userId}/mypage`)
+    fetch(`/api/users/${userId}/myPage`)
         .then(response => response.json())
         .then(data => {
             document.getElementById("userName").innerText = `${data.name}님의 마이페이지`;
@@ -137,10 +136,10 @@ function loadRecentPosts() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadUserInfo();
-    document.getElementById("followerLink").onclick = loadFollowerList;
-    document.getElementById("followingLink").onclick = loadFollowingList;
-    $('#myItemsModal').on('shown.bs.modal', loadUserItems);
-    $('#myPointLogsModal').on('shown.bs.modal', loadPointLogs);
-    loadRecentPosts();
+    loadUserInfo(userId);
+    document.getElementById("followerLink").onclick = () => loadFollowerList(userId); // 팔로워 리스트 로딩
+    document.getElementById("followingLink").onclick = () => loadFollowingList(userId); // 팔로잉 리스트 로딩
+    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId)); // 아이템 리스트 로딩
+    $('#myPointLogsModal').on('shown.bs.modal', () => loadPointLogs(userId));
+    loadRecentPosts(userId);
 });

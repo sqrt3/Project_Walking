@@ -3,6 +3,7 @@ package com.walking.project_walking.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -10,14 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+//@RequiredArgsConstructor
 public class TokenService {
 
     private final String SECRET_KEY = "your_secret_key"; // 비밀 키
     private final long EXPIRATION_TIME = 1000 * 60 * 15; // 15분
+//    private final UserService userService;
 
     // JWT 생성
     public String createToken(String email) {
         Map<String, Object> claims = new HashMap<>();
+//        Long userId = userService.getUserIdByEmail(email);
+//        claims.put("userId", userId); // userId(String) 키 - userId(Long) 값 쌍
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)

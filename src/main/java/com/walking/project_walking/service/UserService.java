@@ -1,17 +1,14 @@
 package com.walking.project_walking.service;
 
-import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.RecentPost;
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.domain.userdto.*;
 
-import com.walking.project_walking.repository.FollowRepository;
-import com.walking.project_walking.repository.MyGoodsRepository;
-import com.walking.project_walking.repository.PointLogRepository;
-import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,7 @@ public class UserService {
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
     private final TokenService tokenService;
+    private final RecentPostRepository recentPostRepository;
 
     // 회원 가입
     @Transactional
@@ -112,11 +111,21 @@ public class UserService {
         Users users = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        users.update(update.getPassword(), update.getPhone(), update.getNickname(), update.getProfileImage());
-
-        userRepository.save(users);
-
-        return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
+        // 클라이언트가 보낸 데이터가 있을 때만 해당 필드를 업데이트
+        if (update.getPassword() != null && !update.getPassword().isEmpty()) {
+            users.setPassword(update.getPassword());
+        }
+        if (update.getPhone() != null && !update.getPhone().isEmpty()) {
+            users.setPhone(update.getPhone());
+        }
+        if (update.getNickname() != null && !update.getNickname().isEmpty()) {
+            users.setNickname(update.getNickname());
+        }
+        if (update.getProfileImage() != null && !update.getProfileImage().isEmpty()) {
+            users.setProfileImage(update.getProfileImage());
+        }
+            userRepository.save(users);
+            return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
     // 유저 soft delete
@@ -159,10 +168,19 @@ public class UserService {
     public List<MyGoods> getGoods(Long userId) {
         List<MyGoods> myGoods = myGoodsRepository.findByUserId(userId);
         if (myGoods.isEmpty()) {
-            throw new IllegalArgumentException("등록된 아이템이 없습니다.");
+            System.out.println("등록된 아이템이 없습니다.");
         }
         return myGoods;
     }
 
+    // 사용자 최근 게시물 조회
 
+    public Long getLastViewPost(Long userId) {
+        Optional<RecentPost> recentPost = recentPostRepository.findPostById(userId);
+
+        // 최근 조회한 게시물이 없으면 null 반환
+        return recentPostRepository.findPostById(userId)
+                .map(RecentPost::getPostId)
+                .orElse(null);
+    }
 }

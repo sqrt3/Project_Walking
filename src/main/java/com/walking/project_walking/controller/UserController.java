@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -147,6 +148,12 @@ public class UserController {
     ) {
         List<MyGoods> myGoods = userService.getGoods(userId);
         return ResponseEntity.ok(myGoods);
+    }
+
+    // 최근 게시물 조회
+    @GetMapping("/users/{userId}/recent-post")
+    public Long getLastViewedPost(@PathVariable Long userId) {
+        return userService.getLastViewPost(userId);
     }
 
 }

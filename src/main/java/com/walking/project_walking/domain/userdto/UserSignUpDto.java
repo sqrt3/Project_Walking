@@ -1,5 +1,6 @@
 package com.walking.project_walking.domain.userdto;
 
+import com.walking.project_walking.domain.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +44,19 @@ public class UserSignUpDto {
     private Boolean gender;
 
     @NotNull(message = "생년월일을 입력하세요.")
+    @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birth;
+
+    private Role role;
+
+    private Long loginCount;
+
+    private Integer userLevel;
+
+    private Long userExp;
+
+    private Integer point;
+
+    private Boolean isActive;
 
 }

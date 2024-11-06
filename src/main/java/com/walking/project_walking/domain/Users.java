@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 @Entity
 @Getter
 @Setter
@@ -58,29 +59,35 @@ public class Users implements UserDetails {
     @Column(name = "last_login")
     private LocalDateTime lastLogin; // TIMESTAMP 형식이기 때문에 LocalDateTime으로 둠.
 
+    @Builder.Default
     @Column(name = "login_count")
-    private Long loginCount;
+    private Long loginCount = 0L;
 
     @Column(name = "login_browser", length = 512)
     private String loginBrowser;
 
+    @Builder.Default
     @Column(name = "user_level")
-    private Integer userLevel;
+    private Integer userLevel = 0;
 
+    @Builder.Default
     @Column(name = "user_exp")
-    private Long userExp;
+    private Long userExp = 0L;
 
+    @Builder.Default
     @Column(name = "point")
-    private Integer point;
+    private Integer point = 0;
 
+    @Builder.Default
     @Column(name = "is_active")
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
     private String profileImage;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
     // 팔로우 관련 필드
     @OneToMany(mappedBy = "followingUser")

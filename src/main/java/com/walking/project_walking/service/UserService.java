@@ -112,13 +112,21 @@ public class UserService {
         Users users = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        // todo 필요한 부분만 변경할 수 있도록 수정할 것 
-        // todo 값들을 넣어두고 필요한 부분만 수정하도록
-        users.update(update.getPassword(), update.getPhone(), update.getNickname(), update.getProfileImage());
-
-        userRepository.save(users);
-
-        return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
+        // 클라이언트가 보낸 데이터가 있을 때만 해당 필드를 업데이트
+        if (update.getPassword() != null && !update.getPassword().isEmpty()) {
+            users.setPassword(update.getPassword());
+        }
+        if (update.getPhone() != null && !update.getPhone().isEmpty()) {
+            users.setPhone(update.getPhone());
+        }
+        if (update.getNickname() != null && !update.getNickname().isEmpty()) {
+            users.setNickname(update.getNickname());
+        }
+        if (update.getProfileImage() != null && !update.getProfileImage().isEmpty()) {
+            users.setProfileImage(update.getProfileImage());
+        }
+            userRepository.save(users);
+            return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
     // 유저 soft delete
@@ -164,20 +172,5 @@ public class UserService {
             System.out.println("등록된 아이템이 없습니다.");
         }
         return myGoods;
-    }
-
-    // 이메일로 사용자 userId 조회 (JWT용)
-    public Long getUserIdByEmail(
-            @Email(message = "유효한 이메일 형식이 아닙니다.")String email
-    ) {
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일 입니다."));
-        return user.getUserId();
-    }
-
-    // 로그인 (임시)
-    public Optional<Users> authenticate(String email, String password) {
-        return userRepository.findByEmail(email)
-                .filter(user -> user.getPassword().equals(password));
     }
 }

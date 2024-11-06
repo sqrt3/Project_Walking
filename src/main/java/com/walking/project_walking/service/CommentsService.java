@@ -1,24 +1,25 @@
 package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.Comments;
-import com.walking.project_walking.domain.dto.CommentRequest;
-import com.walking.project_walking.domain.dto.CommentResponse;
+import com.walking.project_walking.domain.dto.CommentRequestDto;
+import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
 import org.springframework.stereotype.Service;
 
 
 @Service
 
-public class CommentService {
+
+public class CommentsService {
     private final CommentsRepository commentRepository;
 
-    public CommentService(CommentsRepository commentRepository) {
+    public CommentsService(CommentsRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
 
 
     // 댓글, 답글 생성
-    public CommentResponse createComment (CommentRequest request) {
+    public CommentResponseDto createComment (CommentRequestDto request) {
         Comments comment = Comments.builder()
                 .postId(request.getPostId())
                 .userId(request.getUserId())
@@ -28,7 +29,7 @@ public class CommentService {
 
         Comments savedComment = commentRepository.save(comment);
 
-        return new CommentResponse(
+        return new CommentResponseDto(
                 savedComment.getCommentId(),
                 savedComment.getParentCommentId(),
                 savedComment.getPostId(),
@@ -57,7 +58,7 @@ public class CommentService {
 
 
     //댓글, 답글 수정 (작성자만 가능)
-    public CommentResponse modifyComment(Long commentId, Long userId, CommentRequest request) {
+    public CommentResponseDto modifyComment(Long commentId, Long userId, CommentRequestDto request) {
         Comments comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
@@ -68,7 +69,7 @@ public class CommentService {
         comment.setContent(request.getContent());
         Comments updatedComment = commentRepository.save(comment);
 
-        return new CommentResponse(
+        return new CommentResponseDto(
                 updatedComment.getCommentId(),
                 updatedComment.getParentCommentId(),
                 updatedComment.getPostId(),
@@ -77,19 +78,6 @@ public class CommentService {
                 updatedComment.getCreatedAt(),
                 updatedComment.getIsDeleted());
     }
-
-
-    //댓글, 답글 수 조회
-    public int getCommentCount(Long postId) {
-        return commentRepository.countByPostId(postId);
-    }
-
-
-
-
-
-
-
 
 }
 

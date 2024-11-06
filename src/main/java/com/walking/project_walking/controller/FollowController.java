@@ -13,6 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api")
 public class FollowController {
     private final FollowService followService;
 

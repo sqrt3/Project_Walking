@@ -2,13 +2,11 @@ package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.RecentPost;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 
-import com.walking.project_walking.repository.FollowRepository;
-import com.walking.project_walking.repository.MyGoodsRepository;
-import com.walking.project_walking.repository.PointLogRepository;
-import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,7 @@ public class UserService {
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
     private final TokenService tokenService;
+    private final RecentPostRepository recentPostRepository;
 
     // 회원 가입
     @Transactional
@@ -172,5 +171,16 @@ public class UserService {
             System.out.println("등록된 아이템이 없습니다.");
         }
         return myGoods;
+    }
+
+    // 사용자 최근 게시물 조회
+
+    public Long getLastViewPost(Long userId) {
+        Optional<RecentPost> recentPost = recentPostRepository.findPostById(userId);
+
+        // 최근 조회한 게시물이 없으면 null 반환
+        return recentPostRepository.findPostById(userId)
+                .map(RecentPost::getPostId)
+                .orElse(null);
     }
 }

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +18,13 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userservice;
+    private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @PostMapping("/users")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserSignUpDto request) {
-        Users user = userservice.saveUser(request);
+        Users user = userService.saveUser(request);
         String redirectUri = "/auth/login";
 
         UserResponse response = new UserResponse(user, redirectUri);
@@ -35,7 +34,7 @@ public class UserController {
 
     @GetMapping("/auth/check-email")
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
-        boolean exists = userservice.checkEmailExists(email);
+        boolean exists = userService.checkEmailExists(email);
         if (exists) {
             return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
         }
@@ -44,7 +43,7 @@ public class UserController {
 
     @GetMapping("/auth/check-nickname")
     public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
-        boolean exists = userservice.checkNicknameExists(nickname);
+        boolean exists = userService.checkNicknameExists(nickname);
         if (exists) {
             return ResponseEntity.badRequest().body("이미 사용 중인 닉네임입니다.");
         }
@@ -53,11 +52,11 @@ public class UserController {
 
     @PostMapping("/auth/request-password-reset")
     public ResponseEntity<String> recoverPassword(@RequestParam String email) {
-        boolean exists = userservice.checkEmailExists(email);
+        boolean exists = userService.checkEmailExists(email);
         if (!exists) {
             return ResponseEntity.badRequest().body("등록된 이메일이 아닙니다.");
         }
-        userservice.sendPasswordRecoveryEmail(email);
+        userService.sendPasswordRecoveryEmail(email);
 
         return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
     }
@@ -65,7 +64,7 @@ public class UserController {
     @PostMapping("/auth/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
         try {
-            Users user = userservice.findUserByToken(resetPasswordDto.getToken());
+            Users user = userService.findUserByToken(resetPasswordDto.getToken());
             user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
             userRepository.save(user);
             return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
@@ -79,7 +78,7 @@ public class UserController {
     // (Admin only) User 전체 조회
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> findUsers() {
-        List<UserResponse> list = userservice.findAll().stream()
+        List<UserResponse> list = userService.findAll().stream()
                 .map(UserResponse::new)
                 .toList();
         return ResponseEntity.ok(list);
@@ -88,7 +87,7 @@ public class UserController {
     // (Admin only) User 한 명 조회
     @GetMapping("/users/{usersId}")
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long usersId) {
-        Users users = userservice.findById(usersId);
+        Users users = userService.findById(usersId);
         return ResponseEntity.ok(new UserResponse(users));
     }
 
@@ -98,7 +97,7 @@ public class UserController {
             @PathVariable Long userId,
             @RequestBody UserUpdate update
     ) {
-        return userservice.updateById(userId, update);
+        return userService.updateById(userId, update);
     }
 
     // User Soft Delete
@@ -106,7 +105,7 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(
             @PathVariable Long userId
     ) {
-        userservice.softDeleteUser(userId);
+        userService.softDeleteUser(userId);
         return ResponseEntity.ok("사용자가 비활성화 되었습니다");
     }
 
@@ -115,7 +114,7 @@ public class UserController {
     public ResponseEntity<UserDetailDto> getUserDetail(
             @PathVariable Long userId
     ) {
-        UserDetailDto userDetail = userservice.userDetail(userId);
+        UserDetailDto userDetail = userService.userDetail(userId);
         return ResponseEntity.ok(userDetail);
     }
 
@@ -124,7 +123,7 @@ public class UserController {
     public ResponseEntity<UserPageDto> getMyPage(
             @PathVariable Long userId
     ) {
-        UserPageDto userPageDto = userservice.getInfo(userId);
+        UserPageDto userPageDto = userService.getInfo(userId);
 
         return ResponseEntity.ok(userPageDto);
     }
@@ -135,7 +134,7 @@ public class UserController {
     public ResponseEntity<List<UserPointLogDto>> getPointView(
             @PathVariable Long userId
     ) {
-        List<PointLog> pointLogs = userservice.getPointLog(userId);
+        List<PointLog> pointLogs = userService.getPointLog(userId);
         List<UserPointLogDto> userPointLogDtos = pointLogs.stream()
                 .map(UserPointLogDto::new)
                 .toList();
@@ -147,9 +146,13 @@ public class UserController {
     public ResponseEntity<List<MyGoods>> getMyItems(
             @PathVariable Long userId
     ) {
-        List<MyGoods> myGoods = userservice.getGoods(userId);
+        List<MyGoods> myGoods = userService.getGoods(userId);
         return ResponseEntity.ok(myGoods);
     }
 
-
+    // 최근 게시물 조회
+    @GetMapping("/users/{userId}/recent-post")
+    public Long getLastViewedPost(@PathVariable Long userId) {
+        return userService.getLastViewPost(userId);
+    }
 }

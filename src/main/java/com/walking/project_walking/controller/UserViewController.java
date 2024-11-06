@@ -52,7 +52,7 @@ public class UserViewController {
     }
 
     // 마이페이지 뷰
-    @GetMapping("/mypage/{userId}")
+    @GetMapping("/myPage/{userId}")
     public String getMyPage(@PathVariable Long userId, HttpSession session, Model model) {
         // 요청된 userId로 사용자 정보를 가져옵니다.
         Users user = userService.findById(userId);
@@ -66,9 +66,15 @@ public class UserViewController {
     }
 
     // 유저 상세 페이지 뷰
-    @GetMapping("/info/{userId}")
+    @GetMapping("/myPage/info/{userId}")
     public String getUserDetailPage(@PathVariable Long userId, Model model) {
-        model.addAttribute("userId", userId);
+        Users user = userService.findById(userId);
+
+        if (user != null) {
+            model.addAttribute("userId", userId);
+            model.addAttribute("user", user);
+        }
+
         return "followPage";
     }
 }

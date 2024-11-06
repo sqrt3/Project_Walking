@@ -1,4 +1,4 @@
-const userId = window.location.pathname.split("/")[2];  // '/mypage/{userId}'에서 userId 가져오기
+const userId = window.location.pathname.split("/")[2];
 
 function loadUserInfo() {
     fetch(`/api/users/${userId}/myPage`)
@@ -34,7 +34,8 @@ function loadFollowerList() {
 
                 // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    window.location.href = `/info/${follower.userId}`;
+                    console.log(follower.userId);
+                    window.location.href = `/myPage/info/${follower.userId}`;
                 });
 
                 div.appendChild(img);
@@ -64,7 +65,8 @@ function loadFollowingList() {
 
                 // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    window.location.href = `/info/${following.userId}`;
+                    console.log(following.userId);
+                    window.location.href = `/myPage/info/${following.userId}`;
                 });
 
                 div.appendChild(img);
@@ -136,10 +138,10 @@ function loadRecentPosts() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadUserInfo(userId);
-    document.getElementById("followerLink").onclick = () => loadFollowerList(userId); // 팔로워 리스트 로딩
-    document.getElementById("followingLink").onclick = () => loadFollowingList(userId); // 팔로잉 리스트 로딩
-    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId)); // 아이템 리스트 로딩
+    loadUserInfo();
+    document.getElementById("followerLink").onclick = () => loadFollowerList();
+    document.getElementById("followingLink").onclick = () => loadFollowingList();
+    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId));
     $('#myPointLogsModal').on('shown.bs.modal', () => loadPointLogs(userId));
     loadRecentPosts(userId);
 });

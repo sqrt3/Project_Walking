@@ -1,34 +1,17 @@
 package com.walking.project_walking.controller;
 
-import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.userdto.UserDetailDto;
-import com.walking.project_walking.domain.userdto.UserPageDto;
-import com.walking.project_walking.domain.userdto.UserPointLogDto;
-import com.walking.project_walking.domain.userdto.UserUpdate;
 import com.walking.project_walking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -48,12 +31,6 @@ public class UserViewController {
         }
 
         return "index";
-    }
-
-    private final UserService userService;
-
-    public UserViewController(UserService userService) {
-        this.userService = userService;
     }
 
     @GetMapping("/auth/login")

@@ -1,11 +1,10 @@
 package com.walking.project_walking.controller;
 
-import com.walking.project_walking.domain.dto.PostResponseDto;
-import com.walking.project_walking.domain.dto.PostSearchResultDto;
-import com.walking.project_walking.domain.dto.PostSummuryResponseDto;
+import com.walking.project_walking.domain.dto.*;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.PostsService;
 import com.walking.project_walking.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -98,6 +98,29 @@ public class PostsController {
         }
 
         return ResponseEntity.ok(userPosts);
+    }
+
+    //게시글 생성 (작성자만 가능)
+    @PostMapping
+    public ResponseEntity<PostCreateResponseDto> savePosts(@Valid @RequestBody PostRequestDto postRequestDto) {
+        PostCreateResponseDto savedPost = postsService.savePost(postRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
+    }
+
+
+    // 게시글 수정 (작성자만 가능)
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostCreateResponseDto> modifyPosts(@PathVariable Long postId, @RequestParam Long userId, @Valid @RequestBody PostRequestDto postRequestDto) {
+        PostCreateResponseDto updatedPost = postsService.modifyPost(postId, userId, postRequestDto);
+        return ResponseEntity.ok(updatedPost);
+    }
+
+
+    // 게시글 삭제 (작성자만 가능)
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<String> deletePosts(@PathVariable Long postId, @RequestParam Long userId) {
+        postsService.deletePost(postId, userId);
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 
 }

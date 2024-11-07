@@ -21,10 +21,12 @@
           <p class="card-text description-text" th:text="${goods.getDescription()}">아이템 설명</p>
           <div class="d-flex justify-content-between align-items-center mt-auto">
             <a href="javascript:void(0);" class="btn btn-primary purchase-btn"
+               th:if="${user != null}"
                th:data-goods-id="${goods.getGoodsId()}" th:data-goods-price="${goods.getPrice()}"
-               th:data-user-id="${user.getUserId()}" th:data-user-point="${user.getPoint()}"
+               th:data-user-id="${user.getId()}" th:data-user-point="${user.getPoint()}"
                th:data-goods-name="${goods.getName()}"
-               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P'">
+               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P'"
+               >
               구매하기
             </a>
           </div>

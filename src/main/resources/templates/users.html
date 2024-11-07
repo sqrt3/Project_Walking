@@ -19,7 +19,7 @@
     </thead>
     <tbody>
     <tr th:each="user : ${userList}">
-      <td th:text="${user.getUserId()}"></td>
+      <td th:text="${user.getId()}"></td>
       <td th:text="${user.getEmail()}"></td>
       <td th:text="${user.getName()}"></td>
       <td th:text="${user.getPhone()}"></td>
@@ -32,10 +32,10 @@
       <td th:text="${user.getIsActive()} ? '활성화' : '비활성화'"></td>
       <td>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"
-                th:data-user-id="${user.getUserId()}">자세히</button>
+                th:data-user-id="${user.getId()}">자세히</button>
       </td>
       <td>
-        <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getUserId()}" th:disabled="${!user.getIsActive()}">비활성화</button>
+        <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getId()}" th:disabled="${!user.getIsActive()}">비활성화</button>
       </td>
     </tr>
     </tbody>

@@ -2,6 +2,7 @@ package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.Board;
 import com.walking.project_walking.domain.Posts;
+import com.walking.project_walking.domain.dto.BoardRequestDto;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.repository.BoardRepository;
 import com.walking.project_walking.repository.PostsRepository;
@@ -49,11 +50,36 @@ public class BoardService {
         return boardRepository.existsById(boardId);
     }
 
-    public Board addBoard(Board board) { return boardRepository.save(board); }
+    public BoardResponseDto addBoard(BoardRequestDto boardRequestDto) {
+        Board board = boardRequestDto.toEntity();
+        Board savedBoard = boardRepository.save(board);
+        return new BoardResponseDto(savedBoard.getBoardId(), savedBoard.getName());
+    }
 
-    public Board getBoard(Long boardId) { return boardRepository.findById(boardId).orElse(null); }
+    public BoardResponseDto getBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board == null) {
+            return null;
+        }
+        return new BoardResponseDto(board.getBoardId(), board.getName());
+    }
 
-    public Board updateBoard(Board board) { return boardRepository.save(board); }
+    public BoardResponseDto deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if (board != null) {
+            boardRepository.delete(board);
+            return new BoardResponseDto(board.getBoardId(), board.getName());
+        }
+        return null;
+    }
 
-    public void deleteBoard(Long boardId) { boardRepository.deleteById(boardId); }
+    public BoardResponseDto updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
+        Board existingBoard = boardRepository.findById(boardId).orElse(null);
+        if (existingBoard == null) {
+            return null;
+        }
+        existingBoard.setName(boardRequestDto.getName());
+        Board updatedBoard = boardRepository.save(existingBoard);
+        return new BoardResponseDto(updatedBoard.getBoardId(), updatedBoard.getName());
+    }
 }

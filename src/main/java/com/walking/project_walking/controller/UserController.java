@@ -23,7 +23,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserSignUpDto request) {
+    public ResponseEntity<UserResponse> createUser(@ModelAttribute UserSignUpDto request) {
         Users user = userService.saveUser(request);
         String redirectUri = "/auth/login";
 
@@ -36,9 +36,9 @@ public class UserController {
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
         boolean exists = userService.checkEmailExists(email);
         if (exists) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 이메일입니다.\"}");
         }
-        return ResponseEntity.ok("사용 가능한 이메일입니다.");
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 이메일입니다.\"}");
     }
 
     @GetMapping("/auth/check-nickname")

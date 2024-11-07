@@ -92,6 +92,7 @@ public class PostsService {
                 .toList();
     }
 
+    // 검색 시 결과의 페이지를 구하는 메소드
     public int getTotalPages(Long boardId, String title, String content, String nickname, int pageSize) {
         Long userId = userRepository.getUserIdByNickname(nickname);
         long totalPosts = postsRepository.countBySearchCriteria(boardId, title, content, userId);
@@ -105,7 +106,6 @@ public class PostsService {
                 .boardId(postRequestDto.getBoardId())
                 .title(postRequestDto.getTitle())
                 .content(postRequestDto.getContent())
-                .postImage(postRequestDto.getPostImage())
                 .build();
 
         Posts savedPost = postsRepository.save(post);
@@ -116,7 +116,6 @@ public class PostsService {
                 savedPost.getBoardId(),
                 savedPost.getTitle(),
                 savedPost.getContent(),
-                savedPost.getPostImage(),
                 savedPost.getViewCount(),
                 savedPost.getCreatedAt(),
                 savedPost.getModifiedAt(),
@@ -135,7 +134,6 @@ public class PostsService {
 
         post.setTitle(postRequestDto.getTitle());
         post.setContent(postRequestDto.getContent());
-        post.setPostImage(postRequestDto.getPostImage());
 
         Posts updatedPost = postsRepository.save(post);
 
@@ -145,7 +143,6 @@ public class PostsService {
                 updatedPost.getBoardId(),
                 updatedPost.getTitle(),
                 updatedPost.getContent(),
-                updatedPost.getPostImage(),
                 updatedPost.getViewCount(),
                 updatedPost.getCreatedAt(),
                 updatedPost.getModifiedAt(),

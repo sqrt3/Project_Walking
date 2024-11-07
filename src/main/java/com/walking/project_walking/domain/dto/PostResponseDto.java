@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 public class PostResponseDto {
     private Long boardId;
     private LocalDateTime createdAt;
-    private String postImage;
     private String title;
     private Integer commentsCount;
     private String content;
@@ -20,7 +19,6 @@ public class PostResponseDto {
         PostResponseDto dto = new PostResponseDto();
         dto.boardId = post.getBoardId();
         dto.createdAt = post.getCreatedAt();
-        dto.postImage = post.getPostImage();
         dto.title = post.getTitle();
         dto.commentsCount = commentsNumber;
         dto.content = post.getContent();

@@ -1,14 +1,13 @@
 package com.walking.project_walking.repository;
 
 import com.walking.project_walking.domain.Follow;
-import com.walking.project_walking.domain.followdto.FollowProfileDto;
-import lombok.RequiredArgsConstructor;
+import com.walking.project_walking.domain.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -26,4 +25,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     // 팔로워 수 카운트
     @Query("SELECT COUNT(f) FROM Follow f WHERE f.followingUser.userId = :userId")
     Long countFollowers(Long userId);
+
+    // 팔로우 관계 확인
+    Optional<Follow> findByFollowUserAndFollowingUser(Users followUser, Users followingUser);
 }

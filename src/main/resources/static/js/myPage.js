@@ -1,8 +1,7 @@
-// URL에서 userId 추출
-const userId = window.location.pathname.split("/")[2];  // '/mypage/{userId}'에서 userId 가져오기
+const userId = window.location.pathname.split("/")[2];
 
 function loadUserInfo() {
-    fetch(`/api/users/${userId}/mypage`)
+    fetch(`/api/users/${userId}/myPage`)
         .then(response => response.json())
         .then(data => {
             document.getElementById("userName").innerText = `${data.name}님의 마이페이지`;
@@ -35,7 +34,8 @@ function loadFollowerList() {
 
                 // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    window.location.href = `/info/${follower.userId}`;
+                    console.log(follower.userId);
+                    window.location.href = `/myPage/info/${follower.userId}`;
                 });
 
                 div.appendChild(img);
@@ -65,7 +65,8 @@ function loadFollowingList() {
 
                 // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    window.location.href = `/info/${following.userId}`;
+                    console.log(following.userId);
+                    window.location.href = `/myPage/info/${following.userId}`;
                 });
 
                 div.appendChild(img);
@@ -138,9 +139,9 @@ function loadRecentPosts() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadUserInfo();
-    document.getElementById("followerLink").onclick = loadFollowerList;
-    document.getElementById("followingLink").onclick = loadFollowingList;
-    $('#myItemsModal').on('shown.bs.modal', loadUserItems);
-    $('#myPointLogsModal').on('shown.bs.modal', loadPointLogs);
-    loadRecentPosts();
+    document.getElementById("followerLink").onclick = () => loadFollowerList();
+    document.getElementById("followingLink").onclick = () => loadFollowingList();
+    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId));
+    $('#myPointLogsModal').on('shown.bs.modal', () => loadPointLogs(userId));
+    loadRecentPosts(userId);
 });

@@ -119,7 +119,7 @@ public class UserController {
     }
 
     // myPage 조회
-    @GetMapping("/users/{userId}/mypage")
+    @GetMapping("/users/{userId}/myPage")
     public ResponseEntity<UserPageDto> getMyPage(
             @PathVariable Long userId
     ) {

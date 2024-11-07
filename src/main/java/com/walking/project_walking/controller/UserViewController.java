@@ -22,12 +22,14 @@ public class UserViewController {
     private final UserService userService;
 
     @GetMapping
-    public String index(Model model) {
+    public String index(HttpSession session, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
             Users user = userService.findById(currentUser.getUserId());
             model.addAttribute("user", user);
+
+            session.setAttribute("userId", user.getUserId());
         }
 
         return "index";
@@ -50,24 +52,29 @@ public class UserViewController {
     }
 
     // 마이페이지 뷰
-    @GetMapping("/mypage/{userId}")
+    @GetMapping("/myPage/{userId}")
     public String getMyPage(@PathVariable Long userId, HttpSession session, Model model) {
-        session.setAttribute("userId", userId);
+        // 요청된 userId로 사용자 정보를 가져옵니다.
+        Users user = userService.findById(userId);
 
-//        if (userId == null) {
-//            // 세션에 userId가 없으면 로그인 페이지로 리다이렉트
-//            return "redirect:/auth/login";
-//        }
-
-        // 세션에서 가져온 userId를 모델에 추가
-        model.addAttribute("userId", userId);
-        return "myPageView";
+        if (user != null) {
+            model.addAttribute("userId", userId);
+            return "myPageView";
+        } else {
+            return "redirect:/auth/login";
+        }
     }
 
     // 유저 상세 페이지 뷰
-    @GetMapping("/info/{userId}")
+    @GetMapping("/myPage/info/{userId}")
     public String getUserDetailPage(@PathVariable Long userId, Model model) {
-        model.addAttribute("userId", userId);
+        Users user = userService.findById(userId);
+
+        if (user != null) {
+            model.addAttribute("userId", userId);
+            model.addAttribute("user", user);
+        }
+
         return "followPage";
     }
 }

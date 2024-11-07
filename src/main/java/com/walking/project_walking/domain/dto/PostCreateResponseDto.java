@@ -16,7 +16,6 @@ public class PostCreateResponseDto {
     private Long boardId;
     private String title;
     private String content;
-    private String postImage;
     private int viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

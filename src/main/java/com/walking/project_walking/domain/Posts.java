@@ -40,9 +40,6 @@ public class Posts {
     @Column(name = "content", nullable = false, length = 512)
     private String content;
 
-    @Column(name = "post_image", length = 256)
-    private String postImage;
-
     @Column(name = "view_count")
     private Integer viewCount;
 

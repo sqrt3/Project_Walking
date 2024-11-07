@@ -13,7 +13,7 @@
 </head>
 <body class="gradient-custom">
 <section class="d-flex vh-100">
-  <div class="container-fluid row justify-articleContent-center align-articleContent-center">
+  <div class="container-fluid row justify-content-center align-content-center">
     <div class="card bg-dark" style="border-radius: 1rem;">
       <div class="card-body p-5 text-center">
         <h2 class="text-white">LOGIN</h2>
@@ -23,17 +23,18 @@
           <form action="/auth/login" method="POST">
             <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
             <div class="mb-3">
-              <label class="form-label text-white">Email address</label>
+              <label class="form-label text-white">이메일</label>
               <input type="email" class="form-control" name="username">
             </div>
             <div class="mb-3">
-              <label class="form-label text-white">Password</label>
+              <label class="form-label text-white">비밀번호</label>
               <input type="password" class="form-control" name="password">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">로그인</button>
           </form>
 
-          <button type="button" class="btn btn-secondary mt-3" onclick="location.href='/signup'">회원가입</button>
+          <button type="button" class="btn btn-secondary mt-3" onclick="location.href='/auth/signup'">회원가입</button>
+          <button type="button" class="btn btn-secondary mt-3" onclick="location.href='/auth/request-password-reset'">비밀번호 찾기</button>
         </div>
       </div>
     </div>

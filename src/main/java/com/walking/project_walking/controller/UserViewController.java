@@ -45,6 +45,11 @@ public class UserViewController {
         return "signup";
     }
 
+    @GetMapping("/auth/request-password-reset")
+    public String requestPasswordReset() {
+        return "request-password-reset";
+    }
+
     @GetMapping("/auth/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());

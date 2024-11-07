@@ -1,8 +1,8 @@
 package com.walking.project_walking.controller;
-
-import com.walking.project_walking.domain.Goods;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
+import com.walking.project_walking.domain.dto.GoodsResponseDto;
+import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.GoodsService;
 import com.walking.project_walking.service.UserService;
@@ -31,27 +31,32 @@ public class AdminViewController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
-            Users user = userService.findById(currentUser.getUserId());
-            model.addAttribute("user", user);
+            UserResponse userResponse = new UserResponse(userService.findById(currentUser.getUserId()));
+            model.addAttribute("user", userResponse);
         }
 
         return "admin";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public String manageUsers(Model model) {
-        List<Users> usersList = userService.findAll().stream().toList();
+        List<UserResponse> usersList = userService.findAll().stream()
+                .map(UserResponse::new)
+                .toList();
         model.addAttribute("userList", usersList);
         return "users";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users/{userId}")
     public String manageUser(@PathVariable Long userId, Model model) {
-        Users user = userService.findById(userId);
-        model.addAttribute("user", user);
+        UserResponse userResponse = new UserResponse(userService.findById(userId));
+        model.addAttribute("user", userResponse);
         return "user";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/board")
     public String manageBoard(Model model) {
         List<BoardResponseDto> boardList = boardService.getBoardsList();
@@ -59,9 +64,12 @@ public class AdminViewController {
         return "board";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/goods")
     public String manageGoods(Model model) {
-        List<Goods> goodsList = goodsService.getAllGoods();
+        List<GoodsResponseDto> goodsList = goodsService.getAllGoods().stream()
+                .map(GoodsResponseDto::new)
+                .toList();
         model.addAttribute("goodsList", goodsList);
         return "goods-manager";
     }

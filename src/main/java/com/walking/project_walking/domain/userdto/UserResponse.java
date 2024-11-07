@@ -1,5 +1,6 @@
 package com.walking.project_walking.domain.userdto;
 
+import com.walking.project_walking.domain.Role;
 import com.walking.project_walking.domain.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class UserResponse {
     private String profileImage;
     private Users user;
     private String redirectUri;
+    private Role role;
 
     public UserResponse(Users users) {
         id = users.getUserId();
@@ -52,9 +54,8 @@ public class UserResponse {
         point = users.getPoint();
         isActive = users.getIsActive();
         profileImage = users.getProfileImage();
+        role = users.getRole();
     }
-
-
 
     public UserResponse(Users user, String redirectUri) {
         this.user = user;

@@ -2,6 +2,9 @@ package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.Board;
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.dto.BoardRequestDto;
+import com.walking.project_walking.domain.dto.BoardResponseDto;
+import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.service.AdminService;
 import com.walking.project_walking.service.BoardService;
 import java.util.List;
@@ -25,43 +28,49 @@ public class AdminController {
     private final BoardService boardService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<Users>> getAllUsers() {
-        List<Users> users = adminService.getAllUsers();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = adminService.getAllUsers().stream().toList();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<Users> findUser(@PathVariable Long userId) {
-        Users user = adminService.findUser(userId);
-        if (user == null) {
+    public ResponseEntity<UserResponse> findUser(@PathVariable Long userId) {
+        UserResponse userResponse = adminService.findUser(userId);
+
+        if (userResponse == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(user);
+
+        return ResponseEntity.ok(userResponse);
     }
 
     @PostMapping("/boards")
-    public ResponseEntity<Board> addBoard(@RequestBody Board board) {
-        Board newBoard = boardService.addBoard(board);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newBoard);
+    public ResponseEntity<BoardResponseDto> addBoard(@RequestBody BoardRequestDto boardRequestDto) {
+        BoardResponseDto boardResponseDto = boardService.addBoard(boardRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardResponseDto);
     }
 
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
-        Board board = boardService.getBoard(boardId);
-        if (board == null) {
+        BoardResponseDto boardResponseDto = boardService.getBoard(boardId);
+        if (boardResponseDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
         }
-        boardService.deleteBoard(board.getBoardId());
-        return ResponseEntity.ok().body(board.getName() + " 게시판이 삭제 되었습니다.");
+
+        BoardResponseDto deletedBoard = boardService.deleteBoard(boardId);
+        if (deletedBoard != null) {
+            return ResponseEntity.ok().body(deletedBoard.getName() + " 게시판이 삭제 되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시판 삭제 실패");
+        }
     }
 
     @PutMapping("/boards/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable Long boardId, @RequestBody Board board) {
-        Board orgBoard = boardService.getBoard(boardId);
-        if (orgBoard == null) {
+    public ResponseEntity<String> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
+        BoardResponseDto updatedBoard = boardService.updateBoard(boardId, boardRequestDto);
+        if (updatedBoard == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");
         }
-        boardService.updateBoard(board);
-        return ResponseEntity.ok().body(board.getName() + " 게시판으로 변경 되었습니다.");
+        return ResponseEntity.ok().body(updatedBoard.getName() + " 게시판으로 변경 되었습니다.");
     }
 }

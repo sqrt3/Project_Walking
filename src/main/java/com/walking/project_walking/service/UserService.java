@@ -5,7 +5,6 @@ import com.walking.project_walking.domain.userdto.*;
 
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,7 @@ public class UserService {
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
     private final RecentPostRepository recentPostRepository;
+    private final PostsRepository postsRepository;
 
     // 회원 가입
     @Transactional
@@ -198,13 +198,16 @@ public class UserService {
     }
 
     // 사용자 최근 게시물 조회
+    public String getLastViewedPostTitle(Long userId) {
+        // userId를 기준으로 postId를 조회
+        Long postId = recentPostRepository.findPostIdByUserId(userId);
 
-    public Long getLastViewPost(Long userId) {
-        Optional<RecentPost> recentPost = recentPostRepository.findPostById(userId);
+        if (postId != null) {
+            return postsRepository.findTitleByPostId(postId);
 
-        // 최근 조회한 게시물이 없으면 null 반환
-        return recentPostRepository.findPostById(userId)
-                .map(RecentPost::getPostId)
-                .orElse(null);
+        } else {
+            return "최근 본 게시글이 없습니다";
+        }
     }
+
 }

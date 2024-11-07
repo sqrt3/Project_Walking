@@ -10,12 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "recent_post")
 public class RecentPost {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
+    @Id
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    // 외래 키 관계 설정
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private Users user; // users의 pk와 연결
 
     @Column(name = "post_id", nullable = false)
     private Long postId;

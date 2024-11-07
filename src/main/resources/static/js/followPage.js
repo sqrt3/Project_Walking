@@ -94,3 +94,66 @@ function loadFollowingList() {
             console.error('Error loading following:', error);
         });
 }
+
+// 팔로우 상태 확인
+function checkFollowStatus(followingId) {
+    fetch(`/api/users/${userId}/following`)
+        .then(response => response.json())
+        .then(data => {
+            const isFollowing = data.some(following => following.userId === followingId);
+
+            const followBtn = document.getElementById("followBtn");
+            if (isFollowing) {
+                followBtn.textContent = "팔로우 취소";  // 이미 팔로우 중이면 "팔로우 취소"
+                followBtn.classList.remove("btn-primary");
+                followBtn.classList.add("btn-danger");
+
+                // 팔로우 취소 버튼 클릭 시
+                followBtn.onclick = function() {
+                    unfollowUser(followingId);
+                };
+            } else {
+                followBtn.textContent = "팔로우";  // 팔로우 중이 아니면 "팔로우"
+                followBtn.classList.remove("btn-danger");
+                followBtn.classList.add("btn-primary");
+
+                // 팔로우 버튼 클릭 시
+                followBtn.onclick = function() {
+                    followUser(followingId);
+                };
+            }
+        })
+        .catch(error => {
+            console.error('Error checking follow status:', error);
+        });
+}
+
+// 팔로우 처리
+function followUser(followingId) {
+    fetch(`/api/users/${userId}/follow/${followingId}`, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(message => {
+            alert(message);
+            checkFollowStatus(followingId);  // 팔로우 상태 갱신
+        })
+        .catch(error => {
+            console.error('Error following user:', error);
+        });
+}
+
+// 팔로우 취소 처리
+function unfollowUser(followingId) {
+    fetch(`/api/users/${userId}/unfollow/${followingId}`, {
+        method: 'DELETE',
+    })
+        .then(response => response.json())
+        .then(message => {
+            alert(message);
+            checkFollowStatus(followingId);  // 팔로우 상태 갱신
+        })
+        .catch(error => {
+            console.error('Error unfollowing user:', error);
+        });
+}

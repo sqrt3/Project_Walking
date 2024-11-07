@@ -87,7 +87,7 @@ function updateUserInfo() {
     })
         .then(response => response.text())
         .then(() => alert("정보가 업데이트되었습니다."));
-        window.location.href = `/mypage/${userId}`;
+        window.location.href = `/myPage/${userId}`;
 }
 
 function loadUserItems() {
@@ -120,20 +120,16 @@ function loadPointLogs() {
 
 function loadRecentPosts() {
     fetch(`/api/users/${userId}/recent-post`)
-        .then(response => response.json())
-        .then(postId => {
+        .then(response => response.text())
+        .then(title => {
+            console.log(title);
             const recentPostsList = document.getElementById("recentPostsList");
             recentPostsList.innerHTML = "";
 
-            if (postId) {
-                const div = document.createElement("div");
-                div.textContent = `최근 게시물 ID: ${postId}`;
-                recentPostsList.appendChild(div);
-            } else {
-                const div = document.createElement("div");
-                div.textContent = "최근 게시물이 없습니다.";
-                recentPostsList.appendChild(div);
-            }
+            // 제목이 있으면 출력, 없으면 "최근 본 게시글이 없습니다" 출력
+            const div = document.createElement("div");
+            div.textContent = title || "최근 본 게시글이 없습니다.";
+            recentPostsList.appendChild(div);
         });
 }
 

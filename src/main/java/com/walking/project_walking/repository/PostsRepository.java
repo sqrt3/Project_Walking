@@ -43,4 +43,8 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     @Transactional
     @Query("UPDATE Posts p SET p.viewCount = p.viewCount + 1 WHERE p.postId = :postId")
     void incrementViewCount(Long postId);
+
+    // postId로 제목 찾기
+    @Query("SELECT p.title FROM Posts p WHERE p.postId = :postId")
+    String findTitleByPostId(@Param("postId") Long postId);
 }

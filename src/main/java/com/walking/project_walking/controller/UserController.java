@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -152,8 +154,17 @@ public class UserController {
 
     // 최근 게시물 조회
     @GetMapping("/users/{userId}/recent-post")
-    public Long getLastViewedPost(@PathVariable Long userId) {
-        return userService.getLastViewPost(userId);
+    public ResponseEntity<String> getRecentPost(@PathVariable Long userId) {
+        String title = userService.getLastViewedPostTitle(userId);
+
+        Map<String, String> response = new HashMap<>();
+        if (title == null) {
+            response.put("message", "최근 본 게시글이 없습니다.");
+        } else {
+            response.put("title", title);
+        }
+
+        return ResponseEntity.ok(title);
     }
 
 }

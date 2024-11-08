@@ -1,7 +1,9 @@
 package com.walking.project_walking.domain.userdto;
 
+import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.Role;
 import com.walking.project_walking.domain.Users;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,8 @@ public class UserResponse {
     private Users user;
     private String redirectUri;
     private Role role;
+    private List<Follow> followers;
+    private List<Follow> followings;
 
     public UserResponse(Users users) {
         id = users.getUserId();
@@ -55,6 +59,8 @@ public class UserResponse {
         isActive = users.getIsActive();
         profileImage = users.getProfileImage();
         role = users.getRole();
+        followers = users.getFollowers();
+        followings = users.getFollowings();
     }
 
     public UserResponse(Users user, String redirectUri) {

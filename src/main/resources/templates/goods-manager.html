@@ -55,6 +55,10 @@
             <label for="GoodsPrice" class="form-label">가격</label>
             <input type="number" class="form-control" id="GoodsPrice" required>
           </div>
+          <div class="mb-3">
+            <label for="GoodsImage" class="form-label">이미지</label>
+            <input type="file" id="GoodsImage">
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -202,26 +206,82 @@
       const GoodsName = $('#GoodsName').val();
       const GoodsDescription = $('#GoodsDescription').val();
       const GoodsPrice = $('#GoodsPrice').val();
+      const GoodsImage = $('#GoodsImage')[0].files[0];
 
       if (!GoodsCode || !GoodsName || !GoodsDescription || !GoodsPrice) {
         alert('모든 필드를 채워주세요.');
         return;
       }
 
-      const newGoods = {
-        goodsId: Number(GoodsType * 100000) + Number(GoodsCode),
-        name: GoodsName,
-        description: GoodsDescription,
-        price: GoodsPrice
-      };
+      let imageUrl = '';
+      if (GoodsImage) {
+        const formData = new FormData();
+        formData.append('image', GoodsImage);
 
-      $.ajax({
-        url: '/api/goods',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(newGoods),
-        success: function(response) {
-          const newRow = `
+        $.ajax({
+          url: '/s3/upload',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            console.log(response)
+
+            const newGoods = {
+              goodsId: Number(GoodsType * 100000) + Number(GoodsCode),
+              name: GoodsName,
+              description: GoodsDescription,
+              price: GoodsPrice,
+              goodsImage: response
+            };
+
+            $.ajax({
+              url: '/api/goods',
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(newGoods),
+              success: function(response) {
+                const newRow = `
+                <tr id="GoodsRow${response.goodsId}">
+                  <td>${response.goodsId}</td>
+                  <td>${response.name}</td>
+                  <td>${response.description}</td>
+                  <td>${Intl.NumberFormat().format(response.price)}</td>
+                  <td><a href="#" class="btn btn-success" onclick="editGoods(${response.goodsId})">수정</a></td>
+                  <td><a href="#" class="btn btn-danger" onclick="deleteGoods(${response.goodsId})">삭제</a></td>
+                </tr>
+              `;
+                $('#goodsTable tbody').append(newRow);
+
+                $('#addGoodsModal').modal('hide');
+                $('#addGoodsForm')[0].reset();
+              },
+              error: function(xhr, status, error) {
+                $('#failureMessage').text(`아이템 추가 실패: ${error}`);
+                $('#failureModal').modal('show');
+              }
+            });
+          },
+          error: function(xhr, status, error) {
+            $('#failureMessage').text(`이미지 업로드 실패: ${error}`);
+            $('#failureModal').modal('show');
+          }
+        });
+      } else {
+        const newGoods = {
+          goodsId: Number(GoodsType * 100000) + Number(GoodsCode),
+          name: GoodsName,
+          description: GoodsDescription,
+          price: GoodsPrice
+        };
+
+        $.ajax({
+          url: '/api/goods',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(newGoods),
+          success: function(response) {
+            const newRow = `
             <tr id="GoodsRow${response.goodsId}">
               <td>${response.goodsId}</td>
               <td>${response.name}</td>
@@ -231,16 +291,18 @@
               <td><a href="#" class="btn btn-danger" onclick="deleteGoods(${response.goodsId})">삭제</a></td>
             </tr>
           `;
-          $('#goodsTable tbody').append(newRow);
+            $('#goodsTable tbody').append(newRow);
 
-          $('#addGoodsModal').modal('hide');
-          $('#addGoodsForm')[0].reset();
-        },
-        error: function(xhr, status, error) {
-          $('#failureMessage').text(`아이템 추가 실패: ${error}`);
-          $('#failureModal').modal('show');
-        }
-      });
+            $('#addGoodsModal').modal('hide');
+            $('#addGoodsForm')[0].reset();
+          },
+          error: function(xhr, status, error) {
+            $('#failureMessage').text(`아이템 추가 실패: ${error}`);
+            $('#failureModal').modal('show');
+          }
+        });
+      }
     });
   });
+
 </script>

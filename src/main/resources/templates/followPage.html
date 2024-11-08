@@ -131,6 +131,7 @@
 </head>
 <body>
 <h1 class="text-center">User Detail</h1>
+<p id="userRank">내 등급: </p>
 <section class="container mt-5">
     <section class="userInfo-1">
         <div class="text-center" id="userDetailContainer">
@@ -138,13 +139,19 @@
             <div class="nickname" id="nickname"></div>
             <button id="followBtn" class="btn btn-primary follow-btn">팔로우</button>
         </div>
+
+        <div class="followe-info">
+            <div class="follower">
+                <p>팔로워: <span id="followerCount"></span>명</p>
+                <a href="#" id="followerLink" class="btn btn-info">팔로워 목록 보기</a>
+            </div>
+
+            <div class="following">
+                <p>팔로잉: <span id="followingCount"></span>명</p>
+                <a href="#" id="followingLink" class="btn btn-info">팔로잉 목록 보기</a>
+            </div>
+        </div>
     </section>
-
-    <p>팔로워: <span id="followerCount"></span>명</p>
-    <a href="#" id="followerLink" class="btn btn-info">팔로워 목록 보기</a>
-
-    <p>팔로잉: <span id="followingCount"></span>명</p>
-    <a href="#" id="followingLink" class="btn btn-info">팔로잉 목록 보기</a>
 
     <!-- 팔로워 목록 모달 -->
     <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel" aria-hidden="true">

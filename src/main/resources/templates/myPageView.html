@@ -8,26 +8,36 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script th:src="@{/js/myPage.js}"></script>
+
+    <style>
+        .profile-img { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; }
+        .nickname { font-weight: bold; margin-left: 12px; }
+        .follow-btn { width: 120px; }
+    </style>
 </head>
 <body>
 
 <div class="container mt-5">
     <h3 id="userName">님의 마이페이지</h3>
-    <p>닉네임: <span id="nickname"></span></p>
+    <p id="userRank">내 등급: </p>
 
-    <section class="first_section">
-        <div class="info_1">
-            <p id="userRank">내 등급: </p>
+    <section class="userInfo-1">
+        <div class="text-center" id="userDetailContainer">
+            <img src="" class="profile-img" id="profileImg">
+            <div class="nickname" id="nickname"></div>
+        </div>
+    </section>
+
+    <section class="userInfo-2">
+        <div class="followe-info">
             <p>팔로워: <span id="followerCount"></span>명</p>
             <a href="" id="followerLink" class="btn btn-info" data-toggle="modal" data-target="#followerModal">팔로워 목록 보기</a>
 
             <p>팔로잉: <span id="followingCount"></span>명</p>
             <a href="" id="followingLink" class="btn btn-info" data-toggle="modal" data-target="#followingModal">팔로잉 목록 보기</a>
-
-            <p>프로필 사진: <img id="profileImage" alt="Profile Image" width="100"></p>
         </div>
 
-        <div class="info_2">
+        <div class="media-info">
             <p>이메일: <span id="userEmail"></span></p>
             <p>전화번호: <span id="userPhone"></span></p>
             <button class="btn btn-primary" data-toggle="modal" data-target="#updateInfoModal">내 정보 수정</button>
@@ -78,7 +88,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="text" id="phone" placeholder="전화번호">
-                    <input type="text" id="nickname" placeholder="닉네임">
+                    <input type="text" id="nicknameInput" placeholder="닉네임">
                     <button onclick="updateUserInfo()">수정 완료</button>
                 </div>
             </div>

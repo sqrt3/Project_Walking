@@ -77,22 +77,6 @@ public class UserController {
 //        }
 //    }
 
-    // (Admin only) User 전체 조회
-    @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> findUsers() {
-        List<UserResponse> list = userService.findAll().stream()
-                .map(UserResponse::new)
-                .toList();
-        return ResponseEntity.ok(list);
-    }
-
-    // (Admin only) User 한 명 조회
-    @GetMapping("/users/{usersId}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable Long usersId) {
-        Users users = userService.findById(usersId);
-        return ResponseEntity.ok(new UserResponse(users));
-    }
-
     // User 정보 수정
     @PutMapping("/users/{userId}")
     public ResponseEntity<String> modifyUsersById(
@@ -131,7 +115,6 @@ public class UserController {
     }
 
     // 유저 포인트 로그 조회
-    // todo 포인트 획득, 감소 시 코드상에서 처리?
     @GetMapping("/users/{userId}/points")
     public ResponseEntity<List<UserPointLogDto>> getPointView(
             @PathVariable Long userId

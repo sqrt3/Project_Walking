@@ -16,8 +16,8 @@
   <div class="container-fluid row justify-content-center align-content-center">
     <div class="card bg-dark" style="border-radius: 1rem;">
       <div class="card-body p-5 text-center">
-        <h2 class="text-white">LOGIN</h2>
-        <p class="text-white-50 mt-2 mb-5">서비스를 사용하려면 로그인을 해주세요!</p>
+        <h2 class="text-white">Project Walking</h2>
+        <p class="text-white-50 mt-2 mb-5"></p>
 
         <div class = "mb-2">
           <form action="/auth/login" method="POST">
@@ -29,6 +29,10 @@
             <div class="mb-3">
               <label class="form-label text-white">비밀번호</label>
               <input type="password" class="form-control" name="password">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" name="remember-me" id="remember-me" >
+              <label class="form-check-label text-white" for="remember-me" >로그인 상태 유지</label>
             </div>
             <button type="submit" class="btn btn-primary">로그인</button>
           </form>

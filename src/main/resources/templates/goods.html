@@ -10,8 +10,13 @@
 <body>
 <nav th:replace="~{/fragments/header.html :: fragment-header(user=${user})}"></nav>
 <div class="container px-4">
+  <div class="d-flex justify-content-end mb-4">
+    <button id="showAll" class="btn btn-outline-primary me-2">전체 보기</button>
+    <button id="showConsumable" class="btn btn-outline-success me-2">소모성 아이템</button>
+    <button id="showCosmetic" class="btn btn-outline-info">치장 아이템</button>
+  </div>
   <div class="row d-flex justify-content-start g-4">
-    <div th:each="goods : ${goodsList}" class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <div th:each="goods : ${goodsList}" class="col-12 col-sm-6 col-md-4 col-lg-3 items" th:data-goods-id="${goods.getGoodsId()}">
       <div class="card" style="width: 100%; height: 100%;">
         <img th:src="${goods.getGoodsImage()}" class="card-img-top" alt="아이템 이미지">
         <div class="card-body d-flex flex-column justify-content-between">
@@ -22,10 +27,11 @@
           <div class="d-flex justify-content-between align-items-center mt-auto">
             <a href="javascript:void(0);" class="btn btn-primary purchase-btn"
                th:if="${user != null}"
-               th:data-goods-id="${goods.getGoodsId()}" th:data-goods-price="${goods.getPrice()}"
-               th:data-user-point="${user.getPoint()}" th:data-goods-name="${goods.getName()}"
-               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P'"
-               >
+               th:data-goods-id="${goods.getGoodsId()}"
+               th:data-goods-price="${goods.getPrice()}"
+               th:data-user-point="${user.getPoint()}"
+               th:data-goods-name="${goods.getName()}"
+               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P'">
               구매하기
             </a>
           </div>
@@ -91,44 +97,34 @@
 
 <script>
   $(document).ready(function() {
-    $('.purchase-btn').click(function() {
-      let goodsId = $(this).data('goods-id');
-      let goodsPrice = $(this).data('goods-price');
-      let goodsName = $(this).data('goods-name');
-
-      let currentPoints = $(this).data('userPoint');
-
-      $('#selectedGoods').text(goodsName);
-      $('#currentPoints').text(currentPoints);
-      $('#remainingPoints').text(currentPoints - goodsPrice);
-
-      if (currentPoints < goodsPrice) {
-        $('#confirmPurchase').prop('disabled', true);
-      } else {
-        $('#confirmPurchase').prop('disabled', false);
-      }
-
-      $('#confirmPurchase').off('click').on('click', function() {
-        $.ajax({
-          url: '/api/goods/{goodsId}/purchase'.replace("{goodsId}", goodsId),
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({ "id": goodsId }),
-          success: function(response) {
-            $('#successMessage').text(response);
-            $('#successModal').modal('show');
-            $('#purchaseModal').modal('hide');
-          },
-          error: function(xhr, status, error) {
-            $('#errorMessage').text(xhr.responseText);
-            $('#errorModal').modal('show');
-            $('#purchaseModal').modal('hide');
-          }
-        });
+    function filterItems(type) {
+      $('.items').each(function() {
+        const goodsId = $(this).data('goods-id');
+        if (type === 'all') {
+          $(this).show();
+        } else if (type === 'consumable' && Math.floor(goodsId / 100000) === 1) {
+          $(this).show();
+        } else if (type === 'cosmetic' && Math.floor(goodsId / 100000) === 2) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
       });
+    }
 
-      $('#purchaseModal').modal('show');
+    $('#showAll').click(function() {
+      filterItems('all');
     });
+
+    $('#showConsumable').click(function() {
+      filterItems('consumable');
+    });
+
+    $('#showCosmetic').click(function() {
+      filterItems('cosmetic');
+    });
+
+    filterItems('all');
   });
 </script>
 </body>

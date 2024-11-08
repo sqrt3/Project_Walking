@@ -28,9 +28,11 @@ public class GoodsViewController {
         List<GoodsResponseDto> goodsList = goodsService.getAllGoods();
 
         Long userId = (Long)session.getAttribute("userId");
-        Users user = userService.findById(userId);
+        if (userId != null) {
+            Users user = userService.findById(userId);
+            model.addAttribute("user", user);
+        }
 
-        model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
         return "goods";
     }

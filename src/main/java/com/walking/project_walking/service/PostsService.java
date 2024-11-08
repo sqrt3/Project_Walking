@@ -3,6 +3,7 @@ package com.walking.project_walking.service;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.*;
 import com.walking.project_walking.repository.CommentsRepository;
+import com.walking.project_walking.repository.PostImagesRepository;
 import com.walking.project_walking.repository.PostsRepository;
 import com.walking.project_walking.repository.UserRepository;
 import lombok.*;
@@ -20,6 +21,7 @@ public class PostsService {
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
+    private final PostImagesRepository postImagesRepository;
 
     private static final double THRESHOLD = 100.0;
 
@@ -30,7 +32,8 @@ public class PostsService {
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 }).toList();
     }
 
@@ -49,7 +52,8 @@ public class PostsService {
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
     }
@@ -61,7 +65,8 @@ public class PostsService {
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
     }
@@ -76,7 +81,8 @@ public class PostsService {
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname);
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .orElse(null);
     }

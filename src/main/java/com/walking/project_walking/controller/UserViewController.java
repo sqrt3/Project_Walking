@@ -23,13 +23,10 @@ public class UserViewController {
 
     @GetMapping
     public String index(HttpSession session, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
-            Users user = userService.findById(currentUser.getUserId());
+        Long userId = (Long)session.getAttribute("userId");
+        if (userId != null) {
+            Users user = userService.findById(userId);
             model.addAttribute("user", user);
-
-            session.setAttribute("userId", user.getUserId());
         }
 
         return "index";

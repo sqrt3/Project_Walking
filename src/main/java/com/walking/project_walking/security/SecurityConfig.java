@@ -2,6 +2,7 @@ package com.walking.project_walking.security;
 
 import com.walking.project_walking.handler.CustomAuthenticationSuccessHandler;
 import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +10,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserRepository userRepository;
+    private final PointService pointService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -32,7 +33,7 @@ public class SecurityConfig {
                 )
                 .formLogin(custom -> custom
                         .loginPage("/auth/login")
-                        .successHandler(new CustomAuthenticationSuccessHandler(userRepository))
+                        .successHandler(new CustomAuthenticationSuccessHandler(pointService, userRepository))
                 )
                 .logout(custom -> custom
                         .logoutSuccessUrl("/auth/login")

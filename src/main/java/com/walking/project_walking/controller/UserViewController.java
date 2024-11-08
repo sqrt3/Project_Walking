@@ -58,12 +58,15 @@ public class UserViewController {
 
     // 마이페이지 뷰
     @GetMapping("/myPage/{userId}")
-    public String getMyPage(@PathVariable Long userId, HttpSession session, Model model) {
+    public String getMyPage(
+            @PathVariable Long userId,
+            HttpSession session,
+            Model model
+    ) {
         // 요청된 userId로 사용자 정보를 가져옵니다.
         Users user = userService.findById(userId);
 
         if (user != null) {
-            model.addAttribute("userId", userId);
             return "myPageView";
         } else {
             return "redirect:/auth/login";
@@ -72,14 +75,27 @@ public class UserViewController {
 
     // 유저 상세 페이지 뷰
     @GetMapping("/myPage/info/{userId}")
-    public String getUserDetailPage(@PathVariable Long userId, Model model) {
-        Users user = userService.findById(userId);
+    public String getUserDetailPage(
+            @PathVariable Long userId,
+            HttpSession session,
+            Model model
+    ) {
+        // 현재 로그인된 사용자 ID를 세션에서 가져오기
+        Long currentUserId = (Long) session.getAttribute("userId");
 
-        if (user != null) {
-            model.addAttribute("userId", userId);
-            model.addAttribute("user", user);
+        // 인증된 사용자 정보가 존재하는지 확인
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
+            Users user = userService.findById(userId);
+
+            // 모델에 사용자 정보와 현재 로그인된 사용자 ID를 추가
+            model.addAttribute("user", user);  // 조회된 타 유저 정보
+            model.addAttribute("currentUserId", currentUser.getUserId()); // 세션에서 가져온 현재 로그인된 사용자 ID
         }
 
+        // 'followPage'는 타 유저 정보를 보여주는 페이지 이름
         return "followPage";
     }
+
 }

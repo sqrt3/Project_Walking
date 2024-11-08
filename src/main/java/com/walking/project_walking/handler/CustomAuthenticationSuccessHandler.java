@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +30,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         user.setLastLogin(LocalDateTime.now());
         user.setLoginBrowser(userAgent);
         userRepository.save(user);
+
+        // userId를 세션에 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("userId", user.getUserId());
+
         response.sendRedirect("/");
     }
 }

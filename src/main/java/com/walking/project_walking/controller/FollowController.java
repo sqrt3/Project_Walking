@@ -15,22 +15,13 @@ import java.util.List;
 public class FollowController {
     private final FollowService followService;
 
-    // 사용자를 팔로우
-    @PostMapping("/users/{followerId}/follow/{followingId}")
-    public ResponseEntity<String> followUser(
+    // 팔로우/언팔로우 토글
+    @PostMapping("/users/{followerId}/toggle-follow/{followingId}")
+    public ResponseEntity<String> toggleFollowUser(
             @PathVariable Long followerId,
             @PathVariable Long followingId
     ) {
-        return followService.followUser(followerId, followingId);
-    }
-
-    // 팔로우 취소
-    @DeleteMapping("/users/{followerId}/unfollow/{followingId}")
-    public ResponseEntity<String> unfollowUser(
-            @PathVariable Long followerId,
-            @PathVariable Long followingId
-    ) {
-        return followService.unfollowUser(followerId, followingId);
+        return followService.toggleFollowUser(followerId, followingId);
     }
 
     // 팔로잉을 조회 - 에러메시지 프로트에서 출력되도록 하기!
@@ -59,6 +50,24 @@ public class FollowController {
                 .toList();
 
         return ResponseEntity.ok(followerDto);
+    }
+
+    // 팔로잉 수 조회
+    @GetMapping("/users/{userId}/count-following")
+    public ResponseEntity<Long> getFollowingCount(
+            @PathVariable Long userId
+    ) {
+        Long followingCount = followService.countFollowing(userId);
+        return ResponseEntity.ok(followingCount);
+    }
+
+    // 팔로워 수 조회
+    @GetMapping("/users/{userId}/count-followers")
+    public ResponseEntity<Long> getFollowerCount(
+            @PathVariable Long userId
+    ) {
+        Long followerCount = followService.countFollowers(userId);
+        return ResponseEntity.ok(followerCount);
     }
 
 }

@@ -106,10 +106,11 @@ function fetchPopularPosts(boardId) {
         .then(data => {
             if (data) {
                 const popularPosts = document.getElementById('popular-posts');
+                const imageUrl = data.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
                 popularPosts.innerHTML = `
                     <h4>${data.title}</h4>
                     <p>${data.content}</p>
-                    <img src="https://placehold.co/30x30" alt="Placeholder Image">
+                    <img src= "${imageUrl}" alt="Placeholder Image">
                     <p>작성일: ${data.createdAt}</p>
                     <p>조회수: ${data.viewCount}</p>
                     <p>좋아요: ${data.likes}</p>
@@ -207,10 +208,11 @@ function displayPosts(posts) {
 
     posts.forEach(post => {
         const li = document.createElement('li');
+        const imageUrl = post.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
         li.innerHTML = `
             <h4>${post.title}</h4>
             <p>${post.content}</p>
-            <img src="https://placehold.co/30x30" alt="Placeholder Image">
+            <img src= "${imageUrl}" alt="Placeholder Image">
             <p>작성일: ${post.createdAt}</p>
             <p>조회수: ${post.viewCount}</p>
             <p>좋아요: ${post.likes}</p>

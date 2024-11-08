@@ -77,17 +77,21 @@ function loadFollowingList() {
 }
 
 function updateUserInfo() {
+    const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value;
-    const nickname = document.getElementById("nickname").value;
+    const nickname = document.getElementById("nicknameInput").value;
+    const profileImage = document.getElementById("profileImage").value;
 
     fetch(`/api/users/${userId}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({phone, nickname})
+        body: JSON.stringify({password, phone, nickname, profileImage})
     })
         .then(response => response.text())
-        .then(() => alert("정보가 업데이트되었습니다."));
-        window.location.href = `/myPage/${userId}`;
+        .then(() => {
+            alert("정보가 업데이트되었습니다.")
+            window.location.href = `/myPage/${userId}`;
+        });
 }
 
 function loadUserItems() {

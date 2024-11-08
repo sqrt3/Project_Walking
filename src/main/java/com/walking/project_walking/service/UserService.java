@@ -137,7 +137,8 @@ public class UserService {
 
         // 클라이언트가 보낸 데이터가 있을 때만 해당 필드를 업데이트
         if (update.getPassword() != null && !update.getPassword().isEmpty()) {
-            users.setPassword(update.getPassword());
+            String encodedPassword = encoder.encode(update.getPassword());
+            users.setPassword(encodedPassword);
         }
         if (update.getPhone() != null && !update.getPhone().isEmpty()) {
             users.setPhone(update.getPhone());

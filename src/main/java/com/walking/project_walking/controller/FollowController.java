@@ -2,6 +2,7 @@ package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
+import com.walking.project_walking.domain.followdto.FollowerProfileDto;
 import com.walking.project_walking.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class FollowController {
         List<Follow> followings = followService.getFollowing(userId);
 
         List<FollowProfileDto> followingDto = followings.stream()
-                .map(FollowProfileDto::new) // Follow 객체를 이용해 FollowProfileDto 생성
+                .map(FollowProfileDto::new)
                 .toList();
 
         return ResponseEntity.ok(followingDto);
@@ -40,16 +41,11 @@ public class FollowController {
 
     // 팔로워를 조회 - "
     @GetMapping("/users/{userId}/follower")
-    public ResponseEntity<List<FollowProfileDto>> getFollower(
+    public ResponseEntity<List<FollowerProfileDto>> getFollower(
             @PathVariable Long userId
     ) {
-        List<Follow> followers = followService.getFollower(userId);
-
-        List<FollowProfileDto> followerDto = followers.stream()
-                .map(FollowProfileDto::new)
-                .toList();
-
-        return ResponseEntity.ok(followerDto);
+        List<FollowerProfileDto> followers = followService.getFollowers(userId);
+        return ResponseEntity.ok(followers);
     }
 
     // 팔로잉 수 조회

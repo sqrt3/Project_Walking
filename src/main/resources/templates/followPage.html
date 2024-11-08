@@ -72,13 +72,14 @@
         function loadFollowerList() {
             $.get(`/api/users/${followingId}/follower`, function(data) {
                 const followerList = $('#followerList');
-                followerList.empty();
+                followerList.empty(); // 기존 목록 비우기
                 data.forEach(follower => {
-                    const followerItem = `
-                        <div class="d-flex align-items-center">
+                    const followerItem = $(`
+                        <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${follower.userId}'">
                             <img src="${follower.profileImage}" class="profile-img">
                             <span class="nickname">${follower.nickname}</span>
-                        </div>`;
+                        </div>
+                    `);
                     followerList.append(followerItem);
                 });
             });
@@ -87,13 +88,14 @@
         function loadFollowingList() {
             $.get(`/api/users/${followingId}/following`, function(data) {
                 const followingList = $('#followingList');
-                followingList.empty();
+                followingList.empty(); // 기존 목록 비우기
                 data.forEach(following => {
-                    const followingItem = `
-                        <div class="d-flex align-items-center">
+                    const followingItem = $(`
+                        <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${following.userId}'">
                             <img src="${following.profileImage}" class="profile-img">
                             <span class="nickname">${following.nickname}</span>
-                        </div>`;
+                        </div>
+                    `);
                     followingList.append(followingItem);
                 });
             });
@@ -122,13 +124,13 @@
 <section class="container mt-5">
     <div class="text-center" id="userDetailContainer"></div>
 
-    <div class="text-center mt-3">
-        <button id="followBtn" class="btn follow-btn">로딩 중...</button>
-    </div>
+    <p>팔로워: <span id="followerCount"></span>명</p>
+    <a href="#" id="followerLink" class="btn btn-info" data-toggle="modal" data-target="#followerModal">팔로워 목록 보기</a>
 
-    <span id="followerCount" class="text-primary" style="cursor: pointer;">0</span> 팔로워
-    <span id="followingCount" class="text-primary" style="cursor: pointer;">0</span> 팔로잉
+    <p>팔로잉: <span id="followingCount"></span>명</p>
+    <a href="#" id="followingLink" class="btn btn-info" data-toggle="modal" data-target="#followingModal">팔로잉 목록 보기</a>
 
+    <!-- 팔로워 목록 모달 -->
     <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -138,11 +140,14 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" id="followerList"></div>
+                <div class="modal-body">
+                    <div id="followerList"></div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- 팔로잉 목록 모달 -->
     <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -152,7 +157,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" id="followingList"></div>
+                <div class="modal-body">
+                    <div id="followingList"></div>
+                </div>
             </div>
         </div>
     </div>

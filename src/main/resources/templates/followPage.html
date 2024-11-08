@@ -27,14 +27,15 @@
                 alert("유효하지 않은 유저 정보입니다.");
             }
 
-            $('#followBtn').click(toggleFollow);
+            // 이벤트 바인딩
+            $('#followBtn').off('click').on('click', toggleFollow);
 
-            $('#followerCount').click(function() {
+            $('#followerLink').click(function() {
                 loadFollowerList();
                 $('#followerModal').modal('show');
             });
 
-            $('#followingCount').click(function() {
+            $('#followingLink').click(function() {
                 loadFollowingList();
                 $('#followingModal').modal('show');
             });
@@ -45,11 +46,12 @@
                 url: `/api/users/${followingId}/info`,
                 type: 'GET',
                 success: function(data) {
-                    $('#userDetailContainer').html(`
-                        <img src="${data.profileImage}" class="profile-img">
-                        <span class="nickname">${data.nickname}</span>
-                    `);
-                    $('#followBtn').text(data.isFollowing ? '언팔로우' : '팔로우');
+                    $('#profileImg').attr('src', data.profileImage);
+                    $('#nickname').text(data.nickname);
+                    $('#followBtn')
+                        .text(data.isFollowing ? '언팔로우' : '팔로우')
+                        .removeClass(data.isFollowing ? 'btn-primary' : 'btn-secondary')
+                        .addClass(data.isFollowing ? 'btn-secondary' : 'btn-primary');
                 },
                 error: function() {
                     alert('유저 정보를 불러오는 데 실패했습니다.');
@@ -69,38 +71,6 @@
             });
         }
 
-        function loadFollowerList() {
-            $.get(`/api/users/${followingId}/follower`, function(data) {
-                const followerList = $('#followerList');
-                followerList.empty(); // 기존 목록 비우기
-                data.forEach(follower => {
-                    const followerItem = $(`
-                        <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${follower.userId}'">
-                            <img src="${follower.profileImage}" class="profile-img">
-                            <span class="nickname">${follower.nickname}</span>
-                        </div>
-                    `);
-                    followerList.append(followerItem);
-                });
-            });
-        }
-
-        function loadFollowingList() {
-            $.get(`/api/users/${followingId}/following`, function(data) {
-                const followingList = $('#followingList');
-                followingList.empty(); // 기존 목록 비우기
-                data.forEach(following => {
-                    const followingItem = $(`
-                        <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${following.userId}'">
-                            <img src="${following.profileImage}" class="profile-img">
-                            <span class="nickname">${following.nickname}</span>
-                        </div>
-                    `);
-                    followingList.append(followingItem);
-                });
-            });
-        }
-
         function toggleFollow() {
             const actionUrl = `/api/users/${currentUserId}/toggle-follow/${followingId}`;
 
@@ -109,7 +79,8 @@
                 type: 'POST',
                 success: function(response) {
                     alert(response);
-                    loadUserInfo(); // 팔로우 상태 변경 후 사용자 정보 새로고침
+                    loadUserInfo(); // 버튼 텍스트 및 상태 업데이트
+                    loadFollowerCount(); // 팔로워 수 갱신
                 },
                 error: function() {
                     alert('팔로우 상태 변경에 실패했습니다.');
@@ -117,18 +88,63 @@
             });
         }
 
+        function loadFollowerList() {
+            $.get(`/api/users/${followingId}/follower`, function(data) {
+                const followerList = $('#followerList');
+                followerList.empty(); // 기존 목록 비우기
+                if (data.length === 0) {
+                    followerList.append('<p>팔로워가 없습니다.</p>');
+                } else {
+                    data.forEach(follower => {
+                        const followerItem = $(`
+                            <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${follower.userId}'">
+                                <img src="${follower.profileImage}" class="profile-img">
+                                <span class="nickname">${follower.nickname}</span>
+                            </div>
+                        `);
+                        followerList.append(followerItem);
+                    });
+                }
+            });
+        }
+
+        function loadFollowingList() {
+            $.get(`/api/users/${followingId}/following`, function(data) {
+                const followingList = $('#followingList');
+                followingList.empty(); // 기존 목록 비우기
+                if (data.length === 0) {
+                    followingList.append('<p>팔로잉하는 사용자가 없습니다.</p>');
+                } else {
+                    data.forEach(following => {
+                        const followingItem = $(`
+                            <div class="d-flex align-items-center mb-2" style="cursor: pointer;" onclick="window.location.href='/myPage/info/${following.userId}'">
+                                <img src="${following.profileImage}" class="profile-img">
+                                <span class="nickname">${following.nickname}</span>
+                            </div>
+                        `);
+                        followingList.append(followingItem);
+                    });
+                }
+            });
+        }
     </script>
 </head>
 <body>
 <h1 class="text-center">User Detail</h1>
 <section class="container mt-5">
-    <div class="text-center" id="userDetailContainer"></div>
+    <section class="userInfo-1">
+        <div class="text-center" id="userDetailContainer">
+            <img src="" class="profile-img" id="profileImg">
+            <div class="nickname" id="nickname"></div>
+            <button id="followBtn" class="btn btn-primary follow-btn">팔로우</button>
+        </div>
+    </section>
 
     <p>팔로워: <span id="followerCount"></span>명</p>
-    <a href="#" id="followerLink" class="btn btn-info" data-toggle="modal" data-target="#followerModal">팔로워 목록 보기</a>
+    <a href="#" id="followerLink" class="btn btn-info">팔로워 목록 보기</a>
 
     <p>팔로잉: <span id="followingCount"></span>명</p>
-    <a href="#" id="followingLink" class="btn btn-info" data-toggle="modal" data-target="#followingModal">팔로잉 목록 보기</a>
+    <a href="#" id="followingLink" class="btn btn-info">팔로잉 목록 보기</a>
 
     <!-- 팔로워 목록 모달 -->
     <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel" aria-hidden="true">

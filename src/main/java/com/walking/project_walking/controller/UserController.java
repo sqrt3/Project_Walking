@@ -29,16 +29,18 @@ public class UserController {
 
         UserResponse response = new UserResponse(user, redirectUri);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", redirectUri)
+                .body(response);
     }
 
     @GetMapping("/auth/check-email")
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
         boolean exists = userService.checkEmailExists(email);
         if (exists) {
-            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 이메일입니다.\"}");
+            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
         }
-        return ResponseEntity.ok("{\"message\": \"사용 가능한 이메일입니다.\"}");
+        return ResponseEntity.ok("사용 가능한 이메일입니다.");
     }
 
     @GetMapping("/auth/check-nickname")

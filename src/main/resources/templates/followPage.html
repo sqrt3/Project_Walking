@@ -9,16 +9,28 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <style>
-        .profile-img { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; }
-        .nickname { font-weight: bold; margin-left: 12px; }
-        .follow-btn { width: 120px; }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .nickname {
+            font-weight: bold;
+            margin-left: 12px;
+        }
+
+        .follow-btn {
+            width: 120px;
+        }
     </style>
 
     <script th:inline="javascript">
         const currentUserId = [[${currentUserId}]];
         const followingId = [[${user.userId}]];
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             if (followingId) {
                 loadUserInfo();
                 loadFollowerCount();
@@ -30,12 +42,12 @@
             // 이벤트 바인딩
             $('#followBtn').off('click').on('click', toggleFollow);
 
-            $('#followerLink').click(function() {
+            $('#followerLink').click(function () {
                 loadFollowerList();
                 $('#followerModal').modal('show');
             });
 
-            $('#followingLink').click(function() {
+            $('#followingLink').click(function () {
                 loadFollowingList();
                 $('#followingModal').modal('show');
             });
@@ -45,7 +57,7 @@
             $.ajax({
                 url: `/api/users/${followingId}/info`,
                 type: 'GET',
-                success: function(data) {
+                success: function (data) {
                     $('#profileImg').attr('src', data.profileImage);
                     $('#nickname').text(data.nickname);
                     $('#followBtn')
@@ -53,20 +65,20 @@
                         .removeClass(data.isFollowing ? 'btn-primary' : 'btn-secondary')
                         .addClass(data.isFollowing ? 'btn-secondary' : 'btn-primary');
                 },
-                error: function() {
+                error: function () {
                     alert('유저 정보를 불러오는 데 실패했습니다.');
                 }
             });
         }
 
         function loadFollowerCount() {
-            $.get(`/api/users/${followingId}/count-followers`, function(data) {
+            $.get(`/api/users/${followingId}/count-followers`, function (data) {
                 $('#followerCount').text(data || 0);
             });
         }
 
         function loadFollowingCount() {
-            $.get(`/api/users/${followingId}/count-following`, function(data) {
+            $.get(`/api/users/${followingId}/count-following`, function (data) {
                 $('#followingCount').text(data || 0);
             });
         }
@@ -77,19 +89,19 @@
             $.ajax({
                 url: actionUrl,
                 type: 'POST',
-                success: function(response) {
+                success: function (response) {
                     alert(response);
                     loadUserInfo(); // 버튼 텍스트 및 상태 업데이트
                     loadFollowerCount(); // 팔로워 수 갱신
                 },
-                error: function() {
+                error: function () {
                     alert('팔로우 상태 변경에 실패했습니다.');
                 }
             });
         }
 
         function loadFollowerList() {
-            $.get(`/api/users/${followingId}/follower`, function(data) {
+            $.get(`/api/users/${followingId}/follower`, function (data) {
                 const followerList = $('#followerList');
                 followerList.empty(); // 기존 목록 비우기
                 if (data.length === 0) {
@@ -109,7 +121,7 @@
         }
 
         function loadFollowingList() {
-            $.get(`/api/users/${followingId}/following`, function(data) {
+            $.get(`/api/users/${followingId}/following`, function (data) {
                 const followingList = $('#followingList');
                 followingList.empty(); // 기존 목록 비우기
                 if (data.length === 0) {
@@ -154,7 +166,8 @@
     </section>
 
     <!-- 팔로워 목록 모달 -->
-    <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -171,7 +184,8 @@
     </div>
 
     <!-- 팔로잉 목록 모달 -->
-    <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+    <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

@@ -11,9 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -24,7 +23,7 @@ public class UserViewController {
 
     @GetMapping
     public String index(HttpSession session, Model model) {
-        Long userId = (Long)session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("userId");
         if (userId != null) {
             Users user = userService.findById(userId);
             model.addAttribute("user", user);

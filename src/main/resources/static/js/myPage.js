@@ -84,8 +84,8 @@ function updateUserInfo() {
 
     // JSON 데이터를 문자열로 직렬화하여 FormData에 추가
     const formData = new FormData();
-    const updateData = JSON.stringify({ password, phone, nickname });
-    formData.append("update", new Blob([updateData], { type: "application/json" }));
+    const updateData = JSON.stringify({password, phone, nickname});
+    formData.append("update", new Blob([updateData], {type: "application/json"}));
 
     // 이미지 파일을 FormData에 추가
     if (profileImageFile) {

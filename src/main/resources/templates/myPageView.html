@@ -10,8 +10,17 @@
     <script th:src="@{/js/myPage.js}"></script>
 
     <style>
-        .profile-img { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; }
-        .nickname { font-weight: bold; margin-left: 12px; }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .nickname {
+            font-weight: bold;
+            margin-left: 12px;
+        }
     </style>
 </head>
 <body>
@@ -30,10 +39,12 @@
     <section class="userInfo-2">
         <div class="followe-info">
             <p>팔로워: <span id="followerCount"></span>명</p>
-            <a href="" id="followerLink" class="btn btn-info" data-toggle="modal" data-target="#followerModal">팔로워 목록 보기</a>
+            <a href="" id="followerLink" class="btn btn-info" data-toggle="modal" data-target="#followerModal">팔로워 목록
+                보기</a>
 
             <p>팔로잉: <span id="followingCount"></span>명</p>
-            <a href="" id="followingLink" class="btn btn-info" data-toggle="modal" data-target="#followingModal">팔로잉 목록 보기</a>
+            <a href="" id="followingLink" class="btn btn-info" data-toggle="modal" data-target="#followingModal">팔로잉 목록
+                보기</a>
         </div>
 
         <div class="media-info">
@@ -44,7 +55,8 @@
     </section>
 
     <!-- 팔로워 목록 모달 -->
-    <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="followerModal" tabindex="-1" role="dialog" aria-labelledby="followerModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -61,7 +73,8 @@
     </div>
 
     <!-- 팔로잉 목록 모달 -->
-    <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+    <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

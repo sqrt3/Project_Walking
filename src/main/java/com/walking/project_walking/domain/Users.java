@@ -89,6 +89,9 @@ public class Users implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
 
+    @Column(name = "title_id")
+    private Integer titleId;
+
     // 팔로우 관련 필드
     @OneToMany(mappedBy = "followingUser")
     private List<Follow> followers; // 현재 사용자의 id

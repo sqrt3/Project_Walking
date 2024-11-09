@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -58,12 +59,30 @@ public class UserViewController {
     public String getMyPage(
             @PathVariable Long userId,
             HttpSession session,
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
+        // 세션에서 로그인한 사용자 ID를 가져옵니다.
+        Long loggedInUserId = (Long) session.getAttribute("userId");
+
+        // 로그인하지 않았으면 로그인 페이지로 리다이렉트
+        if (loggedInUserId == null) {
+            return "redirect:/auth/login";
+        }
+
+        // 로그인한 사용자 ID와 요청된 userId를 비교
+        if (!loggedInUserId.equals(userId)) {
+            // 에러 메시지 추가
+            redirectAttributes.addFlashAttribute("error", "You do not have permission to access this page.");
+            return "redirect:/";  // 메인 페이지로 리다이렉트
+        }
+
+
         // 요청된 userId로 사용자 정보를 가져옵니다.
         Users user = userService.findById(userId);
 
         if (user != null) {
+            model.addAttribute("user", user);
             return "myPageView";
         } else {
             return "redirect:/auth/login";

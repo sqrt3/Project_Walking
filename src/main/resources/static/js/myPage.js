@@ -80,19 +80,30 @@ function updateUserInfo() {
     const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value;
     const nickname = document.getElementById("nicknameInput").value;
-    const profileImage = document.getElementById("profileImage").value;
+    const profileImageFile = document.getElementById("profileImage").files[0]; // 파일 선택
+
+    // JSON 데이터를 문자열로 직렬화하여 FormData에 추가
+    const formData = new FormData();
+    const updateData = JSON.stringify({ password, phone, nickname });
+    formData.append("update", new Blob([updateData], { type: "application/json" }));
+
+    // 이미지 파일을 FormData에 추가
+    if (profileImageFile) {
+        formData.append("profileImage", profileImageFile);
+    }
 
     fetch(`/api/users/${userId}`, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({password, phone, nickname, profileImage})
+        body: formData
     })
         .then(response => response.text())
         .then(() => {
-            alert("정보가 업데이트되었습니다.")
+            alert("정보가 업데이트되었습니다.");
             window.location.href = `/myPage/${userId}`;
-        });
+        })
+        .catch(error => console.error("오류 발생:", error));
 }
+
 
 function loadUserItems() {
     const itemList = document.getElementById("itemList");

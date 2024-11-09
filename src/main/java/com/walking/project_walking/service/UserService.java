@@ -12,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,7 @@ public class UserService {
     private final JavaMailSender mailSender;
     private final RecentPostRepository recentPostRepository;
     private final PostsRepository postsRepository;
+    private final ImageService imageService;
 
     // 회원 가입
     @Transactional
@@ -131,7 +133,7 @@ public class UserService {
 
     // 유저 정보 수정
     @Transactional
-    public ResponseEntity<String> updateById(Long id, UserUpdate update) {
+    public ResponseEntity<String> updateById(Long id, UserUpdate update, MultipartFile profileImage) {
         Users users = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -146,8 +148,9 @@ public class UserService {
         if (update.getNickname() != null && !update.getNickname().isEmpty()) {
             users.setNickname(update.getNickname());
         }
-        if (update.getProfileImage() != null && !update.getProfileImage().isEmpty()) {
-            users.setProfileImage(update.getProfileImage());
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String imageUrl = imageService.upload(profileImage);  // S3에 파일 업로드 후 URL 반환
+            users.setProfileImage(imageUrl);
         }
             userRepository.save(users);
             return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);

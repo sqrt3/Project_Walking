@@ -8,9 +8,11 @@ import com.walking.project_walking.repository.UserRepository;
 import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,11 +83,12 @@ public class UserController {
 
     // User 정보 수정
     @PutMapping("/users/{userId}")
-    public ResponseEntity<String> modifyUsersById(
+    public ResponseEntity<?> modifyUsersById(
             @PathVariable Long userId,
-            @RequestBody UserUpdate update
+            @RequestPart(value = "update", required = false) UserUpdate update,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
     ) {
-        return userService.updateById(userId, update);
+        return userService.updateById(userId, update, profileImage);
     }
 
     // User Soft Delete

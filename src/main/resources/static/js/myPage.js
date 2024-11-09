@@ -8,7 +8,7 @@ function loadUserInfo() {
             document.getElementById("nickname").innerText = data.nickname;
             document.getElementById("followerCount").innerText = data.followers;
             document.getElementById("followingCount").innerText = data.following;
-            document.getElementById("profileImage").src = data.profileImage;
+            document.getElementById("profileImg").src = data.profileImage;
             document.getElementById("userEmail").innerText = data.email;
             document.getElementById("userPhone").innerText = data.phone;
         });

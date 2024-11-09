@@ -155,7 +155,7 @@ function deleteAccount() {
         .then(response => {
             if (response.ok) {
                 alert("회원 탈퇴가 완료되었습니다.");
-                window.location.href = "/"; // 홈 페이지로 리다이렉트
+                window.location.href = "/auth/logout";
             } else {
                 alert("탈퇴 처리 중 오류가 발생했습니다.");
             }

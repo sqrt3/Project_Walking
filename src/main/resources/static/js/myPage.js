@@ -148,6 +148,25 @@ function loadRecentPosts() {
         });
 }
 
+function deleteAccount() {
+    fetch(`/api/users/${userId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("회원 탈퇴가 완료되었습니다.");
+                window.location.href = "/"; // 홈 페이지로 리다이렉트
+            } else {
+                alert("탈퇴 처리 중 오류가 발생했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("오류 발생:", error);
+            alert("탈퇴 처리 중 오류가 발생했습니다.");
+        });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     loadUserInfo();
     document.getElementById("followerLink").onclick = () => loadFollowerList();

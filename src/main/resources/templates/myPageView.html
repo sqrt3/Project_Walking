@@ -143,6 +143,28 @@
     </div>
 </div>
 
+<button class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">회원 탈퇴</button>
+
+<!-- 회원 탈퇴 모달 -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">회원 탈퇴</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>정말 회원 탈퇴를 하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-danger" onclick="deleteAccount()">회원 탈퇴</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <section class="recent-posts-section">
     <h4>최근 게시물</h4>
     <div id="recentPostsList"></div>

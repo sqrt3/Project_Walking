@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PointLogRepository pointLogRepository;
+    private final GoodsRepository goodsRepository;
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
     private final RecentPostRepository recentPostRepository;
@@ -193,12 +194,20 @@ public class UserService {
     }
 
     // 사용자 아이템 조회 서비스
-    public List<MyGoods> getGoods(Long userId) {
-        List<MyGoods> myGoods = myGoodsRepository.findByUserId(userId);
-        if (myGoods.isEmpty()) {
+    public List<UserGoodsDto> getGoods(Long userId) {
+        List<MyGoods> myGoodsList = myGoodsRepository.findByUserId(userId);
+        List<UserGoodsDto> myGoodsDtos = new ArrayList<>();
+
+        for (MyGoods myGoods : myGoodsList) {
+            String name = goodsRepository.findNameByGoodsId(myGoods.getGoodsId());
+            UserGoodsDto myGoodsDto = new UserGoodsDto(myGoods.getGoodsId(), name, myGoods.getAmount());
+            myGoodsDtos.add(myGoodsDto);
+        }
+
+        if (myGoodsDtos.isEmpty()) {
             System.out.println("등록된 아이템이 없습니다.");
         }
-        return myGoods;
+        return myGoodsDtos;
     }
 
     // 사용자 최근 게시물 조회

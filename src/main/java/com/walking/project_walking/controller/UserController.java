@@ -132,10 +132,10 @@ public class UserController {
 
     // 유저 아이템 조회
     @GetMapping("/users/{userId}/items")
-    public ResponseEntity<List<MyGoods>> getMyItems(
+    public ResponseEntity<List<UserGoodsDto>> getMyItems(
             @PathVariable Long userId
     ) {
-        List<MyGoods> myGoods = userService.getGoods(userId);
+        List<UserGoodsDto> myGoods = userService.getGoods(userId);
         return ResponseEntity.ok(myGoods);
     }
 

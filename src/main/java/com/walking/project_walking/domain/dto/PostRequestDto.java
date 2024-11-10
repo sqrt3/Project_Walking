@@ -5,6 +5,8 @@ import lombok.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,6 +27,5 @@ public class PostRequestDto {
     @NotBlank(message = "내용은 필수입니다.")
     private String content;
 
-    //private String postImage;
-    private String postImage;
+    private List<String> postImage;
 }

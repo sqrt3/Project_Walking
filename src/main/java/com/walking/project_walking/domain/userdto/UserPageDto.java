@@ -18,13 +18,13 @@ public class UserPageDto {
     private final Long followers;
     private final Long following;
 
-    public UserPageDto(Users user, Long followers, Long following) {
+    public UserPageDto(Users user, Long followers, Long following, String profileImage) {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.name = user.getName();
         this.phone = user.getPhone();
-        this.profileImage = user.getProfileImage();
+        this.profileImage = profileImage;
         this.followers = followers;
         this.following = following;
     }

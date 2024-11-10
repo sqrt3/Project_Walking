@@ -112,6 +112,10 @@ public class PostsService {
                 .boardId(postRequestDto.getBoardId())
                 .title(postRequestDto.getTitle())
                 .content(postRequestDto.getContent())
+                .viewCount(0)
+                .likes(0)
+                .weightValue(0)
+                .isDeleted(false)
                 .build();
 
         Posts savedPost = postsRepository.save(post);
@@ -168,6 +172,20 @@ public class PostsService {
         post.setIsDeleted(true);
         postsRepository.save(post);
 
+    }
+
+    //게시글 조회수를 가져오는 메소드
+    public int getViewCountByPostId(Long postId) {
+        return postsRepository.getViewCountByPostId(postId);
+    }
+
+    //특정 게시글의 조회수를 증가시키는 메소드
+
+    public void incrementViewCount(Long postId) {
+        if (!postsRepository.existsById(postId)) {
+            throw new IllegalArgumentException("해당 게시글이 없습니다.");
+        }
+        postsRepository.incrementViewCount(postId);
     }
 
 

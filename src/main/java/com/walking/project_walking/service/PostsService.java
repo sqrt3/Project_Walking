@@ -1,27 +1,46 @@
 package com.walking.project_walking.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.walking.project_walking.domain.PostImages;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.*;
 import com.walking.project_walking.repository.CommentsRepository;
 import com.walking.project_walking.repository.PostImagesRepository;
 import com.walking.project_walking.repository.PostsRepository;
 import com.walking.project_walking.repository.UserRepository;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
-@Builder
+
 @Service
 @RequiredArgsConstructor
+
+
 public class PostsService {
+
+    private final AmazonS3 amazonS3Client;
+
+
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
     private final PostImagesRepository postImagesRepository;
+
+    // S3 버킷 이름 주입
+    @Value("${aws.s3.bucket.name}")
+    private String bucketName;
 
     private static final double THRESHOLD = 100.0;
 
@@ -106,7 +125,7 @@ public class PostsService {
     }
 
     //게시글 생성
-    public PostCreateResponseDto savePost(PostRequestDto postRequestDto) {
+    public PostCreateResponseDto savePost(PostRequestDto postRequestDto, List<MultipartFile> files) throws IOException {
         Posts post = Posts.builder()
                 .userId(postRequestDto.getUserId())
                 .boardId(postRequestDto.getBoardId())
@@ -118,7 +137,21 @@ public class PostsService {
                 .isDeleted(false)
                 .build();
 
+        // 게시글 저장
         Posts savedPost = postsRepository.save(post);
+
+        // 이미지 업로드 및 URL 저장
+        List<PostImages> postImagesList = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String fileUrl = uploadFileToS3(file);
+                PostImages postImage = new PostImages(savedPost.getPostId(), fileUrl);
+                postImagesList.add(postImage);
+            }
+        }
+
+        // 이미지 저장
+        postImagesRepository.saveAll(postImagesList);
 
         return new PostCreateResponseDto(
                 savedPost.getPostId(),
@@ -133,8 +166,27 @@ public class PostsService {
         );
     }
 
-    //게시글 수정 (작성자만 가능)
-    public PostCreateResponseDto modifyPost(Long postId, Long userId, PostRequestDto postRequestDto) {
+    // S3에 파일을 업로드하는 메서드
+    public String uploadFileToS3(MultipartFile file) throws IOException {
+        try {
+            String uniqueFileName = "uploads/" + UUID.randomUUID() + "-" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, uniqueFileName, file.getInputStream(), metadata));
+
+            // S3에 업로드된 파일의 URL 반환
+            return amazonS3Client.getUrl(bucketName, uniqueFileName).toString();
+        } catch (IOException e) {
+            throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.", e);
+        }
+    }
+
+
+    //게시글 수정 (작성자만 가능, 기본 이미지 유지/삭제 가능)
+    public PostCreateResponseDto modifyPost(Long postId, Long userId, PostRequestDto postRequestDto,
+                                            List<MultipartFile> files, boolean deleteExistingImages) throws IOException {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
@@ -142,9 +194,30 @@ public class PostsService {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
 
+        // 기존 이미지 삭제 옵션 처리
+        if (deleteExistingImages) {
+            List<String> existingImageUrls = getPostImageUrls(postId);
+            for (String imageUrl : existingImageUrls) {
+                deleteFileFromS3(imageUrl);
+            }
+            postImagesRepository.deleteByPostId(postId);  // 데이터베이스에서 기존 이미지 정보 삭제
+        }
+
+        // 새 이미지 업로드 및 저장
+        if (files != null && !files.isEmpty()) {
+            List<PostImages> postImagesList = new ArrayList<>();
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String fileUrl = uploadFileToS3(file);
+                    PostImages postImage = new PostImages(postId, fileUrl);
+                    postImagesList.add(postImage);
+                }
+            }
+            postImagesRepository.saveAll(postImagesList);  // 데이터베이스에 새 이미지 정보 저장
+        }
+        // 게시글 수정 후 저장
         post.setTitle(postRequestDto.getTitle());
         post.setContent(postRequestDto.getContent());
-
         Posts updatedPost = postsRepository.save(post);
 
         return new PostCreateResponseDto(
@@ -160,6 +233,7 @@ public class PostsService {
         );
     }
 
+
     //게시글 삭제 (작성자만 가능)
     public void deletePost(Long postId, Long userId) {
         Posts post = postsRepository.findById(postId)
@@ -169,24 +243,48 @@ public class PostsService {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 
-        post.setIsDeleted(true);
-        postsRepository.save(post);
-
-    }
-
-    //게시글 조회수를 가져오는 메소드
-    public int getViewCountByPostId(Long postId) {
-        return postsRepository.getViewCountByPostId(postId);
-    }
-
-    //특정 게시글의 조회수를 증가시키는 메소드
-
-    public void incrementViewCount(Long postId) {
-        if (!postsRepository.existsById(postId)) {
-            throw new IllegalArgumentException("해당 게시글이 없습니다.");
+        // 게시글에 연관된 이미지 URL 가져오기 및 삭제
+        List<String> imageUrls = getPostImageUrls(postId);
+        for (String imageUrl : imageUrls) {
+            deleteFileFromS3(imageUrl);
         }
-        postsRepository.incrementViewCount(postId);
+        postImagesRepository.deleteByPostId(postId);  // 데이터베이스에서 이미지 정보 삭제
+
+        // 게시글 삭제
+        postsRepository.delete(post);
     }
 
+    // 게시글에 연관된 이미지 URL 가져오기
+    public List<String> getPostImageUrls(Long postId) {
+        return postImagesRepository.findImageUrlsByPostId(postId);
+    }
 
+    // S3에서 파일 삭제 메서드 (지정된 파일 삭제)
+    public void deleteFileFromS3(String fileUrl) {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);  // URL에서 파일 이름 추출
+        amazonS3Client.deleteObject(bucketName, "uploads/" + fileName);
+    }
+
+    // 데이터베이스에서 연관된 파일 삭제
+    public void deletePostImages(Long postId) {
+        postImagesRepository.deleteByPostId(postId);
+    }
+
+    public void savePostImages(Long postId, List<PostImages> postImagesList) {
+        postImagesRepository.saveAll(postImagesList);
+    }
+
+    //게시글 상세 조회
+
+    public PostResponseDto getPostById(Long postId) {
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+
+        Integer commentsNumber = commentsRepository.countCommentsByPostId(postId);
+        String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+        List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(postId);
+
+        return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
+    }
 }
+

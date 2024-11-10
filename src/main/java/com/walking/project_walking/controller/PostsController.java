@@ -101,7 +101,7 @@ public class PostsController {
     }
 
     //게시글 생성 (작성자만 가능)
-    @PostMapping
+    @PostMapping("/posts" )
     public ResponseEntity<PostCreateResponseDto> savePosts(@Valid @RequestBody PostRequestDto postRequestDto) {
         PostCreateResponseDto savedPost = postsService.savePost(postRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
@@ -109,7 +109,7 @@ public class PostsController {
 
 
     // 게시글 수정 (작성자만 가능)
-    @PutMapping("/{postId}")
+    @PutMapping("/posts/{postId}")
     public ResponseEntity<PostCreateResponseDto> modifyPosts(@PathVariable Long postId, @RequestParam Long userId, @Valid @RequestBody PostRequestDto postRequestDto) {
         PostCreateResponseDto updatedPost = postsService.modifyPost(postId, userId, postRequestDto);
         return ResponseEntity.ok(updatedPost);
@@ -117,7 +117,7 @@ public class PostsController {
 
 
     // 게시글 삭제 (작성자만 가능)
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/posts/{postId}")
     public ResponseEntity<String> deletePosts(@PathVariable Long postId, @RequestParam Long userId) {
         postsService.deletePost(postId, userId);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");

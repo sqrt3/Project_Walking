@@ -113,9 +113,46 @@ function loadUserItems() {
         .then(data => {
             data.forEach(item => {
                 const div = document.createElement("div");
-                div.textContent = `${item.name} x ${item.amount}`;
+                div.classList.add("item");
+
+                const itemInfo = document.createElement("div");
+                itemInfo.textContent = `${item.name} x ${item.amount}`;
+                div.appendChild(itemInfo);
+
+                const useButton = document.createElement("button");
+                useButton.textContent = "사용";
+                useButton.classList.add("use-button");
+
+                // 아이템 사용 확인 후 useItem 호출
+                useButton.onclick = () => {
+                    const confirmUse = confirm(`정말로 ${item.name}을(를) 사용하시겠습니까?`);
+                    if (confirmUse) {
+                        useItem(item.goodsId);
+                    }
+                };
+
+                div.appendChild(useButton);
                 itemList.appendChild(div);
             });
+        });
+}
+
+function useItem(goodsId) {
+    // 아이템 사용 API 호출
+    fetch(`/api/${userId}/items/${goodsId}/use`, {
+        method: "POST"
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("아이템을 사용했습니다!");
+                loadUserItems(); // 아이템 리스트를 다시 불러와 업데이트
+            } else {
+                alert("아이템 사용에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("아이템 사용 중 에러가 발생했습니다.");
         });
 }
 

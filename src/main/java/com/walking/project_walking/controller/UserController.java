@@ -1,6 +1,5 @@
 package com.walking.project_walking.controller;
 
-import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
@@ -137,6 +136,16 @@ public class UserController {
     ) {
         List<UserGoodsDto> myGoods = userService.getGoods(userId);
         return ResponseEntity.ok(myGoods);
+    }
+
+    // 아이템 사용
+    @PostMapping("/{userId}/items/{goodsId}/use")
+    public ResponseEntity<String> useItem(
+            @PathVariable Long userId,
+            @PathVariable Long goodsId
+    ) {
+        userService.useItem(userId, goodsId);
+        return ResponseEntity.ok("아이템 사용 완료");
     }
 
     // 최근 게시물 조회

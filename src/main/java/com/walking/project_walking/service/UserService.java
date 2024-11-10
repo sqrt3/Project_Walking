@@ -1,8 +1,9 @@
 package com.walking.project_walking.service;
 
-import com.walking.project_walking.domain.*;
+import com.walking.project_walking.domain.MyGoods;
+import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
-
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -153,8 +154,8 @@ public class UserService {
             String imageUrl = imageService.upload(profileImage);  // S3에 파일 업로드 후 URL 반환
             users.setProfileImage(imageUrl);
         }
-            userRepository.save(users);
-            return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
+        userRepository.save(users);
+        return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
     // 유저 soft delete
@@ -208,6 +209,25 @@ public class UserService {
             System.out.println("등록된 아이템이 없습니다.");
         }
         return myGoodsDtos;
+    }
+
+    // 아이템 사용
+    @Transactional
+    public void useItem(Long userId, Long goodsId) {
+        // userId와 goodsId로 MyGoods 조회
+        MyGoods myGoods = myGoodsRepository.findByUserIdAndGoodsId(userId, goodsId);
+
+        if (myGoods == null) {
+            throw new IllegalArgumentException("아이템이 존재하지 않습니다.");
+        }
+
+        if (myGoods.getAmount() > 1) {
+            // 아이템 수량이 2개 이상일 때 수량 감소
+            myGoods.setAmount(myGoods.getAmount() - 1);
+        } else {
+            // 아이템 수량이 1개 이하일 때 삭제
+            myGoodsRepository.delete(myGoods);
+        }
     }
 
     // 사용자 최근 게시물 조회

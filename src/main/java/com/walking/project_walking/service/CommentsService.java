@@ -6,6 +6,8 @@ import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 
@@ -78,6 +80,18 @@ public class CommentsService {
                 updatedComment.getCreatedAt(),
                 updatedComment.getIsDeleted());
     }
+
+    // 최신순 댓글 조회
+    public List<Comments> getCommentsByPostIdLatest(Long postId) {
+        return commentRepository.findCommentsByPostIdOrderByCreatedAtDesc(postId);
+    }
+
+    // 등록순 댓글 조회
+    public List<Comments> getCommentsByPostIdOldest(Long postId) {
+        return commentRepository.findCommentsByPostIdOrderByCreatedAtAsc(postId);
+    }
+
+
 
 }
 

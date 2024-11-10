@@ -70,10 +70,12 @@ function performSearch(boardId, page = 1) {
 }
 
 function updateBoardContent(boardId) {
-    fetchPopularPosts(boardId);
+    if (!isNoticeBoard) {
+        fetchPopularPosts(boardId); // 인기 게시글 요청
+        fetchNotices(); // 공지사항 요청
+    }
     fetchRecentPosts(boardId);
     updatePagination(boardId);
-    fetchNotices();
 }
 
 function fetchNotices() {
@@ -84,15 +86,19 @@ function fetchNotices() {
             noticeList.innerHTML = '';
             data.forEach(notice => {
                 const li = document.createElement('li');
+                // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
                 li.innerHTML = `
-                    <h4>${notice.title}</h4>
-                    <p>${notice.content}</p>
-                    <span>작성일: ${notice.createdAt}</span>`;
+                    <a href="#" style="display: block; text-decoration: none; color: inherit;">
+                        <h4>${notice.title}</h4>
+                        <p>${notice.content}</p>
+                        <span>작성일: ${notice.createdAt}</span>
+                    </a>`;
                 noticeList.appendChild(li);
             });
         })
         .catch(error => handleError(error, '공지사항을 가져오는 중에 문제가 발생했습니다.'));
 }
+
 
 function fetchPopularPosts(boardId) {
     fetch(`/api/posts/hot/${boardId}`)
@@ -107,19 +113,23 @@ function fetchPopularPosts(boardId) {
             if (data) {
                 const popularPosts = document.getElementById('popular-posts');
                 const imageUrl = data.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
+                // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
                 popularPosts.innerHTML = `
-                    <h4>${data.title}</h4>
-                    <p>${data.content}</p>
-                    <img src= "${imageUrl}" alt="Placeholder Image">
-                    <p>작성일: ${data.createdAt}</p>
-                    <p>조회수: ${data.viewCount}</p>
-                    <p>좋아요: ${data.likes}</p>
-                    <p>댓글 수: ${data.commentsCount}</p>
-                    <p>작성자: ${data.nickname}</p>`;
+                    <a href="#" style="display: block; text-decoration: none; color: inherit;">
+                        <h4>${data.title}</h4>
+                        <p>${data.content}</p>
+                        <img src="${imageUrl}" alt="Thumbnail">
+                        <p>작성일: ${data.createdAt}</p>
+                        <p>조회수: ${data.viewCount}</p>
+                        <p>좋아요: ${data.likes}</p>
+                        <p>댓글 수: ${data.commentsCount}</p>
+                        <p>작성자: ${data.nickname}</p>
+                    </a>`;
             }
         })
         .catch(error => handleError(error, '인기 게시물을 가져오는 중에 문제가 발생했습니다.'));
 }
+
 
 function fetchRecentPosts(boardId, page = 1) {
     fetch(`/api/boards/posts?boardId=${boardId}&page=${page}`)
@@ -209,18 +219,22 @@ function displayPosts(posts) {
     posts.forEach(post => {
         const li = document.createElement('li');
         const imageUrl = post.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
+        // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
         li.innerHTML = `
-            <h4>${post.title}</h4>
-            <p>${post.content}</p>
-            <img src= "${imageUrl}" alt="Placeholder Image">
-            <p>작성일: ${post.createdAt}</p>
-            <p>조회수: ${post.viewCount}</p>
-            <p>좋아요: ${post.likes}</p>
-            <p>댓글 수: ${post.commentsCount}</p>
-            <p>작성자: ${post.nickname}</p>`;
+            <a href="#" style="display: block; text-decoration: none; color: inherit;">
+                <h4>${post.title}</h4>
+                <p>${post.content}</p>
+                <img src="${imageUrl}" alt="Thumbnail">
+                <p>작성일: ${post.createdAt}</p>
+                <p>조회수: ${post.viewCount}</p>
+                <p>좋아요: ${post.likes}</p>
+                <p>댓글 수: ${post.commentsCount}</p>
+                <p>작성자: ${post.nickname}</p>
+            </a>`;
         postList.appendChild(li);
     });
 }
+
 
 function displayNoPostsMessage(message) {
     const postList = document.getElementById('post-list');

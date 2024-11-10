@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.walking.project_walking.domain.PostImages;
+import com.walking.project_walking.domain.PostNavigationDto;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.*;
 import com.walking.project_walking.repository.CommentsRepository;
@@ -18,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -285,6 +283,43 @@ public class PostsService {
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(postId);
 
         return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
+    }
+
+    //이전 글 다음 글 이동
+
+    public PostNavigationDto getPostWithNavigation(Long postId) {
+
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        Long boardId = post.getBoardId(); // boardId 가져오기
+
+        Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+        String postNickname = userRepository.getNicknameByUserId(post.getUserId());
+        List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+
+        PostResponseDto currentPost = PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
+
+        // 이전 글 조회
+        PostResponseDto previousPost = postsRepository.findPreviousPost(postId, boardId)
+                .map(p -> PostResponseDto.fromEntity(
+                        p,
+                        commentsRepository.countCommentsByPostId(p.getPostId()),
+                        userRepository.getNicknameByUserId(p.getUserId()),
+                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
+                ))
+                .orElse(null);
+
+        // 다음 글 조회
+        PostResponseDto nextPost = postsRepository.findNextPost(postId, boardId)
+                .map(p -> PostResponseDto.fromEntity(
+                        p,
+                        commentsRepository.countCommentsByPostId(p.getPostId()),
+                        userRepository.getNicknameByUserId(p.getUserId()),
+                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
+                ))
+                .orElse(null);
+
+        return new PostNavigationDto(currentPost, previousPost, nextPost);
     }
 }
 

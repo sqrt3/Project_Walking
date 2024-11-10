@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostsRepository extends JpaRepository<Posts, Long> {
@@ -32,9 +33,9 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             "(:content IS NULL OR p.content LIKE %:content%) AND " +
             "(:userId IS NULL OR p.userId = :userId)")
     long countBySearchCriteria(@Param("boardId") Long boardId,
-                                @Param("title") String title,
-                                @Param("content") String content,
-                                @Param("userId") Long userId);
+                               @Param("title") String title,
+                               @Param("content") String content,
+                               @Param("userId") Long userId);
 
     @Query("SELECT p.viewCount FROM Posts p WHERE p.postId = :postId")
     int getViewCountByPostId(Long postId);
@@ -47,4 +48,17 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     // postId로 제목 찾기
     @Query("SELECT p.title FROM Posts p WHERE p.postId = :postId")
     String findTitleByPostId(@Param("postId") Long postId);
+
+    //이전 게시글 찾기
+    @Query("SELECT p FROM Posts p WHERE p.postId < :postId AND p.boardId = :boardId ORDER BY p.postId DESC")
+    Optional<Posts> findPreviousPost(@Param("postId") Long postId, @Param("boardId") Long boardId);
+
+    //다음 게시글 찾기
+    @Query("SELECT p FROM Posts p WHERE p.postId > :postId AND p.boardId = :boardId ORDER BY p.postId ASC")
+    Optional<Posts> findNextPost(@Param("postId") Long postId, @Param("boardId") Long boardId);
+
+
 }
+
+
+

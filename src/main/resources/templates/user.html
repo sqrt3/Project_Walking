@@ -62,7 +62,7 @@
     let userId = [[${user.getId()}]];
 
     $.ajax({
-      url: '/api/posts/userId',
+      url: '/api/posts',
       type: 'GET',
       data: { userId: userId },
       success: function(response) {

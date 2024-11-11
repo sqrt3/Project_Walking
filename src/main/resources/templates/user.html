@@ -29,7 +29,7 @@
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">게시물 수</p>
-        <p class="mb-1 h5">0</p>
+        <p class="mb-1 h5" id="post-count">0</p>
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">팔로워 수</p>
@@ -56,3 +56,27 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    let userId = [[${user.getId()}]];
+
+    $.ajax({
+      url: '/api/posts/userId',
+      type: 'GET',
+      data: { userId: userId },
+      success: function(response) {
+        if (response && Array.isArray(response)) {
+          let postCount = response.length;
+          $('#post-count').text(postCount);
+        } else {
+          $('#post-count').text('0');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("게시물 수를 가져오는 데 실패했습니다:", error);
+        $('#post-count').text('0');
+      }
+    });
+  });
+</script>

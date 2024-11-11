@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,6 @@ public class UserService {
     private final FollowRepository followRepository;
     private final PointLogRepository pointLogRepository;
     private final MyGoodsRepository myGoodsRepository;
-    private final JavaMailSender mailSender;
     private final RecentPostRepository recentPostRepository;
     private final PostsRepository postsRepository;
 
@@ -49,57 +49,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // 비밀번호 재설정 이메일 전송
-    @Transactional
-    public void sendPasswordRecoveryEmail(String email) {
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        String token = generateToken(user.getEmail());
-
-        String recoveryLink = "http://yourdomain.com/auth/reset-password?token=" + token;
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
-        message.setSubject("비밀번호 재설정");
-        message.setText("비밀번호를 재설정하려면 아래 링크를 클릭하세요:\n" + recoveryLink);
-        mailSender.send(message);
+    // 이메일로 사용자 찾기
+    public Optional<Users> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
-    // UUID로 이메일 재설정 주소용 토큰 생성
-    private String generateToken(String email) {
-        String uuid = UUID.randomUUID().toString();
-        long expiryTime = System.currentTimeMillis() + 1000 * 60 * 60;
-        String token = uuid + ":" + email + ":" + expiryTime;
-        return token;
-    }
-
-    public boolean validateToken(String token, String email) {
-        try {
-            // 토큰을 ":"으로 분리
-            String[] parts = token.split(":");
-            if (parts.length != 3) {
-                return false; // 잘못된 토큰 형식
-            }
-
-            String uuid = parts[0];      // UUID
-            String tokenEmail = parts[1]; // 이메일
-            long expiryTime = Long.parseLong(parts[2]); // 만료 시간
-
-            // 토큰 만료 시간 검사
-            if (expiryTime < System.currentTimeMillis()) {
-                return false; // 토큰이 만료됨
-            }
-
-            // 이메일 검사
-            if (!email.equals(tokenEmail)) {
-                return false; // 이메일 불일치
-            }
-
-            return true; // 모든 검증을 통과하면 유효한 토큰
-        } catch (Exception e) {
-            return false; // 예외가 발생하면 유효하지 않은 토큰으로 간주
-        }
+    // 비밀번호 업데이트
+    public void updatePassword(Users user, String newPassword) {
+        String encodedPassword = encoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
     }
 
     // 이메일 등록 여부 확인
@@ -111,7 +70,6 @@ public class UserService {
     public boolean checkNicknameExists(String nickname) {
         return userRepository.existsByNickname(nickname);
     }
-
 
     // 유저 정보 전체 조회
     public List<Users> findAll() {

@@ -4,12 +4,12 @@ import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
-import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.exception.UserNotFoundException;
+import com.walking.project_walking.service.PasswordResetService;
 import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,8 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> createUser(@ModelAttribute UserSignUpDto request) {
@@ -54,30 +53,24 @@ public class UserController {
         return ResponseEntity.ok("사용 가능한 닉네임입니다.");
     }
 
+    // 비밀번호 재설정
     @PostMapping("/auth/request-password-reset")
-    public ResponseEntity<String> recoverPassword(@RequestParam String email) {
-        boolean exists = userService.checkEmailExists(email);
-        if (!exists) {
-            return ResponseEntity.badRequest().body("등록된 이메일이 아닙니다.");
+    public ResponseEntity<Map<String, String>> requestPasswordReset(@RequestBody PasswordResetRequest passwordResetRequest) {
+        String email = passwordResetRequest.getEmail();
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String newPassword = passwordResetService.resetPassword(email);
+
+            response.put("message", "새로운 비밀번호가 입력하신 메일로 전송되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (UserNotFoundException e) {
+            response.put("message", "이메일을 찾을 수 없습니다");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        userService.sendPasswordRecoveryEmail(email);
-
-        return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
     }
-
-//    @PostMapping("api/auth/reset-password")
-//    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-//        try {
-//            Users user = userService.findUserByToken(resetPasswordDto.getToken());
-//            user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
-//            userRepository.save(user);
-//            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
-//        }
-//    }
 
     // User 정보 수정
     @PutMapping("/users/{userId}")

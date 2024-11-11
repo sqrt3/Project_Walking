@@ -1,15 +1,14 @@
 package com.walking.project_walking.service;
 
+import com.walking.project_walking.domain.LikeLog;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.*;
-import com.walking.project_walking.repository.CommentsRepository;
-import com.walking.project_walking.repository.PostImagesRepository;
-import com.walking.project_walking.repository.PostsRepository;
-import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.repository.*;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +21,7 @@ public class PostsService {
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
     private final PostImagesRepository postImagesRepository;
+    private final UserLikeLogRepository userLikeLogRepository;
 
     private static final double THRESHOLD = 100.0;
 
@@ -170,5 +170,36 @@ public class PostsService {
 
     }
 
+    // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
+    public boolean hasLiked(Long userId, Long postId) {
+        return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();
+    }
+
+    // 좋아요 버튼을 클릭 시
+    @Transactional
+    public void likePost(Long userId, Long postId) {
+        // 좋아요 로그 확인
+        boolean hasLiked = hasLiked(userId, postId);
+
+        // 게시글 조회
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if (hasLiked) {
+            // 유저가 이미 좋아요를 눌렀다면, 좋아요 로그 삭제하고 게시글 좋아요 수 감소
+            userLikeLogRepository.deleteByUserIdAndPostId(userId, postId);  // 좋아요 로그 삭제
+            post.setLikes(post.getLikes() - 1);  // 게시글 좋아요 수 감소
+        } else {
+            // 유저가 좋아요를 안 눌렀다면, 새로운 좋아요 로그 추가하고 게시글 좋아요 수 증가
+            LikeLog newLikeLog = new LikeLog();
+            newLikeLog.setUserId(userId);
+            newLikeLog.setPostId(postId);
+            userLikeLogRepository.save(newLikeLog);  // 새로운 좋아요 로그 추가
+            post.setLikes(post.getLikes() + 1);  // 게시글 좋아요 수 증가
+        }
+
+        // 게시글 정보 저장
+        postsRepository.save(post);  // 게시글 저장
+    }
 
 }

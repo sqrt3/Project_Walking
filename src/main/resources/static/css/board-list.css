@@ -107,10 +107,11 @@ header div {
     color: #333;
 }
 
-/* 페이징 스타일 */
 .pagination {
     margin-top: 20px;
+    justify-content: center;
     text-align: center;
+    clear: both;  /* 이전 요소들이 끝난 후 배치 */
 }
 
 .pagination a {
@@ -124,17 +125,4 @@ header div {
 
 .pagination a:hover {
     background-color: #45a049;
-}
-
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        position: relative;
-        border-right: none;
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
 }

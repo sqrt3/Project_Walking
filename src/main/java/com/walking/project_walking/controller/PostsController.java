@@ -123,5 +123,10 @@ public class PostsController {
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 
+    @PostMapping("/likes")
+    public ResponseEntity<String> likePost (@RequestParam Long userId, @RequestParam Long postId) {
+        postsService.likePost(userId, postId);
+        return ResponseEntity.ok("좋아요 상태가 변경되었습니다.");
+    }
 
 }

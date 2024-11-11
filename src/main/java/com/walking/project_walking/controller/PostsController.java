@@ -85,7 +85,7 @@ public class PostsController {
     }
 
     // 유저가 작성한 게시글 목록 보기
-    @GetMapping("/userId")
+    @GetMapping
     public ResponseEntity<List<PostSummuryResponseDto>> getUserPosts(@RequestParam Long userId) {
         if (!userService.existsById(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -122,5 +122,6 @@ public class PostsController {
         postsService.deletePost(postId, userId);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
+
 
 }

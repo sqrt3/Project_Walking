@@ -40,18 +40,18 @@ public class UserController {
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
         boolean exists = userService.checkEmailExists(email);
         if (exists) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 이메일 입니다.\"}");
         }
-        return ResponseEntity.ok("사용 가능한 이메일입니다.");
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 이메일입니다.\"}");
     }
 
     @GetMapping("/auth/check-nickname")
     public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
         boolean exists = userService.checkNicknameExists(nickname);
         if (exists) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 닉네임입니다.");
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 닉네임 입니다.\"}");
         }
-        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 닉네임 입니다.\"}");
     }
 
     @PostMapping("/auth/request-password-reset")

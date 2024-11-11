@@ -26,5 +26,4 @@ public class UserUpdate {
 
     @Size(min = 1, max = 15, message = "닉네임은 1자에서 15자 사이여야 합니다.")
     private String nickname;
-    private String profileImage;
 }

@@ -1,18 +1,18 @@
 package com.walking.project_walking.domain;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -82,12 +82,16 @@ public class Users implements UserDetails {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Builder.Default
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
-    private String profileImage;
+    private String profileImage = "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
+
+    @Column(name = "title_id")
+    private Integer titleId;
 
     // 팔로우 관련 필드
     @OneToMany(mappedBy = "followingUser")
@@ -167,19 +171,6 @@ public class Users implements UserDetails {
         this.userExp = userExp;
         this.point = point;
         this.isActive = isActive;
-        this.profileImage = profileImage;
-    }
-
-    // 패스워드, 전화번호, 닉네임만 변경 가능 (나머지는 불가능)
-    public void update(
-            String password,
-            String phone,
-            String nickname,
-            String profileImage
-    ) {
-        this.password = password;
-        this.phone = phone;
-        this.nickname = nickname;
         this.profileImage = profileImage;
     }
 

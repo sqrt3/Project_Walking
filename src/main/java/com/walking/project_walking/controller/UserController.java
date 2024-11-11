@@ -1,6 +1,5 @@
 package com.walking.project_walking.controller;
 
-import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,18 +40,18 @@ public class UserController {
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
         boolean exists = userService.checkEmailExists(email);
         if (exists) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 이메일 입니다.\"}");
         }
-        return ResponseEntity.ok("사용 가능한 이메일입니다.");
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 이메일입니다.\"}");
     }
 
     @GetMapping("/auth/check-nickname")
     public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
         boolean exists = userService.checkNicknameExists(nickname);
         if (exists) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 닉네임입니다.");
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 닉네임 입니다.\"}");
         }
-        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 닉네임 입니다.\"}");
     }
 
     @PostMapping("/auth/request-password-reset")
@@ -81,11 +81,12 @@ public class UserController {
 
     // User 정보 수정
     @PutMapping("/users/{userId}")
-    public ResponseEntity<String> modifyUsersById(
+    public ResponseEntity<?> modifyUsersById(
             @PathVariable Long userId,
-            @RequestBody UserUpdate update
+            @RequestPart(value = "update", required = false) UserUpdate update,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
     ) {
-        return userService.updateById(userId, update);
+        return userService.updateById(userId, update, profileImage);
     }
 
     // User Soft Delete
@@ -130,11 +131,21 @@ public class UserController {
 
     // 유저 아이템 조회
     @GetMapping("/users/{userId}/items")
-    public ResponseEntity<List<MyGoods>> getMyItems(
+    public ResponseEntity<List<UserGoodsDto>> getMyItems(
             @PathVariable Long userId
     ) {
-        List<MyGoods> myGoods = userService.getGoods(userId);
+        List<UserGoodsDto> myGoods = userService.getGoods(userId);
         return ResponseEntity.ok(myGoods);
+    }
+
+    // 아이템 사용
+    @PostMapping("/{userId}/items/{goodsId}/use")
+    public ResponseEntity<String> useItem(
+            @PathVariable Long userId,
+            @PathVariable Long goodsId
+    ) {
+        userService.useItem(userId, goodsId);
+        return ResponseEntity.ok("아이템 사용 완료");
     }
 
     // 최근 게시물 조회

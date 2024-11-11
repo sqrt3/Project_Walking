@@ -1,7 +1,6 @@
 package com.walking.project_walking.domain.followdto;
 
 import com.walking.project_walking.domain.Follow;
-import com.walking.project_walking.domain.Users;
 import lombok.*;
 
 @RequiredArgsConstructor

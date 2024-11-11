@@ -1,8 +1,9 @@
 package com.walking.project_walking.service;
 
-import com.walking.project_walking.domain.*;
+import com.walking.project_walking.domain.MyGoods;
+import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
-
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,10 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PointLogRepository pointLogRepository;
+    private final GoodsRepository goodsRepository;
     private final MyGoodsRepository myGoodsRepository;
     private final JavaMailSender mailSender;
     private final RecentPostRepository recentPostRepository;
     private final PostsRepository postsRepository;
+    private final ImageService imageService;
 
     // 회원 가입
     @Transactional
@@ -131,13 +135,14 @@ public class UserService {
 
     // 유저 정보 수정
     @Transactional
-    public ResponseEntity<String> updateById(Long id, UserUpdate update) {
+    public ResponseEntity<String> updateById(Long id, UserUpdate update, MultipartFile profileImage) {
         Users users = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         // 클라이언트가 보낸 데이터가 있을 때만 해당 필드를 업데이트
         if (update.getPassword() != null && !update.getPassword().isEmpty()) {
-            users.setPassword(update.getPassword());
+            String encodedPassword = encoder.encode(update.getPassword());
+            users.setPassword(encodedPassword);
         }
         if (update.getPhone() != null && !update.getPhone().isEmpty()) {
             users.setPhone(update.getPhone());
@@ -145,11 +150,12 @@ public class UserService {
         if (update.getNickname() != null && !update.getNickname().isEmpty()) {
             users.setNickname(update.getNickname());
         }
-        if (update.getProfileImage() != null && !update.getProfileImage().isEmpty()) {
-            users.setProfileImage(update.getProfileImage());
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String imageUrl = imageService.upload(profileImage);  // S3에 파일 업로드 후 URL 반환
+            users.setProfileImage(imageUrl);
         }
-            userRepository.save(users);
-            return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
+        userRepository.save(users);
+        return new ResponseEntity<>("수정이 완료되었습니다 :)", HttpStatus.OK);
     }
 
     // 유저 soft delete
@@ -189,12 +195,39 @@ public class UserService {
     }
 
     // 사용자 아이템 조회 서비스
-    public List<MyGoods> getGoods(Long userId) {
-        List<MyGoods> myGoods = myGoodsRepository.findByUserId(userId);
-        if (myGoods.isEmpty()) {
+    public List<UserGoodsDto> getGoods(Long userId) {
+        List<MyGoods> myGoodsList = myGoodsRepository.findByUserId(userId);
+        List<UserGoodsDto> myGoodsDtos = new ArrayList<>();
+
+        for (MyGoods myGoods : myGoodsList) {
+            String name = goodsRepository.findNameByGoodsId(myGoods.getGoodsId());
+            UserGoodsDto myGoodsDto = new UserGoodsDto(myGoods.getGoodsId(), name, myGoods.getAmount());
+            myGoodsDtos.add(myGoodsDto);
+        }
+
+        if (myGoodsDtos.isEmpty()) {
             System.out.println("등록된 아이템이 없습니다.");
         }
-        return myGoods;
+        return myGoodsDtos;
+    }
+
+    // 아이템 사용
+    @Transactional
+    public void useItem(Long userId, Long goodsId) {
+        // userId와 goodsId로 MyGoods 조회
+        MyGoods myGoods = myGoodsRepository.findByUserIdAndGoodsId(userId, goodsId);
+
+        if (myGoods == null) {
+            throw new IllegalArgumentException("아이템이 존재하지 않습니다.");
+        }
+
+        if (myGoods.getAmount() > 1) {
+            // 아이템 수량이 2개 이상일 때 수량 감소
+            myGoods.setAmount(myGoods.getAmount() - 1);
+        } else {
+            // 아이템 수량이 1개 이하일 때 삭제
+            myGoodsRepository.delete(myGoods);
+        }
     }
 
     // 사용자 최근 게시물 조회

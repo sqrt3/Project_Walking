@@ -89,7 +89,7 @@ public class PostsService {
 
     // 특정 유저가 작성한 게시글을 조회하는 메소드
     public List<PostSummuryResponseDto> getPostsByUserId(Long userId) {
-        List<Posts> posts = postsRepository.findByUserId(userId);
+        List<Posts> posts = postsRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return posts.stream()
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());

@@ -8,7 +8,7 @@ function loadUserInfo() {
             document.getElementById("nickname").innerText = data.nickname;
             document.getElementById("followerCount").innerText = data.followers;
             document.getElementById("followingCount").innerText = data.following;
-            document.getElementById("profileImage").src = data.profileImage;
+            document.getElementById("profileImg").src = data.profileImage;
             document.getElementById("userEmail").innerText = data.email;
             document.getElementById("userPhone").innerText = data.phone;
         });
@@ -77,18 +77,33 @@ function loadFollowingList() {
 }
 
 function updateUserInfo() {
+    const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value;
-    const nickname = document.getElementById("nickname").value;
+    const nickname = document.getElementById("nicknameInput").value;
+    const profileImageFile = document.getElementById("profileImage").files[0]; // 파일 선택
+
+    // JSON 데이터를 문자열로 직렬화하여 FormData에 추가
+    const formData = new FormData();
+    const updateData = JSON.stringify({password, phone, nickname});
+    formData.append("update", new Blob([updateData], {type: "application/json"}));
+
+    // 이미지 파일을 FormData에 추가
+    if (profileImageFile) {
+        formData.append("profileImage", profileImageFile);
+    }
 
     fetch(`/api/users/${userId}`, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({phone, nickname})
+        body: formData
     })
         .then(response => response.text())
-        .then(() => alert("정보가 업데이트되었습니다."));
-        window.location.href = `/myPage/${userId}`;
+        .then(() => {
+            alert("정보가 업데이트되었습니다.");
+            window.location.href = `/myPage/${userId}`;
+        })
+        .catch(error => console.error("오류 발생:", error));
 }
+
 
 function loadUserItems() {
     const itemList = document.getElementById("itemList");
@@ -98,9 +113,46 @@ function loadUserItems() {
         .then(data => {
             data.forEach(item => {
                 const div = document.createElement("div");
-                div.textContent = `${item.name} x ${item.amount}`;
+                div.classList.add("item");
+
+                const itemInfo = document.createElement("div");
+                itemInfo.textContent = `${item.name} x ${item.amount}`;
+                div.appendChild(itemInfo);
+
+                const useButton = document.createElement("button");
+                useButton.textContent = "사용";
+                useButton.classList.add("use-button");
+
+                // 아이템 사용 확인 후 useItem 호출
+                useButton.onclick = () => {
+                    const confirmUse = confirm(`정말로 ${item.name}을(를) 사용하시겠습니까?`);
+                    if (confirmUse) {
+                        useItem(item.goodsId);
+                    }
+                };
+
+                div.appendChild(useButton);
                 itemList.appendChild(div);
             });
+        });
+}
+
+function useItem(goodsId) {
+    // 아이템 사용 API 호출
+    fetch(`/api/${userId}/items/${goodsId}/use`, {
+        method: "POST"
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("아이템을 사용했습니다!");
+                loadUserItems(); // 아이템 리스트를 다시 불러와 업데이트
+            } else {
+                alert("아이템 사용에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("아이템 사용 중 에러가 발생했습니다.");
         });
 }
 
@@ -112,7 +164,15 @@ function loadPointLogs() {
         .then(data => {
             data.forEach(log => {
                 const div = document.createElement("div");
-                div.textContent = log.description;
+
+                const descriptionSpan = document.createElement("span");
+                descriptionSpan.textContent = log.description;
+                div.appendChild(descriptionSpan);
+
+                const amountSpan = document.createElement("span");
+                amountSpan.textContent = log.amount;
+                div.appendChild(amountSpan);
+
                 pointLogs.appendChild(div);
             });
         });
@@ -133,11 +193,39 @@ function loadRecentPosts() {
         });
 }
 
+function deleteAccount() {
+    fetch(`/api/users/${userId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("회원 탈퇴가 완료되었습니다.");
+                window.location.href = "/auth/logout";
+            } else {
+                alert("탈퇴 처리 중 오류가 발생했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("오류 발생:", error);
+            alert("탈퇴 처리 중 오류가 발생했습니다.");
+        });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     loadUserInfo();
     document.getElementById("followerLink").onclick = () => loadFollowerList();
     document.getElementById("followingLink").onclick = () => loadFollowingList();
-    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId));
-    $('#myPointLogsModal').on('shown.bs.modal', () => loadPointLogs(userId));
+
+    document.getElementById("myItemsModal").addEventListener("shown.bs.modal", () => {
+        console.log("My Items Modal shown");
+        loadUserItems(userId);
+    });
+
+    document.getElementById("myPointLogsModal").addEventListener("shown.bs.modal", () => {
+        console.log("My Point Logs Modal shown");
+        loadPointLogs(userId);
+    });
+
     loadRecentPosts(userId);
 });

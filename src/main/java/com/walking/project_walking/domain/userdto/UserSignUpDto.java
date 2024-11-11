@@ -59,4 +59,5 @@ public class UserSignUpDto {
 
     private Boolean isActive;
 
+    private String profileImage;
 }

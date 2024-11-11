@@ -85,7 +85,7 @@ public class PostsController {
     }
 
     // 유저가 작성한 게시글 목록 보기
-    @GetMapping("/userId")
+    @GetMapping
     public ResponseEntity<List<PostSummuryResponseDto>> getUserPosts(@RequestParam Long userId) {
         if (!userService.existsById(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -121,6 +121,12 @@ public class PostsController {
     public ResponseEntity<String> deletePosts(@PathVariable Long postId, @RequestParam Long userId) {
         postsService.deletePost(postId, userId);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
+    }
+
+    @PostMapping("/likes")
+    public ResponseEntity<String> likePost (@RequestParam Long userId, @RequestParam Long postId) {
+        postsService.likePost(userId, postId);
+        return ResponseEntity.ok("좋아요 상태가 변경되었습니다.");
     }
 
 }

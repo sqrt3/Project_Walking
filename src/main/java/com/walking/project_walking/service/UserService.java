@@ -178,7 +178,6 @@ public class UserService {
         return new UserDetailDto(user.getNickname(), user.getProfileImage(), followerCount, followingCount);
     }
 
-    private final String defaultProfileImageUrl = "https://walkingproject.s3.ap-northeast-2.amazonaws.com/95360af5-04.jpg";
     // mypage에서 정보 반환
     public UserPageDto getInfo(Long userId) {
         Users users = userRepository.findById(userId)
@@ -187,9 +186,7 @@ public class UserService {
         Long followerCount = followRepository.countFollowers(userId);
         Long followingCount = followRepository.countFollowing(userId);
 
-        String profileImage = users.getProfileImage() != null? users.getProfileImage() : defaultProfileImageUrl;
-
-        return new UserPageDto(users, followerCount, followingCount, profileImage);
+        return new UserPageDto(users, followerCount, followingCount);
     }
 
     // 사용자 포인트 조회 서비스

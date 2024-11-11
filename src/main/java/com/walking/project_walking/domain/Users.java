@@ -82,8 +82,9 @@ public class Users implements UserDetails {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Builder.Default
     @Column(name = "profile_image", length = 256) // url 형태로 받아와도 되는 형태 (VARCHAR 이므로)
-    private String profileImage;
+    private String profileImage = "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

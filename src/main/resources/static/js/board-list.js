@@ -76,6 +76,20 @@ function updateBoardContent(boardId) {
     } else {
         const noticeSection = document.querySelector('.notice-section');
         const popularSection = document.querySelector('.popular-post');
+
+        const nicknameOption = document.querySelector('#searchCategory option[value="nickname"]');
+        if (Number(boardId) === 3) {
+            if (nicknameOption) nicknameOption.remove();
+        } else {
+            if (!nicknameOption) {
+                const searchCategory = document.getElementById('searchCategory');
+                const option = document.createElement('option');
+                option.value = "nickname";
+                option.textContent = "글쓴이";
+                searchCategory.appendChild(option);
+            }
+        }
+
         if (!noNotice.includes(Number(boardId))) {
             if (noticeSection) noticeSection.style.display = 'block';
             if (popularSection) popularSection.style.display = 'block';

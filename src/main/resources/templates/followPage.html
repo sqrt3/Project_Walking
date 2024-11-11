@@ -143,7 +143,7 @@
 
         function loadUserPosts() {
             $.ajax({
-                url: `/api/posts/userId?userId=${followingId}`, // 유저 ID에 맞게 게시글 가져오기
+                url: `/api/posts?userId=${followingId}`, // 유저 ID에 맞게 게시글 가져오기
                 type: 'GET',
                 success: function (data) {
                     const postList = $('#postList');

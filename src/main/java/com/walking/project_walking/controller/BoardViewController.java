@@ -19,7 +19,6 @@ import java.util.List;
 public class BoardViewController {
     private final UserService userService;
     private final UserRepository userRepository;
-    private static final List<Long> NoNoticeBoards = Arrays.asList(1L, 2L, 3L);
 
     @GetMapping("/boardList")
     public String getBoard2(@RequestParam(defaultValue = "1") Long boardId,
@@ -36,7 +35,6 @@ public class BoardViewController {
         }
 
         model.addAttribute("boardId", boardId);
-        model.addAttribute("noNotice", NoNoticeBoards.contains(boardId));
         model.addAttribute("user", user);
         model.addAttribute("userNickname", userNickname);
         return "board-list";

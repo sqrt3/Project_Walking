@@ -37,7 +37,7 @@ public class PostsService {
     private final PostImagesRepository postImagesRepository;
 
     // S3 버킷 이름 주입
-    @Value("${aws.s3.bucket.name}")
+    @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
     private static final double THRESHOLD = 100.0;
@@ -322,4 +322,3 @@ public class PostsService {
         return new PostNavigationDto(currentPost, previousPost, nextPost);
     }
 }
-

@@ -164,7 +164,15 @@ function loadPointLogs() {
         .then(data => {
             data.forEach(log => {
                 const div = document.createElement("div");
-                div.textContent = log.description;
+
+                const descriptionSpan = document.createElement("span");
+                descriptionSpan.textContent = log.description;
+                div.appendChild(descriptionSpan);
+
+                const amountSpan = document.createElement("span");
+                amountSpan.textContent = log.amount;
+                div.appendChild(amountSpan);
+
                 pointLogs.appendChild(div);
             });
         });
@@ -208,7 +216,16 @@ document.addEventListener("DOMContentLoaded", () => {
     loadUserInfo();
     document.getElementById("followerLink").onclick = () => loadFollowerList();
     document.getElementById("followingLink").onclick = () => loadFollowingList();
-    $('#myItemsModal').on('shown.bs.modal', () => loadUserItems(userId));
-    $('#myPointLogsModal').on('shown.bs.modal', () => loadPointLogs(userId));
+
+    document.getElementById("myItemsModal").addEventListener("shown.bs.modal", () => {
+        console.log("My Items Modal shown");
+        loadUserItems(userId);
+    });
+
+    document.getElementById("myPointLogsModal").addEventListener("shown.bs.modal", () => {
+        console.log("My Point Logs Modal shown");
+        loadPointLogs(userId);
+    });
+
     loadRecentPosts(userId);
 });

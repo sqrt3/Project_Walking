@@ -1,6 +1,7 @@
 let currentPage = 1;
 let pageCount = 0;
 const pagesToShow = 10;
+const noNotice = [1, 2, 3]; // 공지사항, 인기게시판, 1:1 문의 게시판
 
 document.addEventListener('DOMContentLoaded', function () {
     const boardIdInput = document.getElementById('boardId');
@@ -70,12 +71,24 @@ function performSearch(boardId, page = 1) {
 }
 
 function updateBoardContent(boardId) {
-    if (!isNoticeBoard) {
-        fetchPopularPosts(boardId); // 인기 게시글 요청
-        fetchNotices(); // 공지사항 요청
+    if (Number(boardId) === 3 && userNickname == null) {
+        window.location.href = '/auth/login';
+    } else {
+        const noticeSection = document.querySelector('.notice-section');
+        const popularSection = document.querySelector('.popular-post');
+        if (!noNotice.includes(Number(boardId))) {
+            if (noticeSection) noticeSection.style.display = 'block';
+            if (popularSection) popularSection.style.display = 'block';
+            fetchPopularPosts(boardId); // 인기 게시글 요청
+            fetchNotices(); // 공지사항 요청
+        } else {
+            if (noticeSection) noticeSection.style.display = 'none';
+            if (popularSection) popularSection.style.display = 'none';
+
+        }
+        fetchRecentPosts(boardId);
+        updatePagination(boardId);
     }
-    fetchRecentPosts(boardId);
-    updatePagination(boardId);
 }
 
 function fetchNotices() {
@@ -132,7 +145,15 @@ function fetchPopularPosts(boardId) {
 
 
 function fetchRecentPosts(boardId, page = 1) {
-    fetch(`/api/boards/posts?boardId=${boardId}&page=${page}`)
+    let url;
+    if (Number(boardId) === 2) {
+        url = "/api/posts/hot";
+    } else if (Number(boardId) === 3) {
+        url = `/api/posts/search?boardId=${boardId}&nickname=${userNickname}`;
+    } else {
+        url = `/api/boards/posts?boardId=${boardId}&page=${page}`;
+    }
+    fetch(url)
         .then(response => {
             if (response.status === 204) {
                 displayNoPostsMessage('게시판이 비어 있습니다.');
@@ -142,7 +163,11 @@ function fetchRecentPosts(boardId, page = 1) {
         })
         .then(data => {
             if (data) {
-                displayPosts(data);
+                if (Number(boardId) === 3) {
+                    displayPosts(data.posts);
+                } else {
+                    displayPosts(data);
+                }
             }
         })
         .catch(error => handleError(error, '게시물 목록을 가져오는 중에 문제가 발생했습니다.'));

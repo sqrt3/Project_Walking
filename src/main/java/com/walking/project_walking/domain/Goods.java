@@ -26,5 +26,7 @@ public class Goods {
     @Column(name = "price", nullable = false)
     private Integer price;
 
+    @Column(name = "goods_image")
+    private String goodsImage;
 }
 

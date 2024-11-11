@@ -31,16 +31,18 @@ public class UserController {
 
         UserResponse response = new UserResponse(user, redirectUri);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", redirectUri)
+                .body(response);
     }
 
     @GetMapping("/auth/check-email")
     public ResponseEntity<String> checkEmail(@RequestParam String email) {
         boolean exists = userService.checkEmailExists(email);
         if (exists) {
-            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 이메일입니다.\"}");
+            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
         }
-        return ResponseEntity.ok("{\"message\": \"사용 가능한 이메일입니다.\"}");
+        return ResponseEntity.ok("사용 가능한 이메일입니다.");
     }
 
     @GetMapping("/auth/check-nickname")
@@ -76,22 +78,6 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
 //        }
 //    }
-
-    // (Admin only) User 전체 조회
-    @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> findUsers() {
-        List<UserResponse> list = userService.findAll().stream()
-                .map(UserResponse::new)
-                .toList();
-        return ResponseEntity.ok(list);
-    }
-
-    // (Admin only) User 한 명 조회
-    @GetMapping("/users/{usersId}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable Long usersId) {
-        Users users = userService.findById(usersId);
-        return ResponseEntity.ok(new UserResponse(users));
-    }
 
     // User 정보 수정
     @PutMapping("/users/{userId}")
@@ -131,7 +117,6 @@ public class UserController {
     }
 
     // 유저 포인트 로그 조회
-    // todo 포인트 획득, 감소 시 코드상에서 처리?
     @GetMapping("/users/{userId}/points")
     public ResponseEntity<List<UserPointLogDto>> getPointView(
             @PathVariable Long userId

@@ -6,6 +6,7 @@ import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.GoodsService;
 import com.walking.project_walking.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,13 +28,11 @@ public class AdminViewController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
-    public String adminView(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String adminView(Model model, HttpSession session) {
+        Long userId = (Long)session.getAttribute("userId");
+        Users user = userService.findById(userId);
 
-        if (authentication != null && authentication.getPrincipal() instanceof Users currentUser) {
-            UserResponse userResponse = new UserResponse(userService.findById(currentUser.getUserId()));
-            model.addAttribute("user", userResponse);
-        }
+        model.addAttribute("user", user);
 
         return "admin";
     }
@@ -68,7 +67,6 @@ public class AdminViewController {
     @GetMapping("/goods")
     public String manageGoods(Model model) {
         List<GoodsResponseDto> goodsList = goodsService.getAllGoods().stream()
-                .map(GoodsResponseDto::new)
                 .toList();
         model.addAttribute("goodsList", goodsList);
         return "goods-manager";

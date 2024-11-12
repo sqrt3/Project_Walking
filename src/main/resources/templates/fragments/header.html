@@ -58,7 +58,7 @@
                         </li>
                         <li><a class="dropdown-item disabled" href="#">내 포인트: [[${#numbers.formatInteger(user.point, 0, 'COMMA')}]]P</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{'/mypage/' + ${session.userId}}">마이 페이지</a></li>
+                        <li><a class="dropdown-item" th:href="@{'/myPage/' + ${session.userId}}">마이 페이지</a></li>
                         <li><a class="dropdown-item" th:href="@{/auth/logout}">로그아웃</a></li>
                     </ul>
                 </li>

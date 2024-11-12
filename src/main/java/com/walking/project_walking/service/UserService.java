@@ -51,6 +51,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public boolean validateLogin(String email, String password) {
+        // 이메일로 유저 조회
+        Optional<Users> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return false; // 이메일이 존재하지 않으면 로그인 실패
+        }
+
+        Users user = userOpt.get();
+        return encoder.matches(password, user.getPassword());
+    }
+
     // 이메일로 사용자 찾기
     public Optional<Users> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -71,6 +83,11 @@ public class UserService {
     // 닉네임 등록 여부 확인
     public boolean checkNicknameExists(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    // 폰번호 등록 여부 확인
+    public boolean checkPhoneExists(String phone) {
+        return userRepository.existsByPhone(phone);
     }
 
     // 유저 정보 전체 조회

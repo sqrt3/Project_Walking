@@ -293,21 +293,10 @@ public class PostsService {
         Integer commentsNumber = commentsRepository.countCommentsByPostId(postId);
         String postNickname = userRepository.getNicknameByUserId(post.getUserId());
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(postId);
+        post.setViewCount(post.getViewCount() + 1);
 
         return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
     }
-
-    //이전 글 다음 글 이동
-
-    public PostNavigationDto getPostWithNavigation(Long postId) {
-
-        Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-        Long boardId = post.getBoardId(); // boardId 가져오기
-
-        Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
-        String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-        List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
 
     // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
     public boolean hasLiked(Long userId, Long postId) {
@@ -339,30 +328,5 @@ public class PostsService {
 
         // 게시글 정보 저장
         postsRepository.save(post);  // 게시글 저장
-    }
-
-        PostResponseDto currentPost = PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
-
-        // 이전 글 조회
-        PostResponseDto previousPost = postsRepository.findPreviousPost(postId, boardId)
-                .map(p -> PostResponseDto.fromEntity(
-                        p,
-                        commentsRepository.countCommentsByPostId(p.getPostId()),
-                        userRepository.getNicknameByUserId(p.getUserId()),
-                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
-                ))
-                .orElse(null);
-
-        // 다음 글 조회
-        PostResponseDto nextPost = postsRepository.findNextPost(postId, boardId)
-                .map(p -> PostResponseDto.fromEntity(
-                        p,
-                        commentsRepository.countCommentsByPostId(p.getPostId()),
-                        userRepository.getNicknameByUserId(p.getUserId()),
-                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
-                ))
-                .orElse(null);
-
-        return new PostNavigationDto(currentPost, previousPost, nextPost);
     }
 }

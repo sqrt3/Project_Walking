@@ -4,6 +4,7 @@ package com.walking.project_walking.controller;
 import com.walking.project_walking.domain.dto.CommentRequestDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.service.CommentsService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +27,11 @@ public class CommentsController {
     }
 
     //댓글, 답글 삭제 (작성자만 가능)
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long postId, @RequestParam Long userId) {
-        commentsService.deleteComment(postId,userId);
-        return ResponseEntity.status (HttpStatus.OK).body ("댓글이 삭제되었습니다");
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId, HttpSession session) {
+        Long userId = (Long)session.getAttribute("userId");
+        commentsService.deleteComment(commentId, userId);
+        return ResponseEntity.status (HttpStatus.OK).body("댓글이 삭제되었습니다");
     }
 
     //댓글, 답글 수정 (작성자만 가능)

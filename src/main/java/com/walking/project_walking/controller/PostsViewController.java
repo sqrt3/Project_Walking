@@ -62,6 +62,12 @@ public class PostsViewController {
 
             List<CommentResponseDto> commentLists = commentsService.getCommentsByPostIdOldest(postId);
             model.addAttribute("comments", commentLists);
+            int commentListsSize = 0;
+            for (CommentResponseDto comment : commentLists) {
+                if (!comment.getIsDeleted())
+                    commentListsSize++;
+            }
+            model.addAttribute("commentsSize", commentListsSize);
 
             return "post";
         } catch (IllegalArgumentException e) {

@@ -15,18 +15,20 @@ import java.util.Optional;
 
 @Repository
 public interface PostsRepository extends JpaRepository<Posts, Long> {
-    Page<Posts> findByBoardId(Long boardId, Pageable pageable);
+    @Query("SELECT p FROM Posts p WHERE p.boardId = :boardId ORDER BY p.createdAt DESC, p.postId DESC")
+    Page<Posts> findByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 
     @Query("SELECT p FROM Posts p WHERE p.boardId = ?1 AND " +
             "(LOWER(p.title) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
             "LOWER(p.content) LIKE LOWER(CONCAT('%', ?3, '%')) OR " +
-            "p.userId = ?4)")
+            "p.userId = ?4) " +
+            "ORDER BY p.createdAt DESC, p.postId DESC")
     Page<Posts> searchPosts(Long boardId, String title, String content, Long userId, Pageable pageable);
 
     @Query("SELECT p FROM Posts p WHERE p.weightValue >= :threshold")
     List<Posts> findHotPosts(@Param("threshold") double threshold);
 
-    List<Posts> findByUserId(Long userId);
+    List<Posts> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.boardId = :boardId AND " +
             "(:title IS NULL OR p.title LIKE %:title%) AND " +

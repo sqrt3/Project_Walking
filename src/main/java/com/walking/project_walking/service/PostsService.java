@@ -1,5 +1,6 @@
 package com.walking.project_walking.service;
 
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -21,6 +22,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 
+import com.walking.project_walking.domain.LikeLog;
+import com.walking.project_walking.domain.Posts;
+import com.walking.project_walking.domain.dto.*;
+import com.walking.project_walking.repository.*;
+import lombok.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +46,7 @@ public class PostsService {
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
     private final PostImagesRepository postImagesRepository;
+    private final UserLikeLogRepository userLikeLogRepository;
 
     // S3 버킷 이름 주입
     @Value("${cloud.aws.s3.bucketName}")
@@ -106,7 +118,7 @@ public class PostsService {
 
     // 특정 유저가 작성한 게시글을 조회하는 메소드
     public List<PostSummuryResponseDto> getPostsByUserId(Long userId) {
-        List<Posts> posts = postsRepository.findByUserId(userId);
+        List<Posts> posts = postsRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return posts.stream()
                 .map(post -> {
                     Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
@@ -296,6 +308,38 @@ public class PostsService {
         Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
         String postNickname = userRepository.getNicknameByUserId(post.getUserId());
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+
+    // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
+    public boolean hasLiked(Long userId, Long postId) {
+        return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();
+    }
+
+    // 좋아요 버튼을 클릭 시
+    @Transactional
+    public void likePost(Long userId, Long postId) {
+        // 좋아요 로그 확인
+        boolean hasLiked = hasLiked(userId, postId);
+
+        // 게시글 조회
+        Posts post = postsRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if (hasLiked) {
+            // 유저가 이미 좋아요를 눌렀다면, 좋아요 로그 삭제하고 게시글 좋아요 수 감소
+            userLikeLogRepository.deleteByUserIdAndPostId(userId, postId);  // 좋아요 로그 삭제
+            post.setLikes(post.getLikes() - 1);  // 게시글 좋아요 수 감소
+        } else {
+            // 유저가 좋아요를 안 눌렀다면, 새로운 좋아요 로그 추가하고 게시글 좋아요 수 증가
+            LikeLog newLikeLog = new LikeLog();
+            newLikeLog.setUserId(userId);
+            newLikeLog.setPostId(postId);
+            userLikeLogRepository.save(newLikeLog);  // 새로운 좋아요 로그 추가
+            post.setLikes(post.getLikes() + 1);  // 게시글 좋아요 수 증가
+        }
+
+        // 게시글 정보 저장
+        postsRepository.save(post);  // 게시글 저장
+    }
 
         PostResponseDto currentPost = PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
 

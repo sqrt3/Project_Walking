@@ -1,13 +1,9 @@
 package com.walking.project_walking.domain.userdto;
 
 import com.walking.project_walking.domain.Users;
-import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface MyGoodsRepository extends JpaRepository<MyGoods, Long> {
     Boolean existsByUserIdAndGoodsId(Long userId, Long goodsId);
+
     MyGoods findByUserIdAndGoodsId(Long userId, Long goodsId);
 
     List<MyGoods> findByUserId(Long userId);

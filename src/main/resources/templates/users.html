@@ -105,7 +105,7 @@
 
       $('#confirmDeleteBtn').off('click').on('click', function() {
         $.ajax({
-          url: '/users/' + userId,
+          url: '/api/users/' + userId,
           type: 'DELETE',
           success: function(response) {
             alert('사용자가 비활성화되었습니다.');

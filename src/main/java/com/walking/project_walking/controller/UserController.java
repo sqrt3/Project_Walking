@@ -26,13 +26,10 @@ public class UserController {
     @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> createUser(@ModelAttribute UserSignUpDto request) {
         Users user = userService.saveUser(request);
-        String redirectUri = "/auth/login";
 
-        UserResponse response = new UserResponse(user, redirectUri);
+        UserResponse response = new UserResponse(user, "회원가입이 완료되었습니다.");
 
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", redirectUri)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/auth/check-email")

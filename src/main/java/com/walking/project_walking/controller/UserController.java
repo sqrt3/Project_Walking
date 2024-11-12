@@ -9,6 +9,7 @@ import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,16 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final PasswordResetService passwordResetService;
+
+    @PostMapping("/auth/login")
+    public String login(@RequestParam String email, @RequestParam String password, Model model) {
+        boolean isValid = userService.validateLogin(email, password);
+
+        if (!isValid) {
+            return "redirect:/auth/login?error=true";
+        }
+        return "redirect:/dashboard";
+    }
 
     @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> createUser(@ModelAttribute UserSignUpDto request) {
@@ -48,6 +59,15 @@ public class UserController {
             return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 닉네임 입니다.\"}");
         }
         return ResponseEntity.ok("{\"message\": \"사용 가능한 닉네임 입니다.\"}");
+    }
+
+    @GetMapping("/auth/check-phone")
+    public ResponseEntity<String> checkPhone(@RequestParam String phone) {
+        boolean exists = userService.checkPhoneExists(phone);
+        if (exists) {
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 휴대전화 번호 입니다.\"}");
+        }
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 휴대전화 번호 입니다.\"}");
     }
 
     // 비밀번호 재설정

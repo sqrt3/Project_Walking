@@ -1,75 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>회원 가입</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <style>
-    .body-img {
-      background: url("/img/signup-bg.png");
-      background-size: cover;
-    }
+      .body-img {
+        background-size: cover;
+        background: url("/img/walking-bg1.jpg") no-repeat fixed center center;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+      }
+
   </style>
 </head>
 <body class="body-img">
 <section class="d-flex justify-content-center align-items-center" style="height: 100dvh">
-  <form th:action="@{/api/auth/signup}" method="POST" onsubmit="return validateForm()">
-  <div class="card bg-dark m-5 p-5" style="border-radius: 1rem;" id="signupStep1">
-    <div class="card-body p-5 text-white">
-      <h2 class="text-white">SIGN UP</h2>
-      <p class="text-white-50 mt-2 mb-5">서비스 사용을 위해 회원 가입을 진행해주세요.</p>
-    </div>
+  <form id="signupForm" method="POST" onsubmit="return handleSubmit(event)">
+    <div class="card bg-dark m-5 p-5" style="border-radius: 1rem; width: 400px;" id="signupStep1">
+      <div class="card-body p-5 text-white">
+        <h2 class="text-white text-center">계정 생성</h2>
+        <p class="text-white-50 mt-2 mb-5 text-center">project walking과 함께하려면 가입하세요</p>
+      </div>
       <div class="mb-3">
         <label class="form-label text-white">이메일</label>
-        <input type="email" class="form-control input-focus-color" name="email" placeholder="user@example.com" required id="emailInput">
+        <input type="email" class="form-control input-focus-color" name="email" placeholder="example@email.com" required id="emailInput">
         <div id="emailMessage"></div>
       </div>
       <div class="mb-3">
         <label class="form-label text-white">비밀번호</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호 입력" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label text-white">비밀번호 확인</label>
-        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="비밀번호 재입력" required onkeyup="checkPasswordMatch()">
+        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력해주세요." required>
         <div id="passwordMessage"></div>
       </div>
       <div class="mb-3">
+        <label class="form-label text-white">비밀번호 확인</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력해주세요." required onkeyup="checkPasswordMatch()">
+        <div id="passwordMatchMessage"></div>
+      </div>
+      <div class="mb-3">
         <label class="form-label text-white">이름</label>
-        <input type="text" class="form-control" name="name" placeholder="이름 입력" required>
+        <input type="text" class="form-control" name="name" placeholder="이름을 입력해주세요." required>
       </div>
       <div class="d-flex justify-content-end">
         <button type="button" class="btn btn-primary" id="nextButton">다음으로</button>
       </div>
     </div>
-    <div class="card bg-dark p-5 m-5" style="border-radius: 1rem; display: none;" id="signupStep2">
+    <div class="card bg-dark p-5 m-5" style="border-radius: 1rem; width: 400px; display: none;" id="signupStep2">
       <div class="card-body p-5 text-white">
-        <h2 class="text-white">SIGN UP</h2>
-        <p class="text-white-50 mt-2 mb-5">서비스 사용을 위해 회원 가입을 진행해주세요.</p>
+        <h2 class="text-white text-center">계정 생성</h2>
+        <p class="text-white-50 mt-2 mb-5 text-center">project walking과 함께하려면 가입하세요</p>
       </div>
-        <div class="mb-3">
-          <label class="form-label text-white">휴대전화 번호</label>
-          <input type="tel" class="form-control" name="phone" placeholder="휴대전화 번호 입력" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label text-white">닉네임</label>
-          <input type="text" class="form-control" id="nicknameInput" name="nickname" placeholder="닉네임 입력" required onblur="delayedCheckNickname()">
-          <div id="nicknameMessage"></div>
-        </div>
-        <div class="mb-3">
-          <label for="dropdown" class="form-label text-white">성별을 선택하세요</label>
-          <select id="dropdown" name="gender" class="form-control">
-            <option value="0">남</option>
-            <option value="1">여</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="dob" class="form-label text-white">생년월일</label>
-          <input class="form-control" type="date" id="dob" name="birth" required>
-        </div>
-        <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-secondary" id="prevButton">이전으로</button>
-          <button type="submit" class="btn btn-success">가입하기</button>
-        </div>
+      <div class="mb-3">
+        <label class="form-label text-white">휴대전화 번호</label>
+        <input type="tel" class="form-control" id="phoneInput" name="phone" placeholder="휴대전화 번호를 입력해주세요."
+               required maxlength="13" onblur="delayedCheckPhone()">
+        <div id="phoneMessage"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label text-white">닉네임</label>
+        <input type="text" class="form-control" id="nicknameInput" name="nickname" placeholder="닉네임을 입력해주세요." required onblur="delayedCheckNickname()">
+        <div id="nicknameMessage"></div>
+      </div>
+      <div class="mb-3">
+        <label for="dropdown" class="form-label text-white">성별</label>
+        <select id="dropdown" name="gender" class="form-control">
+          <option>성별을 선택하세요</option>
+          <option value="0">남</option>
+          <option value="1">여</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="dob" class="form-label text-white">생년월일</label>
+        <input class="form-control" type="date" id="dob" name="birth" required>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" id="prevButton">이전으로</button>
+        <button type="submit" class="btn btn-success" id="submitButton">가입하기</button>
+      </div>
     </div>
   </form>
 </section>
@@ -87,6 +95,8 @@
 </script>
 </body>
 <script>
+
+  // 이메일 중복 체크 및 정규식 검사
   let emailTimeout;
 
   document.getElementById('emailInput').addEventListener('input', function() {
@@ -99,29 +109,38 @@
     var emailInput = document.getElementById("emailInput");
     var emailMessage = document.getElementById("emailMessage");
 
+    const emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
+    if (!emailRegex.test(email)) {
+      emailInput.style.borderColor = "red";
+      emailInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+      emailMessage.style.color = "red";
+      emailMessage.textContent = "올바른 이메일 형식이 아닙니다.";
+      return;
+    }
+
     if (email) {
       fetch('/api/auth/check-email?email=' + encodeURIComponent(email))
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          emailInput.style.borderColor = "red";
-          emailInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
-          emailMessage.style.color = "red";
-          emailMessage.textContent = data.error;
-        } else {
-          emailInput.style.borderColor = "green";
-          emailInput.style.boxShadow = "0 0 0 0.25rem rgba(40, 167, 69, 0.25)";
-          emailMessage.style.color = "green";
-          emailMessage.textContent = data.message;
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        emailInput.style.borderColor = "red";
-        emailInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
-        emailMessage.style.color = "red";
-        emailMessage.textContent = "서버 오류가 발생했습니다.";
-      });
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  emailInput.style.borderColor = "red";
+                  emailInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                  emailMessage.style.color = "red";
+                  emailMessage.textContent = data.error;
+                } else {
+                  emailInput.style.borderColor = "green";
+                  emailInput.style.boxShadow = "0 0 0 0.25rem rgba(40, 167, 69, 0.25)";
+                  emailMessage.style.color = "green";
+                  emailMessage.textContent = data.message;
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                emailInput.style.borderColor = "red";
+                emailInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                emailMessage.style.color = "red";
+                emailMessage.textContent = "서버 오류가 발생했습니다.";
+              });
     } else {
       emailInput.style.borderColor = "";
       emailInput.style.boxShadow = "";
@@ -129,6 +148,7 @@
     }
   }
 
+  // 닉네임 중복 체크
   let nicknameCheckTimeout;
 
   function delayedCheckNickname() {
@@ -148,31 +168,125 @@
 
     if (nickname) {
       fetch('/api/auth/check-nickname?nickname=' + encodeURIComponent(nickname))
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          nicknameInput.style.borderColor = "red";
-          nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
-          nicknameMessage.style.color = "red";
-          nicknameMessage.textContent = data.error;
-        } else {
-          nicknameInput.style.borderColor = "green";
-          nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(40, 167, 69, 0.25)";
-          nicknameMessage.style.color = "green";
-          nicknameMessage.textContent = data.message;
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        nicknameInput.style.borderColor = "red";
-        nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
-        nicknameMessage.style.color = "red";
-        nicknameMessage.textContent = "서버 오류가 발생했습니다.";
-      });
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  nicknameInput.style.borderColor = "red";
+                  nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                  nicknameMessage.style.color = "red";
+                  nicknameMessage.textContent = data.error;
+                } else {
+                  nicknameInput.style.borderColor = "green";
+                  nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(40, 167, 69, 0.25)";
+                  nicknameMessage.style.color = "green";
+                  nicknameMessage.textContent = data.message;
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                nicknameInput.style.borderColor = "red";
+                nicknameInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                nicknameMessage.style.color = "red";
+                nicknameMessage.textContent = "서버 오류가 발생했습니다.";
+              });
     } else {
       nicknameInput.style.borderColor = "";
       nicknameInput.style.boxShadow = "";
       nicknameMessage.textContent = "";
+    }
+  }
+
+  // 휴대전화 번호 중복 검사
+  let phoneCheckTimeout;
+
+  function delayedCheckPhone() {
+    if (phoneCheckTimeout) {
+      clearTimeout(phoneCheckTimeout);
+    }
+
+    phoneCheckTimeout = setTimeout(function() {
+      checkPhoneAvailability();
+    }, 1000);
+  }
+
+  function checkPhoneAvailability() {
+    var phone = document.getElementById("phoneInput").value;
+    var phoneInput = document.getElementById("phoneInput");
+    var phoneMessage = document.getElementById("phoneMessage");
+
+    if (phone) {
+      fetch('/api/auth/check-phone?phone=' + encodeURIComponent(phone))
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  phoneInput.style.borderColor = "red";
+                  phoneInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                  phoneMessage.style.color = "red";
+                  phoneMessage.textContent = data.error;
+                } else {
+                  phoneInput.style.borderColor = "green";
+                  phoneInput.style.boxShadow = "0 0 0 0.25rem rgba(40, 167, 69, 0.25)";
+                  phoneMessage.style.color = "green";
+                  phoneMessage.textContent = data.message;
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                phoneInput.style.borderColor = "red";
+                phoneInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+                phoneMessage.style.color = "red";
+                phoneMessage.textContent = "서버 오류가 발생했습니다.";
+              });
+    } else {
+      phoneInput.style.borderColor = "";
+      phoneInput.style.boxShadow = "";
+      phoneMessage.textContent = "";
+    }
+  }
+
+
+  // 생년월일 오늘 이전으로 제한
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+  const dd = today.getDate().toString().padStart(2, '0');
+  const maxDate = `${yyyy}-${mm}-${dd}`;
+
+  document.getElementById('dob').setAttribute('max', maxDate);
+
+  // 휴대전화 번호 자동으로 하이픈 붙게 수정
+  document.getElementById('phoneInput').addEventListener('input', function (e) {
+    let input = e.target.value.replace(/\D/g, '');
+    if (input.length <= 3) {
+      e.target.value = input;
+    } else if (input.length <= 7) {
+      e.target.value = input.replace(/(\d{3})(\d{0,4})/, '$1-$2');
+    } else {
+      e.target.value = input.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
+    }
+  });
+
+  // 비밀번호 강도 검사
+  document.getElementById('password').addEventListener('input', checkPasswordStrength);
+  function checkPasswordStrength() {
+    const passwordInput = document.getElementById("password");
+    const password = passwordInput.value;
+    const passwordMessage = document.getElementById("passwordMessage");
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}|\[\]:";'<>?,./`~])[A-Za-z\d!@#$%^&*()_+\-={}|\[\]:";'<>?,./`~]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      passwordMessage.style.color = "red";
+      passwordMessage.textContent = "비밀번호는 최소 8자, 알파벳, 숫자, 특수문자를 포함해야 합니다.";
+      passwordInput.style.borderColor = "red";
+      passwordInput.style.boxShadow = "0 0 0 0.25rem rgba(255, 0, 0, 0.25)";
+      return false;
+    } else {
+      // 정규식에 맞으면 메시지 숨기고 스타일 초기화
+      passwordMessage.textContent = "";  // 메시지 지우기
+      passwordInput.style.borderColor = "";  // 테두리 초기화
+      passwordInput.style.boxShadow = "";  // 그림자 초기화
+      return true;
     }
   }
 
@@ -182,7 +296,7 @@
     const confirmPasswordInput = document.getElementById("confirmPassword");
     let password = document.getElementById("password").value;
     let confirmPassword = document.getElementById("confirmPassword").value;
-    const message = document.getElementById("passwordMessage");
+    const message = document.getElementById("passwordMatchMessage");
 
     if (password === confirmPassword) {
       message.style.color = "green";
@@ -202,12 +316,41 @@
       return false;
     }
   }
-  // 폼 제출 전 검증
-  function validateForm() {
-        if (!checkPasswordMatch()) {
+
+  // 폼 제출
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!checkPasswordMatch()) {
       return false;
     }
-    return true;
+
+    const formData = new FormData(document.getElementById('signupForm'));
+
+    fetch('/api/auth/signup', {
+      method: 'POST',
+      body: formData
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data && data.message) {
+
+                alert(data.message);
+
+
+                setTimeout(function() {
+                  window.location.href = '/auth/login';
+                }, 1000);
+              } else {
+                alert('회원가입에 실패했습니다. 이메일, 닉네임 중복 확인 후 다시 시도해주세요.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+
+    return false;
   }
 </script>
 </html>

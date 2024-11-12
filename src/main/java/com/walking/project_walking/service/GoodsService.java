@@ -77,6 +77,9 @@ public class GoodsService {
         if (user.getPoint() < goods.getPrice()) // 유저의 포인트보다 굿즈의 가격이 높을 때
             return Boolean.FALSE;
 
+        if (goodsId / 100000 == 3 && user.getRole().name().equals("ROLE_USER"))
+            return Boolean.FALSE;
+
         user.setPoint(user.getPoint() - goods.getPrice());
         Boolean isExists = myGoodsRepository.existsByUserIdAndGoodsId(userId, goodsId);
         if (isExists == Boolean.TRUE)          // 유저가 굿즈를 이미 갖고있다면
@@ -89,6 +92,41 @@ public class GoodsService {
             myGoodsRepository.save(myGoods);
         }
         pointService.deductPoints(user.getUserId(), goods.getPrice(), "아이템 구매로 인한 포인트 차감");
+        userRepository.save(user);
+        return Boolean.TRUE;
+    }
+
+    @Transactional
+    public Boolean giftGoods(Long goodsId, Long userId, String targetUserNickname) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 유저 ID 입니다."));
+        Long targetUserId = userRepository.getUserIdByNickname(targetUserNickname);
+
+        if (targetUserId == null)
+            return Boolean.FALSE;
+
+        Users targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new IllegalArgumentException("해당 닉네임을 가진 유저가 없습니다."));
+
+        if (user == null || targetUser == null)                       // 유저가 null 일때
+            return Boolean.FALSE;
+
+        GoodsResponseDto goods = getGoodsById(goodsId);
+        if (goods == null)
+            return Boolean.FALSE;
+        if (user.getPoint() < goods.getPrice()) // 유저의 포인트보다 굿즈의 가격이 높을 때
+            return Boolean.FALSE;
+
+        user.setPoint(user.getPoint() - goods.getPrice());
+        Boolean isExists = myGoodsRepository.existsByUserIdAndGoodsId(targetUser.getUserId(), goodsId);
+        if (isExists == Boolean.TRUE)          // 유저가 굿즈를 이미 갖고있다면
+        {
+            MyGoods myGoods = myGoodsRepository.findByUserIdAndGoodsId(targetUser.getUserId(), goodsId);
+            myGoods.setAmount(myGoods.getAmount() + 1);
+            myGoodsRepository.save(myGoods);
+        } else {
+            MyGoods myGoods = new MyGoods(targetUser.getUserId(), goodsId, 1);
+            myGoodsRepository.save(myGoods);
+        }
+        pointService.deductPoints(user.getUserId(), goods.getPrice(), "아이템 선물로 인한 포인트 차감");
         userRepository.save(user);
         return Boolean.TRUE;
     }

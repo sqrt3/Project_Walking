@@ -4,25 +4,23 @@ import com.walking.project_walking.domain.Comments;
 import com.walking.project_walking.domain.dto.CommentRequestDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
+import com.walking.project_walking.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 @Service
-
-
+@RequiredArgsConstructor
 public class CommentsService {
     private final CommentsRepository commentRepository;
-
-    public CommentsService(CommentsRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
-
+    private final UserRepository userRepository;
 
     // 댓글, 답글 생성
     public CommentResponseDto createComment (CommentRequestDto request) {
         Comments comment = Comments.builder()
                 .postId(request.getPostId())
-                .userId(request.getUserId())
+                .user(userRepository.findById(request.getUserId()).orElse(null))
                 .content(request.getContent())
                 .parentCommentId(request.getParentCommentId())
                 .build();
@@ -33,10 +31,12 @@ public class CommentsService {
                 savedComment.getCommentId(),
                 savedComment.getParentCommentId(),
                 savedComment.getPostId(),
-                savedComment.getUserId(),
+                savedComment.getUser().getUserId(),
                 savedComment.getContent(),
                 savedComment.getCreatedAt(),
-                savedComment.getIsDeleted());
+                savedComment.getIsDeleted(),
+                savedComment.getUser().getNickname()
+        );
     }
 
 
@@ -47,7 +47,7 @@ public class CommentsService {
         comment.setIsDeleted(true);
         commentRepository.save(comment);
 
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 
@@ -62,7 +62,7 @@ public class CommentsService {
         Comments comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
 
@@ -73,11 +73,29 @@ public class CommentsService {
                 updatedComment.getCommentId(),
                 updatedComment.getParentCommentId(),
                 updatedComment.getPostId(),
-                updatedComment.getUserId(),
+                updatedComment.getUser().getUserId(),
                 updatedComment.getContent(),
                 updatedComment.getCreatedAt(),
-                updatedComment.getIsDeleted());
+                updatedComment.getIsDeleted(),
+                updatedComment.getUser().getNickname()
+        );
     }
+
+    // 최신순 댓글 조회
+    public List<CommentResponseDto> getCommentsByPostIdLatest(Long postId) {
+        return commentRepository.findCommentsByPostIdOrderByCreatedAtDesc(postId)
+                .stream().map(CommentResponseDto::new)
+                .toList();
+    }
+
+    // 등록순 댓글 조회
+    public List<CommentResponseDto> getCommentsByPostIdOldest(Long postId) {
+        return commentRepository.findCommentsByPostIdOrderByCreatedAtAsc(postId)
+                .stream().map(CommentResponseDto::new)
+                .toList();
+    }
+
+
 
 }
 

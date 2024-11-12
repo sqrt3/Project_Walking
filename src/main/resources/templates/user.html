@@ -25,7 +25,8 @@
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">포인트</p>
-        <p class="mb-1 h5" th:text="${#numbers.formatInteger(user.getPoint(), 0, 'COMMA')} + 'P'"></p>
+        <p class="mb-1 h5"
+           th:text="${#numbers.formatInteger(user.getPoint(), 0, 'COMMA')} + 'P'"></p>
       </div>
       <div class="px-3">
         <p class="small text-muted mb-0">게시물 수</p>
@@ -50,7 +51,8 @@
         <p class="font-italic mb-1">생일: [[${user.getBirth()}]]</p>
         <p class="font-italic mb-1">가입일: [[${user.getJoinDate()}]]</p>
         <p class="font-italic mb-1">최근 로그인: [[${user.getLastLogin()}]]</p>
-        <p class="font-italic mb-1">로그인 횟수: [[${#numbers.formatInteger(user.getLoginCount(), 0, 'COMMA')}]]</p>
+        <p class="font-italic mb-1">로그인 횟수: [[${#numbers.formatInteger(user.getLoginCount(), 0,
+          'COMMA')}]]</p>
         <p class="font-italic mb-1">접속 브라우저 정보: [[${user.getLoginBrowser()}]]</p>
       </div>
     </div>
@@ -58,14 +60,14 @@
 </div>
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     let userId = [[${user.getId()}]];
 
     $.ajax({
       url: '/api/posts',
       type: 'GET',
-      data: { userId: userId },
-      success: function(response) {
+      data: {userId: userId},
+      success: function (response) {
         if (response && Array.isArray(response)) {
           let postCount = response.length;
           $('#post-count').text(postCount);
@@ -73,7 +75,7 @@
           $('#post-count').text('0');
         }
       },
-      error: function(xhr, status, error) {
+      error: function (xhr, status, error) {
         console.error("게시물 수를 가져오는 데 실패했습니다:", error);
         $('#post-count').text('0');
       }

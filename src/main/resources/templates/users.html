@@ -34,17 +34,21 @@
       <td th:text="${user.getIsActive()} ? '활성화' : '비활성화'"></td>
       <td>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"
-                th:data-user-id="${user.getId()}">자세히</button>
+                th:data-user-id="${user.getId()}">자세히
+        </button>
       </td>
       <td>
-        <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getId()}" th:disabled="${!user.getIsActive()}">비활성화</button>
+        <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getId()}"
+                th:disabled="${!user.getIsActive()}">비활성화
+        </button>
       </td>
     </tr>
     </tbody>
   </table>
 </div>
 
-<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -61,7 +65,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -81,35 +86,35 @@
 </div>
 
 <script>
-  $('#userModal').on('show.bs.modal', function(event) {
+  $('#userModal').on('show.bs.modal', function (event) {
     const button = $(event.relatedTarget);
     const userId = button.data('user-id');
 
     $.ajax({
       url: '/admin/users/' + userId,
       method: 'GET',
-      success: function(data) {
+      success: function (data) {
         $('#modalContent').html(data);
       },
-      error: function(xhr, status, error) {
+      error: function (xhr, status, error) {
         $('#modalContent').html('<p class="text-danger">오류: ' + error + '</p>');
       }
     });
   });
 
-  $(document).ready(function() {
-    $('.disable-user-btn').click(function() {
+  $(document).ready(function () {
+    $('.disable-user-btn').click(function () {
       let userId = $(this).data('user-id');
       let userRow = $(this).closest('tr');
       let userEmail = userRow.find('td').eq(1).text();
 
       $('#userInfo').text('이 사용자의 이메일: ' + userEmail);
 
-      $('#confirmDeleteBtn').off('click').on('click', function() {
+      $('#confirmDeleteBtn').off('click').on('click', function () {
         $.ajax({
           url: '/api/users/' + userId,
           type: 'DELETE',
-          success: function(response) {
+          success: function (response) {
             alert('사용자가 비활성화되었습니다.');
 
             userRow.find('td').eq(10).text('비활성화');
@@ -117,7 +122,7 @@
 
             $('#deleteUserModal').modal('hide');
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             alert('사용자 비활성화 실패: ' + xhr.responseText);
           }
         });

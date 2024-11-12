@@ -1,7 +1,5 @@
 package com.walking.project_walking.controller;
 
-import com.walking.project_walking.domain.Board;
-import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.BoardRequestDto;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.userdto.UserResponse;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(("/api/admin"))
 public class AdminController {
+
     private final AdminService adminService;
     private final BoardService boardService;
 
@@ -66,7 +65,8 @@ public class AdminController {
     }
 
     @PutMapping("/boards/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto) {
+    public ResponseEntity<String> updateBoard(@PathVariable Long boardId,
+            @RequestBody BoardRequestDto boardRequestDto) {
         BoardResponseDto updatedBoard = boardService.updateBoard(boardId, boardRequestDto);
         if (updatedBoard == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 ID를 가진 게시판이 없습니다.");

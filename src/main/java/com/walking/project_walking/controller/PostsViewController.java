@@ -4,7 +4,6 @@ import com.walking.project_walking.domain.RecentPost;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
-import com.walking.project_walking.domain.dto.PostCreateResponseDto;
 import com.walking.project_walking.repository.RecentPostRepository;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.CommentsService;

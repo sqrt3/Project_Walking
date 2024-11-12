@@ -2,7 +2,6 @@ package com.walking.project_walking.handler;
 
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.enums.Point;
-import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import com.walking.project_walking.service.PointService;
 import jakarta.servlet.ServletException;
@@ -12,14 +11,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
     private final PointService pointService;
     private final UserRepository userRepository;
 

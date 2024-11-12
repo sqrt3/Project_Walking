@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
 
@@ -23,7 +24,8 @@ public class AdminService {
     }
 
     public UserResponse findUser(Long userId) {
-        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         return new UserResponse(user);
     }
 }

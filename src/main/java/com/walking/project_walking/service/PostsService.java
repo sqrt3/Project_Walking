@@ -4,44 +4,38 @@ package com.walking.project_walking.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.walking.project_walking.domain.LikeLog;
 import com.walking.project_walking.domain.PostImages;
-import com.walking.project_walking.domain.PostNavigationDto;
 import com.walking.project_walking.domain.Posts;
-import com.walking.project_walking.domain.dto.*;
+import com.walking.project_walking.domain.dto.NoticeResponseDto;
+import com.walking.project_walking.domain.dto.PostCreateResponseDto;
+import com.walking.project_walking.domain.dto.PostRequestDto;
+import com.walking.project_walking.domain.dto.PostResponseDto;
+import com.walking.project_walking.domain.dto.PostSummuryResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
 import com.walking.project_walking.repository.PostImagesRepository;
 import com.walking.project_walking.repository.PostsRepository;
+import com.walking.project_walking.repository.UserLikeLogRepository;
 import com.walking.project_walking.repository.UserRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.*;
-
-import com.walking.project_walking.domain.LikeLog;
-import com.walking.project_walking.domain.Posts;
-import com.walking.project_walking.domain.dto.*;
-import com.walking.project_walking.repository.*;
-import lombok.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
 @RequiredArgsConstructor
 
-
 public class PostsService {
-
     private final AmazonS3 amazonS3Client;
-
-
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
@@ -59,9 +53,11 @@ public class PostsService {
 
         return postsRepository.findByBoardId(boardId, pageRequest)
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 }).toList();
     }
@@ -74,14 +70,18 @@ public class PostsService {
     }
 
     // boardId와 제목, 내용, 글쓴이를 통해 특정 게시물을 조회하는 메소드
-    public List<PostResponseDto> searchPosts(Long boardId, String title, String content, String nickname, PageRequest pageRequest) {
+    public List<PostResponseDto> searchPosts(Long boardId, String title, String content,
+            String nickname, PageRequest pageRequest) {
         Long userId = userRepository.getUserIdByNickname(nickname);
-        Page<Posts> postsPage = postsRepository.searchPosts(boardId, title, content, userId, pageRequest);
+        Page<Posts> postsPage = postsRepository.searchPosts(boardId, title, content, userId,
+                pageRequest);
         return postsPage.getContent().stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
@@ -92,9 +92,11 @@ public class PostsService {
         List<Posts> hotPosts = postsRepository.findHotPosts(THRESHOLD);
         return hotPosts.stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
@@ -108,9 +110,11 @@ public class PostsService {
                 .filter(post -> post.getBoardId().equals(boardId))
                 .max(Comparator.comparing(Posts::getWeightValue))
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .orElse(null);
@@ -121,21 +125,24 @@ public class PostsService {
         List<Posts> posts = postsRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return posts.stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     return PostSummuryResponseDto.fromEntity(post, commentsNumber);
                 })
                 .toList();
     }
 
     // 검색 시 결과의 페이지를 구하는 메소드
-    public int getTotalPages(Long boardId, String title, String content, String nickname, int pageSize) {
+    public int getTotalPages(Long boardId, String title, String content, String nickname,
+            int pageSize) {
         Long userId = userRepository.getUserIdByNickname(nickname);
         long totalPosts = postsRepository.countBySearchCriteria(boardId, title, content, userId);
         return (int) Math.ceil((double) totalPosts / pageSize);
     }
 
     //게시글 생성
-    public PostCreateResponseDto savePost(PostRequestDto postRequestDto, List<MultipartFile> files) throws IOException {
+    public PostCreateResponseDto savePost(PostRequestDto postRequestDto, List<MultipartFile> files)
+            throws IOException {
         Posts post = Posts.builder()
                 .userId(postRequestDto.getUserId())
                 .boardId(postRequestDto.getBoardId())
@@ -179,12 +186,15 @@ public class PostsService {
     // S3에 파일을 업로드하는 메서드
     public String uploadFileToS3(MultipartFile file) throws IOException {
         try {
-            String uniqueFileName = "uploads/" + UUID.randomUUID() + "-" + file.getOriginalFilename();
+            String uniqueFileName =
+                    "uploads/" + UUID.randomUUID() + "-" + file.getOriginalFilename();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
 
-            amazonS3Client.putObject(new PutObjectRequest(bucketName, uniqueFileName, file.getInputStream(), metadata));
+            amazonS3Client.putObject(
+                    new PutObjectRequest(bucketName, uniqueFileName, file.getInputStream(),
+                            metadata));
 
             // S3에 업로드된 파일의 URL 반환
             return amazonS3Client.getUrl(bucketName, uniqueFileName).toString();
@@ -196,7 +206,7 @@ public class PostsService {
 
     //게시글 수정 (작성자만 가능, 기본 이미지 유지/삭제 가능)
     public PostCreateResponseDto modifyPost(Long postId, Long userId, PostRequestDto postRequestDto,
-                                            List<MultipartFile> files, boolean deleteExistingImages) throws IOException {
+            List<MultipartFile> files, boolean deleteExistingImages) throws IOException {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 

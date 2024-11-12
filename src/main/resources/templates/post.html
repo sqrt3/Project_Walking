@@ -11,88 +11,92 @@
         <div class="card">
             <div>
                 <h2 th:text="${post.getTitle()}">게시글 제목</h2>
-                <p><span th:text="${post.getNickname()}">작성자 닉네임</span></p>
-                <p><strong>조회 수:</strong> <span>[[${post.getViewCount()}]]회</span></p>
+                <p class="d-flex justify-content-between"><span th:text="${post.getNickname()}">작성자 닉네임</span><span>조회 수: [[${post.getViewCount()}]]회</span></p>
                 <hr>
             </div>
             <div>
                 <p th:text="${post.getContent()}">게시글의 내용</p>
             </div>
             <div>
-                <button id="like-button" type="button" th:onclick="|toggleLike(${post.getPostId()})|">
-                    <!--            <span id="like-button-text" th:text="${post.liked ? '좋아요 취소' : '좋아요'}">좋아요</span> hasLiked 메서드의 반환값 사용-->
-                </button>
+                <button id="like-button" type="button" th:onclick="|toggleLike(${post.getPostId()})|" th:text="${isLiked ? '좋아요 취소' : '좋아요'}" class="btn btn-success"/>
                 <span id="like-count" th:text="${post.getLikes()}">5</span>좋아요
             </div>
         </div>
 
-        <button th:onclick="|location.href='/edit-post/' + ${post.getPostId()}|">수정</button>
+        <button th:onclick="|location.href='/edit-post/' + ${post.getPostId()}|" class="btn btn-primary">수정</button>
         <form th:action="@{/posts/{postId}(postId=${post.getPostId()})}" method="POST" th:onsubmit="return confirm('정말 삭제하시겠습니까?')">
             <input type="hidden" name="_method" value="delete"/>
-            <button type="submit"> 삭제</button>
+            <button type="submit" class="btn btn-danger"> 삭제</button>
         </form>
 
         <div class="comment-sorting">
             <a th:href="@{/comments(sort='latest')}">
-                <button type="button">최신순</button>
+                <button type="button" class="btn btn-secondary">최신순</button>
             </a>
             <a th:href="@{/comments(sort='oldest')}">
-                <button type="button">등록순</button>
+                <button type="button" class="btn btn-secondary">등록순</button>
             </a>
         </div>
-
+        <hr>
         <div class="comments-section">
-            <h3>댓글</h3>
-
-            <div th:each="comment: ${comments}">
-                <div class="comment">
-                    <span th:text="${comment.nickname}"> 닉네임</span>
-                    <p th:text="${comment.getContent()}">댓글 내용</p>
-                </div>
-                <button type="button" onclick="toggleReplyForm(this)">답글 작성</button>
-
-                <!--답글 작성 폼 (숨김)-->
-                <div class="comment-form" style="display:none;" th:if="${user != null}">
-                    <h3>답글 작성</h3>
-                    <form th:action="@{/comments/{postId}/comments(postId=${post.getPostId()})}" method="POST">
-                        <!-- 작성자 정보 -->
-                        <label for="user-id">작성자:</label>
-                        <span th:text="${user.getNickname()}">닉네임</span>
-                        <input type="hidden" id="user-id" name="user-id" th:value="${user.getUserId()}">
-
-                        <!-- 게시글 ID 전송-->
-                        <input type="hidden" name="post_id" th:value="${post.getPostId()}">
-
-                        <!-- 상위 댓글 ID (null) -->
-                        <input type="hidden" name="parent_Comment_Id" th:value="${comment.getParentCommentId()}"/>
-
-                        <!-- 내용 -->
-                        <label for="comment-content">내용:</label>
-                        <textarea id="comment-content" name="content" rows="2" required></textarea>
-
-                        <button type="submit">답글 등록</button>
-                    </form>
-                </div>
+            <div class="comment">
+                <div>댓글 수: [[${comments.size()}]]</div>
+                <table class="table">
+                    <tr>
+                        <td>작성자</td>
+                        <td>내용</td>
+                        <td>작성일</td>
+                    </tr>
+                    <tr th:each="comment: ${comments}">
+                        <td th:text="${comment.getNickname()}"></td>
+                        <td th:text="${comment.getContent()}"></td>
+                        <td th:text="${comment.getCreatedAt()}"></td>
+                    </tr>
+                </table>
             </div>
-            <!-- 댓글 작성 폼 -->
-            <div id ="comment-form-[[${comment.id}]]" class="comment-form">
-                <h3>댓글 작성</h3>
-                <form th:action="@{/comments/{postId}/comments(postId=${post.getPostId()})}" method="POST" th:if="${user != null}">
+            <button type="button" onclick="toggleReplyForm(this)" class="btn btn-secondary">답글 작성</button>
+
+            <!--답글 작성 폼 (숨김)-->
+            <div class="comment-form" style="display:none;" th:if="${user != null}">
+                <h3>답글 작성</h3>
+                <form th:action="@{/comments/{postId}/comments(postId=${post.getPostId()})}" method="POST" class="form">
                     <!-- 작성자 정보 -->
+                    <label for="user_id">작성자:</label>
                     <span th:text="${user.getNickname()}">닉네임</span>
-                    <input type="hidden" class="user-id" name="user-id" th:value="${user.getUserId()}">
+                    <input type="hidden" id="user_id" name="user_id" th:value="${user.getUserId()}">
 
                     <!-- 게시글 ID 전송-->
                     <input type="hidden" name="post_id" th:value="${post.getPostId()}">
 
-                    <!-- 상위 댓글 ID (기본값은 null 또는 0) -->
-                    <!--                                <input type="hidden" name="parent_Comment_Id" th:value="${parentCommentId}"/>-->
+                    <!-- 상위 댓글 ID (null) -->
+                    <input type="hidden" name="parent_Comment_Id" th:value="${comment.getParentCommentId()}"/>
 
                     <!-- 내용 -->
-                    <textarea class="comment-content" name="content" rows="2" required></textarea>
-                    <button type="submit">등록</button>
+                    <label for="comment-content">내용:</label>
+                    <textarea id="comment-content" name="content" rows="2" required class="form-control"></textarea>
+
+                    <button type="submit" class="btn btn-success">답글 등록</button>
                 </form>
             </div>
+        </div>
+        <!-- 댓글 작성 폼 -->
+        <div id ="comment-form-[[${comment.id}]]" class="comment-form">
+            <h3>댓글 작성</h3>
+            <form th:action="@{/comments/{postId}/comments(postId=${post.getPostId()})}" method="POST" th:if="${user != null}">
+                <!-- 작성자 정보 -->
+                <span th:text="${user.getNickname()}">닉네임</span>
+                <input type="hidden" class="user-id" name="user-id" th:value="${user.getUserId()}">
+
+                <!-- 게시글 ID 전송-->
+                <input type="hidden" name="post_id" th:value="${post.getPostId()}">
+
+                <!-- 상위 댓글 ID (기본값은 null 또는 0) -->
+                <!--                                <input type="hidden" name="parent_Comment_Id" th:value="${parentCommentId}"/>-->
+
+                <!-- 내용 -->
+                <textarea class="comment-content form-control" name="content" rows="2" required></textarea>
+                <button type="submit" class="btn btn-success">등록</button>
+            </form>
         </div>
     </section>
 </body>

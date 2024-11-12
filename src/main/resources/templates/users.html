@@ -12,6 +12,7 @@
       <th scope="col" class="text-center">가입일</th>
       <th scope="col" class="text-center">최근 로그인</th>
       <th scope="col" class="text-center">로그인 횟수</th>
+      <th scope="col" class="text-center">권한</th>
       <th scope="col" class="text-center">계정 활성화 여부</th>
       <th scope="col"></th>
       <th scope="col"></th>
@@ -29,6 +30,7 @@
       <td th:text="${user.getJoinDate()}"></td>
       <td th:text="${user.getLastLogin()}"></td>
       <td th:text="${user.getLoginCount()}"></td>
+      <td th:text="${#strings.replace(user.getRole().name(), 'ROLE_', '')}"></td>
       <td th:text="${user.getIsActive()} ? '활성화' : '비활성화'"></td>
       <td>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"

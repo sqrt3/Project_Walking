@@ -5,6 +5,7 @@ import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.service.AdminService;
 import com.walking.project_walking.service.BoardService;
+import com.walking.project_walking.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final BoardService boardService;
+    private final UserService userService;
 
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -40,6 +43,14 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @PostMapping("/users/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long userId,
+            @RequestParam String roleName) {
+        userService.updateUserRole(userId, roleName);
+        UserResponse userResponse = adminService.findUser(userId);
         return ResponseEntity.ok(userResponse);
     }
 

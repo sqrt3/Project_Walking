@@ -29,19 +29,26 @@
     <div class="recent-post">
         <h3>최근 게시글</h3>
 
-        <!-- 검색 영역 -->
-        <div class="search-bar">
-            <form id="search-form">
+
+        <!-- 검색 및 글쓰기 영역 -->
+        <div class="search-write-bar d-flex justify-content-between align-items-center mb-3">
+            <!-- 검색 영역 -->
+            <form id="search-form" class="d-flex">
                 <input type="hidden" name="boardId" th:value="${boardId}" id="boardId"/>
-                <select name="searchCategory" id="searchCategory">
+                <select name="searchCategory" id="searchCategory" class="form-select me-2">
                     <option value="title">제목</option>
                     <option value="content">내용</option>
                     <option value="title-content">제목 + 내용</option>
                     <option value="nickname">글쓴이</option>
                 </select>
-                <input type="text" name="searchKeyword" placeholder="검색어 입력" required>
-                <button type="submit" class="button">검색</button>
+                <input type="text" name="searchKeyword" placeholder="검색어 입력" class="form-control me-2" required>
+
+                <!--        TODO 버튼 링크 걸기-->
+                <button type="submit" class="btn btn-success">검색</button>
             </form>
+
+            <!-- 글쓰기 버튼 -->
+            <a href="#" class="btn btn-primary">글쓰기</a>
         </div>
 
         <!-- 공지사항 목록 -->

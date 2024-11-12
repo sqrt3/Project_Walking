@@ -2,10 +2,12 @@ package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.Role;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -199,6 +201,14 @@ public class UserService {
         } else {
             return "최근 본 게시글이 없습니다";
         }
+    }
+
+    @Transactional
+    public void updateUserRole(Long userId, String roleName) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당하는 유저 ID를 찾을 수 없습니다."));
+        Role role = Role.valueOf(roleName.toUpperCase());
+        user.setRole(role);
+        userRepository.save(user);
     }
 
 }

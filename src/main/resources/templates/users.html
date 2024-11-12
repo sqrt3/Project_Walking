@@ -16,6 +16,7 @@
       <th scope="col" class="text-center">계정 활성화 여부</th>
       <th scope="col"></th>
       <th scope="col"></th>
+      <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -36,6 +37,10 @@
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal"
                 th:data-user-id="${user.getId()}">자세히
         </button>
+      </td>
+      <td>
+        <button class="btn btn-success change-role-btn" data-bs-toggle="modal" data-bs-target="#userRoleModal"
+                th:data-user-id="${user.getId()}">권한 변경</button>
       </td>
       <td>
         <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getId()}"
@@ -85,6 +90,33 @@
   </div>
 </div>
 
+<div class="modal fade" id="userRoleModal" tabindex="-1" aria-labelledby="userRoleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userRoleModalLabel">사용자 권한 변경</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="RoleType" class="form-label">권한 선택</label>
+          <select class="form-select" id="RoleType" required>
+            <option value="ROLE_USER">일반유저</option>
+            <option value="PATHFINDER">패스파인더 (Lv2)</option>
+            <option value="PIONEER">파이오니어 (Lv5)</option>
+            <option value="WALKER_HOLIC">워커홀릭 (Lv8)</option>
+            <option value="ROLE_ADMIN" disabled>관리자</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" id="roleSubmit">변경하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $('#userModal').on('show.bs.modal', function (event) {
     const button = $(event.relatedTarget);
@@ -129,6 +161,35 @@
       });
 
       $('#deleteUserModal').modal('show');
+    });
+
+    $('.change-role-btn').click(function () {
+      let userId = $(this).data('user-id');
+      let userRow = $(this).closest('tr');
+
+      $('#RoleType').val(userRow.find('td').eq(10).text());
+      $('#roleSubmit').off('click').on('click', function () {
+        let selectedRole = $('#RoleType').val();
+
+        if (!selectedRole) {
+          alert('권한을 선택해주세요.');
+          return;
+        }
+
+        $.ajax({
+          url: '/api/admin/users/' + userId + '?roleName=' + selectedRole,
+          type: 'POST',
+          success: function (response) {
+
+          },
+          error: function () {
+            userRow.find('td').eq(10).text(selectedRole.replace("ROLE_", ""));
+            $('#userRoleModal').modal('hide');
+          }
+        });
+      });
+
+      $('#userRoleModal').modal('show');
     });
   });
 </script>

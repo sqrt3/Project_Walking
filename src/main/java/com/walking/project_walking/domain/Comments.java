@@ -11,10 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
-
 public class Comments {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
@@ -26,8 +23,10 @@ public class Comments {
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+//    @Column(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private Users user;
 
     @Column(name = "content", nullable = false)
     private String content;

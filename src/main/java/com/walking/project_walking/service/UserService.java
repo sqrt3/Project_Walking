@@ -198,4 +198,8 @@ public class UserService {
         }
     }
 
+    public Long getLastViewedPostId(Long userId) {
+        return recentPostRepository.findPostIdByUserId(userId);
+    }
+
 }

@@ -143,17 +143,18 @@ public class UserController {
 
     // 최근 게시물 조회
     @GetMapping("/users/{userId}/recent-post")
-    public ResponseEntity<String> getRecentPost(@PathVariable Long userId) {
+    public ResponseEntity<Map<String, Object>> getRecentPost(@PathVariable Long userId) {
+        Long postId = userService.getLastViewedPostId(userId); // postId는 Long 타입
         String title = userService.getLastViewedPostTitle(userId);
 
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         if (title == null) {
-            response.put("message", "최근 본 게시글이 없습니다.");
+            response.put("message", "최근 본 게시글이 없습니다."); // String 타입 message
         } else {
+            response.put("postId", postId); // Long 타입 postId
             response.put("title", title);
         }
 
-        return ResponseEntity.ok(title);
+        return ResponseEntity.ok(response);
     }
-
 }

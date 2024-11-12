@@ -180,16 +180,27 @@ function loadPointLogs() {
 
 function loadRecentPosts() {
     fetch(`/api/users/${userId}/recent-post`)
-        .then(response => response.text())
-        .then(title => {
-            console.log(title);
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
             const recentPostsList = document.getElementById("recentPostsList");
             recentPostsList.innerHTML = "";
 
-            // 제목이 있으면 출력, 없으면 "최근 본 게시글이 없습니다" 출력
             const div = document.createElement("div");
-            div.textContent = title || "최근 본 게시글이 없습니다.";
+
+            if (data.message) {
+                div.textContent = data.message;
+            } else {
+                const postLink = document.createElement("a");
+                postLink.href = `/view/posts/${data.postId}`;  // 해당 게시글 상세 페이지로 링크
+                postLink.textContent = data.title;
+                div.appendChild(postLink);
+            }
+
             recentPostsList.appendChild(div);
+        })
+        .catch(error => {
+            console.error("Error loading recent posts:", error);
         });
 }
 

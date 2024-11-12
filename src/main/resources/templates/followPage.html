@@ -142,22 +142,23 @@
         }
 
         function loadUserPosts() {
+            // 요청 URL 수정
             $.ajax({
-                url: `/api/posts/userId?userId=${followingId}`,
+                url: `/api/posts?userId=${followingId}`,  // userId를 쿼리 파라미터로 전달
                 type: 'GET',
                 success: function (data) {
                     const postList = $('#postList');
                     postList.empty();
 
-                    if (data && data.length > 0) {  // 데이터가 존재하고 길이가 0보다 큰 경우
+                    if (data && data.length > 0) {
                         data.forEach(post => {
                             const postItem = $(`
-                <div class="post-item mb-3 p-3 border rounded">
-                    <h5>${post.title}</h5>
-                    <p>${post.createdAt}</p>
-                    <p>댓글 : ${post.commentsCount} 개</p>
-                </div>
-            `);
+                    <div class="post-item mb-3 p-3 border rounded">
+                        <h5><a href="/view/posts/${post.postId}">${post.title}</a></h5>
+                        <p>${post.createdAt}</p>
+                        <p>댓글 : ${post.commentsCount} 개</p>
+                    </div>
+                `);
                             postList.append(postItem);
                         });
                     } else {

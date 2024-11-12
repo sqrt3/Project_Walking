@@ -30,11 +30,8 @@ public class GoodsService {
     }
 
     public GoodsResponseDto getGoodsById(Long id) {
-        Goods goods = goodsRepository.findById(id).orElse(null);
-        if (goods != null) {
-            return new GoodsResponseDto(goods);
-        }
-        return null;
+        Goods goods = goodsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 굿즈의 ID가 없습니다."));
+        return new GoodsResponseDto(goods);
     }
 
     public GoodsResponseDto addGoods(GoodsResponseDto goods) {
@@ -45,14 +42,11 @@ public class GoodsService {
     @Transactional
     public GoodsResponseDto updateGoods(Long orgGoodsId, GoodsResponseDto newGoods) {
         GoodsResponseDto orgGoods = getGoodsById(orgGoodsId);
-        if (orgGoods != null) {
-            orgGoods.setName(newGoods.getName());
-            orgGoods.setDescription(newGoods.getDescription());
-            orgGoods.setPrice(newGoods.getPrice());
-            goodsRepository.save(orgGoods.toEntity());
-            return orgGoods;
-        }
-        return null;
+        orgGoods.setName(newGoods.getName());
+        orgGoods.setDescription(newGoods.getDescription());
+        orgGoods.setPrice(newGoods.getPrice());
+        goodsRepository.save(orgGoods.toEntity());
+        return orgGoods;
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import com.walking.project_walking.domain.dto.CommentRequestDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
 import com.walking.project_walking.repository.UserRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class CommentsService {
                 .user(userRepository.findById(request.getUserId()).orElse(null))
                 .content(request.getContent())
                 .parentCommentId(request.getParentCommentId())
+                .createdAt(LocalDateTime.now())
+                .isDeleted(Boolean.FALSE)
                 .build();
 
         Comments savedComment = commentRepository.save(comment);

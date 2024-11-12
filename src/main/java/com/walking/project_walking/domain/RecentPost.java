@@ -17,8 +17,8 @@ public class RecentPost {
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-    RecentPost (Users user, Posts post) {
-        this.userId = user.getUserId();
-        this.postId = post.getPostId();
+    public RecentPost (Long userId, Long postId) {
+        this.userId = userId;
+        this.postId = postId;
     }
 }

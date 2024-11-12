@@ -254,13 +254,14 @@ function displayPagination(searchMode) {
 function displayPosts(posts) {
     const postList = document.getElementById('post-list');
     postList.innerHTML = '';
+    console.log(posts)
 
     posts.forEach(post => {
         const li = document.createElement('li');
         const imageUrl = post.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
         // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
         li.innerHTML = `
-            <a href="#" style="display: block; text-decoration: none; color: inherit;">
+            <a href="/posts/${post.postId}" style="display: block; text-decoration: none; color: inherit;">
                 <h4>${post.title}</h4>
                 <p>${post.content}</p>
                 <img src="${imageUrl}" alt="Thumbnail">

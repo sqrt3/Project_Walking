@@ -23,10 +23,7 @@ public class AdminService {
     }
 
     public UserResponse findUser(Long userId) {
-        Users user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return null;
-        }
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         return new UserResponse(user);
     }
 }

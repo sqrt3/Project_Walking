@@ -71,7 +71,7 @@ public class GoodsController {
 
         Boolean isSuccessful = goodsService.purchaseGoods(goodsId, userId);
         if (isSuccessful == Boolean.FALSE)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("포인트가 충분하지 않거나, 올바르지 않은 굿즈입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("포인트가 충분하지 않거나, 구매할 수 없는 굿즈 입니다.");
         return ResponseEntity.status(HttpStatus.OK).body("굿즈를 성공적으로 구매하셨습니다.");
     }
 

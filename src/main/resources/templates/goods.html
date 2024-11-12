@@ -13,7 +13,8 @@
   <div class="d-flex justify-content-end mb-4">
     <button id="showAll" class="btn btn-outline-primary me-2">전체 보기</button>
     <button id="showConsumable" class="btn btn-outline-success me-2">소모성 아이템</button>
-    <button id="showCosmetic" class="btn btn-outline-info">치장 아이템</button>
+    <button id="showCosmetic" class="btn btn-outline-info me-2">치장 아이템</button>
+    <button id="showSpecial" class="btn btn-outline-danger">특별 아이템</button>
   </div>
   <div class="row d-flex justify-content-start g-4">
     <div th:each="goods : ${goodsList}" class="col-12 col-sm-6 col-md-4 col-lg-3 items" th:data-goods-id="${goods.getGoodsId()}">
@@ -24,6 +25,7 @@
           <h5 class="card-title" th:text="${goods.getName()}">아이템 이름</h5>
           <span th:if="${goods.getGoodsId() / 100000 == 1}" class="badge bg-success ms-2">소모성</span>
           <span th:if="${goods.getGoodsId() / 100000 == 2}" class="badge bg-info ms-2">치장</span>
+          <span th:if="${goods.getGoodsId() / 100000 == 3}" class="badge bg-danger ms-2">특별</span>
           <p class="card-text description-text" th:text="${goods.getDescription()}">아이템 설명</p>
           <div class="d-flex justify-content-between align-items-center mt-auto">
             <a href="javascript:void(0);" class="btn btn-primary purchase-btn"
@@ -135,6 +137,8 @@
           $(this).show();
         } else if (type === 'cosmetic' && Math.floor(goodsId / 100000) === 2) {
           $(this).show();
+        } else if (type === 'special' && Math.floor(goodsId / 100000) === 3) {
+          $(this).show();
         } else {
           $(this).hide();
         }
@@ -152,6 +156,10 @@
     $('#showCosmetic').click(function() {
       filterItems('cosmetic');
     });
+
+    $('#showSpecial').click(function() {
+      filterItems('special');
+    })
 
     filterItems('all');
 

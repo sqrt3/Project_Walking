@@ -1,8 +1,8 @@
 package com.walking.project_walking.handler;
 
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.enums.Exp;
 import com.walking.project_walking.enums.Point;
-import com.walking.project_walking.repository.PointLogRepository;
 import com.walking.project_walking.repository.UserRepository;
 import com.walking.project_walking.service.PointService;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -35,6 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         if (user.getLastLogin().toLocalDate().isBefore(LocalDate.now())) {
             user.setPoint(user.getPoint() + Point.LOGIN_POINT.getAmount());
+            user.setUserExp(user.getUserExp() + Exp.LOGIN_POINT.getAmount());
             pointService.addPoints(user.getUserId(), Point.LOGIN_POINT.getAmount(), "일일 로그인 보너스");
         }
 

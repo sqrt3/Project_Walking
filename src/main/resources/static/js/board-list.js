@@ -113,9 +113,8 @@ function fetchNotices() {
             noticeList.innerHTML = '';
             data.forEach(notice => {
                 const li = document.createElement('li');
-                // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
                 li.innerHTML = `
-                    <a href="#" style="display: block; text-decoration: none; color: inherit;">
+                    <a href="/view/posts/${notice.postId}" style="display: block; text-decoration: none; color: inherit;">
                         <h4>${notice.title}</h4>
                         <p>${notice.content}</p>
                         <span>작성일: ${notice.createdAt}</span>
@@ -139,10 +138,9 @@ function fetchPopularPosts(boardId) {
         .then(data => {
             if (data) {
                 const popularPosts = document.getElementById('popular-posts');
-                const imageUrl = data.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
-                // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
+                const imageUrl = data.imageUrl[0] || "https://walkingproject1.s3.ap-northeast-2.amazonaws.com/c07aa2d0-formi.jpg";
                 popularPosts.innerHTML = `
-                    <a href="#" style="display: block; text-decoration: none; color: inherit;">
+                    <a href="/view/posts/${data.postId}" style="display: block; text-decoration: none; color: inherit;">
                         <h4>${data.title}</h4>
                         <p>${data.content}</p>
                         <img src="${imageUrl}" alt="Thumbnail">
@@ -264,10 +262,9 @@ function displayPosts(posts) {
 
     posts.forEach(post => {
         const li = document.createElement('li');
-        const imageUrl = post.imageUrl[0] || "https://walkingproject.s3.ap-northeast-2.amazonaws.com/41166136-8ormi.jpg";
-        // TODO 추후 게시글 상세페이지로 리다이렉션하도록 수정
+        const imageUrl = post.imageUrl[0] || "https://walkingproject1.s3.ap-northeast-2.amazonaws.com/c07aa2d0-formi.jpg";
         li.innerHTML = `
-            <a href="#" style="display: block; text-decoration: none; color: inherit;">
+            <a href= "/view/posts/${post.postId}" style="display: block; text-decoration: none; color: inherit;">
                 <h4>${post.title}</h4>
                 <p>${post.content}</p>
                 <img src="${imageUrl}" alt="Thumbnail">

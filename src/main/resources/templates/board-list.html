@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시글 목록 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/board-list.css">
@@ -29,7 +30,6 @@
     <div class="recent-post">
         <h3>최근 게시글</h3>
 
-
         <!-- 검색 및 글쓰기 영역 -->
         <div class="search-write-bar d-flex justify-content-between align-items-center mb-3">
             <!-- 검색 영역 -->
@@ -42,8 +42,6 @@
                     <option value="nickname">글쓴이</option>
                 </select>
                 <input type="text" name="searchKeyword" placeholder="검색어 입력" class="form-control me-2" required>
-
-                <!--        TODO 버튼 링크 걸기-->
                 <button type="submit" class="btn btn-success">검색</button>
             </form>
 

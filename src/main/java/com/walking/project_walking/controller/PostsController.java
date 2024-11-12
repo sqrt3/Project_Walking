@@ -117,7 +117,7 @@ public class PostsController {
     // 게시글, 이미지 생성을 독립적으로 가능하도록 하기 위해 api 따로 작성
     @PostMapping
     public ResponseEntity<?> savePosts(@RequestPart("postRequest") @Valid PostRequestDto postRequest,
-                                       @RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles) {
+                                        @RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles) {
         try {
             PostCreateResponseDto savedPost = postsService.savePost(postRequest, multipartFiles);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
@@ -250,6 +250,5 @@ public class PostsController {
         postsService.likePost(userId, postId);
         return ResponseEntity.ok("좋아요 상태가 변경되었습니다.");
     }
-
 
 }

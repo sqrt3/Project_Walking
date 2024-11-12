@@ -1,36 +1,24 @@
 package com.walking.project_walking.service;
 
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.walking.project_walking.domain.LikeLog;
 import com.walking.project_walking.domain.PostImages;
 import com.walking.project_walking.domain.PostNavigationDto;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.dto.*;
-import com.walking.project_walking.repository.CommentsRepository;
-import com.walking.project_walking.repository.PostImagesRepository;
-import com.walking.project_walking.repository.PostsRepository;
-import com.walking.project_walking.repository.UserRepository;
+import com.walking.project_walking.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-
-import com.walking.project_walking.domain.LikeLog;
-import com.walking.project_walking.domain.Posts;
-import com.walking.project_walking.domain.dto.*;
-import com.walking.project_walking.repository.*;
-import lombok.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -309,6 +297,31 @@ public class PostsService {
         String postNickname = userRepository.getNicknameByUserId(post.getUserId());
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
 
+        PostResponseDto currentPost = PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
+
+        // 이전 글 조회
+        PostResponseDto previousPost = postsRepository.findPreviousPost(postId, boardId)
+                .map(p -> PostResponseDto.fromEntity(
+                        p,
+                        commentsRepository.countCommentsByPostId(p.getPostId()),
+                        userRepository.getNicknameByUserId(p.getUserId()),
+                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
+                ))
+                .orElse(null);
+
+        // 다음 글 조회
+        PostResponseDto nextPost = postsRepository.findNextPost(postId, boardId)
+                .map(p -> PostResponseDto.fromEntity(
+                        p,
+                        commentsRepository.countCommentsByPostId(p.getPostId()),
+                        userRepository.getNicknameByUserId(p.getUserId()),
+                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
+                ))
+                .orElse(null);
+
+        return new PostNavigationDto(currentPost, previousPost, nextPost);
+    }
+
     // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
     public boolean hasLiked(Long userId, Long postId) {
         return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();
@@ -339,30 +352,5 @@ public class PostsService {
 
         // 게시글 정보 저장
         postsRepository.save(post);  // 게시글 저장
-    }
-
-        PostResponseDto currentPost = PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
-
-        // 이전 글 조회
-        PostResponseDto previousPost = postsRepository.findPreviousPost(postId, boardId)
-                .map(p -> PostResponseDto.fromEntity(
-                        p,
-                        commentsRepository.countCommentsByPostId(p.getPostId()),
-                        userRepository.getNicknameByUserId(p.getUserId()),
-                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
-                ))
-                .orElse(null);
-
-        // 다음 글 조회
-        PostResponseDto nextPost = postsRepository.findNextPost(postId, boardId)
-                .map(p -> PostResponseDto.fromEntity(
-                        p,
-                        commentsRepository.countCommentsByPostId(p.getPostId()),
-                        userRepository.getNicknameByUserId(p.getUserId()),
-                        postImagesRepository.findImageUrlsByPostId(p.getPostId())
-                ))
-                .orElse(null);
-
-        return new PostNavigationDto(currentPost, previousPost, nextPost);
     }
 }

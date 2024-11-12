@@ -11,6 +11,8 @@ function loadUserInfo() {
             document.getElementById("profileImg").src = data.profileImage;
             document.getElementById("userEmail").innerText = data.email;
             document.getElementById("userPhone").innerText = data.phone;
+            document.getElementById("userLevel").innerText = data.userLevel;
+            document.getElementById("userExp").innerText = data.userExp;
         });
 }
 

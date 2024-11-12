@@ -198,9 +198,29 @@ function loadRecentPosts() {
             }
 
             recentPostsList.appendChild(div);
+        });
+}
+
+function loadUserPosts() {
+    fetch(`/api/posts?userId=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            const userPostsList = document.getElementById("userPostsList");
+            userPostsList.innerHTML = ""; // 요소 초기화
+
+            if (data) {
+                data.forEach(post => {
+                    const postDiv = document.createElement("div");
+                    const postLink = document.createElement("a");
+                    postLink.href = `/view/posts/${post.postId}`;
+                    postLink.textContent = post.title;
+                    postDiv.appendChild(postLink);
+                    userPostsList.appendChild(postDiv);
+                });
+            }
         })
         .catch(error => {
-            console.error("Error loading recent posts:", error);
+            console.error("게시글 불러오기 실패 :", error);
         });
 }
 
@@ -229,14 +249,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("followingLink").onclick = () => loadFollowingList();
 
     document.getElementById("myItemsModal").addEventListener("shown.bs.modal", () => {
-        console.log("My Items Modal shown");
-        loadUserItems(userId);
+        loadUserItems();
     });
 
     document.getElementById("myPointLogsModal").addEventListener("shown.bs.modal", () => {
-        console.log("My Point Logs Modal shown");
-        loadPointLogs(userId);
+        loadPointLogs();
     });
-
-    loadRecentPosts(userId);
+    loadRecentPosts();
+    loadUserPosts()
 });

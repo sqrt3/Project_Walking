@@ -2,6 +2,7 @@ package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.MyGoods;
 import com.walking.project_walking.domain.PointLog;
+import com.walking.project_walking.domain.Role;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.repository.*;
@@ -198,4 +199,7 @@ public class UserService {
         }
     }
 
+    public Role getRoleByUserId(Long userId) {
+        return userRepository.getRoleByUserId(userId);
+    }
 }

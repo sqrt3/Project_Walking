@@ -1,5 +1,6 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.Role;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.repository.UserRepository;
 import com.walking.project_walking.service.UserService;
@@ -9,9 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 @Controller
@@ -29,14 +27,17 @@ public class BoardViewController {
 
         Users user = null;
         String userNickname = null;
+        Role role = null;
         if (userId != null) {
             user = userService.findById(userId);
             userNickname = userRepository.getNicknameByUserId(userId);
+            role = userService.getRoleByUserId(userId);
         }
 
         model.addAttribute("boardId", boardId);
         model.addAttribute("user", user);
         model.addAttribute("userNickname", userNickname);
+        model.addAttribute("role", role);
         return "board-list";
     }
 }

@@ -163,7 +163,12 @@ function fetchRecentPosts(boardId, page = 1) {
     if (Number(boardId) === 2) {
         url = "/api/posts/hot";
     } else if (Number(boardId) === 3) {
-        url = `/api/posts/search?boardId=${boardId}&nickname=${userNickname}`;
+        if(role === "ROLE_ADMIN"){
+            url = `/api/boards/posts?boardId=${boardId}&page=${page}`
+        }
+        else {
+            url = `/api/posts/search?boardId=${boardId}&nickname=${userNickname}`;
+        }
     } else {
         url = `/api/boards/posts?boardId=${boardId}&page=${page}`;
     }
@@ -177,8 +182,10 @@ function fetchRecentPosts(boardId, page = 1) {
         })
         .then(data => {
             if (data) {
-                if (Number(boardId) === 3) {
+                if (Number(boardId) === 3 && role !== "ROLE_ADMIN") {
                     displayPosts(data.posts);
+                    pageCount = data.totalPages; // 총 페이지 수 설정
+                    displayPagination(true)
                 } else {
                     displayPosts(data);
                 }

@@ -88,7 +88,7 @@
   <div class="card m-3">
     <div class="p-3">
       <h2 th:text="${post.getTitle()}" class="p-3">게시글 제목</h2>
-      <p class="d-flex justify-content-between"><span th:text="${post.getNickname()}">작성자 닉네임</span><span>조회수: [[${post.getViewCount()}]]회</span>
+      <p class="d-flex justify-content-between"><span th:text="${post.getNickname()}"></span><span>조회수: [[${post.getViewCount()}]]회</span>
       </p>
       <p th:text="'작성 시간 : ' + ${post.createdAt}"></p>
       <p th:text="'수정 시간 : ' + ${post.modifiedAt}"></p>
@@ -207,8 +207,8 @@
 
   <div class="d-flex justify-content-end m-3 gap-2 p-3">
     <a th:href="@{/posts/modify/{postId}(postId=${post.getPostId()})}" class="btn btn-primary"
-       th:if="${user.nickname.equals(post.nickname)}">수정</a>
-    <button type="submit" class="btn btn-danger" onclick="deletepost();" th:if="${user.getRole().name().equals('ROLE_ADMIN') or user.nickname.equals(post.nickname)}">삭제
+       th:if="${user != null && (user.getRole().name().equals('ROLE_ADMIN') || user.nickname.equals(post.nickname))}">수정</a>
+    <button type="submit" class="btn btn-danger" onclick="deletepost();" th:if="${user != null && (user.getRole().name().equals('ROLE_ADMIN') or user.nickname.equals(post.nickname))}">삭제
     </button>
     <a th:href="@{/boardList}" class="btn btn-secondary">목록으로</a>
   </div>

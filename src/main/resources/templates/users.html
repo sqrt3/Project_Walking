@@ -181,13 +181,13 @@
 
         $.ajax({
           url: '/api/admin/users/' + userId + '?roleName=' + selectedRole,
-          type: 'POST',
+          type: 'PUT',
           success: function (response) {
-
-          },
-          error: function () {
             userRow.find('td').eq(10).text(selectedRole.replace("ROLE_", ""));
             $('#userRoleModal').modal('hide');
+          },
+          error: function () {
+
           }
         });
       });

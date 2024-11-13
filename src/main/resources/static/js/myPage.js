@@ -194,7 +194,7 @@ function loadRecentPosts() {
                 div.textContent = data.message;
             } else {
                 const postLink = document.createElement("a");
-                postLink.href = `/view/posts/${data.postId}`;  // 해당 게시글 상세 페이지로 링크
+                postLink.href = `/posts/${data.postId}`;  // 해당 게시글 상세 페이지로 링크
                 postLink.textContent = data.title;
                 div.appendChild(postLink);
             }
@@ -214,7 +214,7 @@ function loadUserPosts() {
                 data.forEach(post => {
                     const postDiv = document.createElement("div");
                     const postLink = document.createElement("a");
-                    postLink.href = `/view/posts/${post.postId}`;
+                    postLink.href = `/posts/${post.postId}`;
                     postLink.textContent = post.title;
                     postDiv.appendChild(postLink);
                     userPostsList.appendChild(postDiv);

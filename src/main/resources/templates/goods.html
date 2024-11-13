@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -13,17 +18,22 @@
   <div class="d-flex justify-content-end mb-4">
     <button id="showAll" class="btn btn-outline-primary me-2">전체 보기</button>
     <button id="showConsumable" class="btn btn-outline-success me-2">소모성 아이템</button>
-    <button id="showCosmetic" class="btn btn-outline-info">치장 아이템</button>
+    <button id="showCosmetic" class="btn btn-outline-info me-2">치장 아이템</button>
+    <button id="showSpecial" class="btn btn-outline-danger">특별 아이템</button>
   </div>
   <div class="row d-flex justify-content-start g-4">
-    <div th:each="goods : ${goodsList}" class="col-12 col-sm-6 col-md-4 col-lg-3 items" th:data-goods-id="${goods.getGoodsId()}">
+    <div th:each="goods : ${goodsList}" class="col-12 col-sm-6 col-md-4 col-lg-3 items"
+         th:data-goods-id="${goods.getGoodsId()}">
       <div class="card" style="width: 100%; height: 100%;">
-        <img th:if="${goods.getGoodsImage() != null}" th:src="${goods.getGoodsImage()}" class="card-img-top" alt="아이템 이미지">
-        <img th:if="${goods.getGoodsImage() == null}" src="https://placehold.co/194x140" alt="아이템 이미지">
+        <img th:if="${goods.getGoodsImage() != null}" th:src="${goods.getGoodsImage()}"
+             class="card-img-top" alt="아이템 이미지" style="object-fit: contain;">
+        <img th:if="${goods.getGoodsImage() == null}" src="https://placehold.co/194x140"
+             alt="아이템 이미지" style="object-fit: contain;">
         <div class="card-body d-flex flex-column justify-content-between">
           <h5 class="card-title" th:text="${goods.getName()}">아이템 이름</h5>
           <span th:if="${goods.getGoodsId() / 100000 == 1}" class="badge bg-success ms-2">소모성</span>
           <span th:if="${goods.getGoodsId() / 100000 == 2}" class="badge bg-info ms-2">치장</span>
+          <span th:if="${goods.getGoodsId() / 100000 == 3}" class="badge bg-danger ms-2">특별</span>
           <p class="card-text description-text" th:text="${goods.getDescription()}">아이템 설명</p>
           <div class="d-flex justify-content-between align-items-center mt-auto">
             <a href="javascript:void(0);" class="btn btn-primary purchase-btn"
@@ -32,8 +42,17 @@
                th:data-goods-price="${goods.getPrice()}"
                th:data-user-point="${user.getPoint()}"
                th:data-goods-name="${goods.getName()}"
-               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P'">
+               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P 구매'">
               구매하기
+            </a>
+            <a href="javascript:void(0);" class="btn btn-success gift-btn"
+               th:if="${user != null} and ${!user.getRole().name().equals('ROLE_USER')}"
+               th:data-goods-id="${goods.getGoodsId()}"
+               th:data-goods-price="${goods.getPrice()}"
+               th:data-user-point="${user.getPoint()}"
+               th:data-goods-name="${goods.getName()}"
+               th:text="${#numbers.formatInteger(goods.price, 0, 'COMMA')} + 'P 선물'">
+              선물하기
             </a>
           </div>
         </div>
@@ -42,7 +61,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+<div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -62,7 +82,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -79,7 +100,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -96,10 +118,30 @@
   </div>
 </div>
 
+<div class="modal fade" id="giftModal" tabindex="-1" aria-labelledby="giftModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="giftModalLabel">선물할 대상의 닉네임 입력</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>선물할 대상의 닉네임을 입력해주세요:</p>
+        <input type="text" id="targetNickname" class="form-control" placeholder="닉네임"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" id="confirmGift" class="btn btn-success" disabled>선물하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     function filterItems(type) {
-      $('.items').each(function() {
+      $('.items').each(function () {
         const goodsId = $(this).data('goods-id');
         if (type === 'all') {
           $(this).show();
@@ -107,25 +149,119 @@
           $(this).show();
         } else if (type === 'cosmetic' && Math.floor(goodsId / 100000) === 2) {
           $(this).show();
+        } else if (type === 'special' && Math.floor(goodsId / 100000) === 3) {
+          $(this).show();
         } else {
           $(this).hide();
         }
       });
     }
 
-    $('#showAll').click(function() {
+    $('#showAll').click(function () {
       filterItems('all');
     });
 
-    $('#showConsumable').click(function() {
+    $('#showConsumable').click(function () {
       filterItems('consumable');
     });
 
-    $('#showCosmetic').click(function() {
+    $('#showCosmetic').click(function () {
       filterItems('cosmetic');
     });
 
+    $('#showSpecial').click(function () {
+      filterItems('special');
+    })
+
     filterItems('all');
+
+    $('.purchase-btn').click(function () {
+      let goodsId = $(this).data('goods-id');
+      let goodsPrice = $(this).data('goods-price');
+      let goodsName = $(this).data('goods-name');
+
+      let currentPoints = $(this).data('userPoint');
+
+      $('#selectedGoods').text(goodsName);
+      $('#currentPoints').text(currentPoints);
+      $('#remainingPoints').text(currentPoints - goodsPrice);
+
+      if (currentPoints < goodsPrice) {
+        $('#confirmPurchase').prop('disabled', true);
+      } else {
+        $('#confirmPurchase').prop('disabled', false);
+      }
+
+      $('#confirmPurchase').off('click').on('click', function () {
+        $.ajax({
+          url: '/api/goods/{goodsId}/purchase'.replace("{goodsId}", goodsId),
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({"id": goodsId}),
+          success: function (response) {
+            $('#successMessage').text(response);
+            $('#successModal').modal('show');
+            $('#purchaseModal').modal('hide');
+          },
+          error: function (xhr, status, error) {
+            $('#errorMessage').text(xhr.responseText);
+            $('#errorModal').modal('show');
+            $('#purchaseModal').modal('hide');
+          }
+        });
+      });
+
+      $('#purchaseModal').modal('show');
+    });
+
+    $('.gift-btn').click(function () {
+      let goodsId = $(this).data('goods-id');
+      let goodsPrice = $(this).data('goods-price');
+      let goodsName = $(this).data('goods-name');
+
+      let currentPoints = $(this).data('userPoint');
+
+      $('#selectedGoods').text(goodsName);
+      $('#currentPoints').text(currentPoints);
+      $('#remainingPoints').text(currentPoints - goodsPrice);
+
+      $('#targetNickname').val('');
+      $('#confirmGift').prop('disabled', true);
+
+      $('#targetNickname').on('input', function () {
+        const targetNickname = $(this).val().trim();
+        if (targetNickname.length > 0) {
+          $('#confirmGift').prop('disabled', false);
+        } else {
+          $('#confirmGift').prop('disabled', true);
+        }
+      });
+
+      $('#confirmGift').off('click').on('click', function () {
+        const targetNickname = $('#targetNickname').val().trim();
+
+        if (targetNickname) {
+          $.ajax({
+            url: '/api/goods/' + goodsId + '/gift?targetNickname=' + encodeURIComponent(
+                targetNickname),
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (response) {
+              $('#successMessage').text(response);
+              $('#successModal').modal('show');
+              $('#giftModal').modal('hide');
+            },
+            error: function (xhr, status, error) {
+              $('#errorMessage').text(xhr.responseText);
+              $('#errorModal').modal('show');
+              $('#giftModal').modal('hide');
+            }
+          });
+        }
+      });
+
+      $('#giftModal').modal('show');
+    });
   });
 </script>
 </body>

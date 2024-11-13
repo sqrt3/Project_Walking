@@ -1,19 +1,24 @@
 package com.walking.project_walking.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.User;
 
 @Entity
 @Getter
-@Setter // <- 필요할 시 활성화
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "my_goods")
 public class MyGoods {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

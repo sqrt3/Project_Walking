@@ -226,14 +226,6 @@ public class PostsController {
         }
     }
 
-
-    // 게시글 작성 페이지로 이동
-    @GetMapping("/posts/create")
-    public String createPostPage(Model model) {
-        model.addAttribute("boards", boardService.getAllBoards());
-        return "createPost";
-    }
-
     //게시글 상세 조회
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long postId) {

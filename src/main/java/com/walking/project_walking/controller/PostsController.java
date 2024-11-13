@@ -165,4 +165,10 @@ public class PostsController {
     }
   }
 
+  @PostMapping("/likes")
+  public ResponseEntity<?> likePost(@RequestParam Long userId, @RequestParam Long postId) {
+    postsService.likePost(userId, postId);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
 }

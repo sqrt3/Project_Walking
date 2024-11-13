@@ -7,7 +7,7 @@
 </head>
 <body>
 <h2>게시글 작성</h2>
-<form th:action="@{/posts}" method="post" enctype="multipart/form-data">
+<form th:action="@{/api/posts}" method="post" enctype="multipart/form-data">
 
   <!-- 게시판 선택 -->
   <div>
@@ -35,20 +35,16 @@
   <br>
   <!-- 이미지 업로드 -->
 
-  <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
-    <div>
-      <label for="image">이미지 업로드:</label>
-      <input type="file" id="image" name="image">
-    </div>
-    <div>
-      <button type="submit">업로드</button>
-    </div>
-  </form>
+  <div>
+    <label for="uploadFiles">이미지 업로드:</label>
+    <input type="file" id="uploadFiles" name="uploadFiles" multiple>
+  </div>
+  <br>
   <br>
   <!-- 등록 및 취소 버튼 -->
   <div>
     <button type="submit">등록</button>
-    <button type="button" onclick=" ">취소</button>
+    <button type="button" onclick="window.history.back();">취소</button>
   </div>
 </form>
 

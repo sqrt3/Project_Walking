@@ -4,6 +4,8 @@ import com.walking.project_walking.domain.Comments;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.CommentRequestDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
+import com.walking.project_walking.enums.Exp;
+import com.walking.project_walking.enums.Point;
 import com.walking.project_walking.repository.CommentsRepository;
 import com.walking.project_walking.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -30,6 +32,11 @@ public class CommentsService {
                 .build();
 
         Comments savedComment = commentRepository.save(comment);
+
+        Users user = comment.getUser();
+        user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount());
+        user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount());
+        userRepository.save(user);
 
         return new CommentResponseDto(
                 savedComment.getCommentId(),

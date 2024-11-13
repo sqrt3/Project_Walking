@@ -39,8 +39,10 @@
         </button>
       </td>
       <td>
-        <button class="btn btn-success change-role-btn" data-bs-toggle="modal" data-bs-target="#userRoleModal"
-                th:data-user-id="${user.getId()}">권한 변경</button>
+        <button class="btn btn-success change-role-btn" data-bs-toggle="modal"
+                data-bs-target="#userRoleModal"
+                th:data-user-id="${user.getId()}" th:disabled="${!user.getIsActive()}">권한 변경
+        </button>
       </td>
       <td>
         <button class="btn btn-danger disable-user-btn" th:data-user-id="${user.getId()}"
@@ -90,7 +92,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="userRoleModal" tabindex="-1" aria-labelledby="userRoleModalLabel" aria-hidden="true">
+<div class="modal fade" id="userRoleModal" tabindex="-1" aria-labelledby="userRoleModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

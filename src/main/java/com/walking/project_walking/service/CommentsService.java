@@ -19,6 +19,7 @@ import java.util.List;
 public class CommentsService {
     private final CommentsRepository commentRepository;
     private final UserRepository userRepository;
+    private final PointService pointService;
 
     // 댓글, 답글 생성
     public CommentResponseDto createComment (CommentRequestDto request) {
@@ -38,9 +39,11 @@ public class CommentsService {
         {
             user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount());
             user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount());
+            pointService.addPoints(user.getUserId(), Point.WRITE_COMMENT_POINT.getAmount(), "댓글 작성 포인트 지급");
         } else {
             user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount() * 2);
             user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount() * 2);
+            pointService.addPoints(user.getUserId(), Point.WRITE_COMMENT_POINT.getAmount() * 2, "댓글 작성 포인트 지급");
         }
         userRepository.save(user);
 

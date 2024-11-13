@@ -13,19 +13,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final AdminRepository adminRepository;
-    private final UserRepository userRepository;
+  private final AdminRepository adminRepository;
+  private final UserRepository userRepository;
 
-    public List<UserResponse> getAllUsers() {
-        List<Users> users = adminRepository.findAll();
-        return users.stream()
-                .map(UserResponse::new)
-                .collect(Collectors.toList());
-    }
+  public List<UserResponse> getAllUsers() {
+    List<Users> users = adminRepository.findAll();
+    return users.stream()
+        .map(UserResponse::new)
+        .collect(Collectors.toList());
+  }
 
-    public UserResponse findUser(Long userId) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        return new UserResponse(user);
-    }
+  public UserResponse findUser(Long userId) {
+    Users user = userRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    return new UserResponse(user);
+  }
 }

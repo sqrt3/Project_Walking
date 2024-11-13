@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PointLogRepository extends JpaRepository<PointLog, Long> {
 
-    List<PointLog> findByUserId(Long userId);
+  List<PointLog> findByUserId(Long userId);
 }

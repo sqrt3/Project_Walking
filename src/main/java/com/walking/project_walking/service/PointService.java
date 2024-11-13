@@ -10,25 +10,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PointService {
 
-    private final PointLogRepository pointLogRepository;
+  private final PointLogRepository pointLogRepository;
 
-    @Transactional
-    public void addPoints(Long userId, Integer amount, String description) {
-        PointLog pointLog = new PointLog();
-        pointLog.setUserId(userId);
-        pointLog.setAmount(amount);
-        pointLog.setDescription(description);
+  @Transactional
+  public void addPoints(Long userId, Integer amount, String description) {
+    PointLog pointLog = new PointLog();
+    pointLog.setUserId(userId);
+    pointLog.setAmount(amount);
+    pointLog.setDescription(description);
 
-        pointLogRepository.save(pointLog);
-    }
+    pointLogRepository.save(pointLog);
+  }
 
-    @Transactional
-    public void deductPoints(Long userId, Integer amount, String description) {
-        PointLog pointLog = new PointLog();
-        pointLog.setUserId(userId);
-        pointLog.setAmount(-amount);
-        pointLog.setDescription(description);
+  @Transactional
+  public void deductPoints(Long userId, Integer amount, String description) {
+    PointLog pointLog = new PointLog();
+    pointLog.setUserId(userId);
+    pointLog.setAmount(-amount);
+    pointLog.setDescription(description);
 
-        pointLogRepository.save(pointLog);
-    }
+    pointLogRepository.save(pointLog);
+  }
 }

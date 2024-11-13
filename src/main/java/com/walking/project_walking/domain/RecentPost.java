@@ -1,6 +1,9 @@
 package com.walking.project_walking.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,15 +13,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "recent_post")
 public class RecentPost {
 
-    @Id
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+  @Id
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+  @Column(name = "post_id", nullable = false)
+  private Long postId;
 
-    public RecentPost (Long userId, Long postId) {
-        this.userId = userId;
-        this.postId = postId;
-    }
+  public RecentPost(Long userId, Long postId) {
+    this.userId = userId;
+    this.postId = postId;
+  }
 }

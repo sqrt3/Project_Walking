@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -20,32 +19,32 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final PointService pointService;
-    private final UserRepository userRepository;
+  private final PointService pointService;
+  private final UserRepository userRepository;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException, ServletException {
-        String name = authentication.getName();
-        Users user = userRepository.findByEmail(name)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+  @Override
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+      Authentication authentication) throws IOException, ServletException {
+    String name = authentication.getName();
+    Users user = userRepository.findByEmail(name)
+        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        String userAgent = request.getHeader("User-Agent");
-        user.setLoginCount(user.getLoginCount() + 1);
+    String userAgent = request.getHeader("User-Agent");
+    user.setLoginCount(user.getLoginCount() + 1);
 
-        if (user.getLastLogin().toLocalDate().isBefore(LocalDate.now())) {
-            user.setPoint(user.getPoint() + Point.LOGIN_POINT.getAmount());
-            user.setUserExp(user.getUserExp() + Exp.LOGIN_POINT.getAmount());
-            pointService.addPoints(user.getUserId(), Point.LOGIN_POINT.getAmount(), "일일 로그인 보너스");
-        }
-
-        user.setLastLogin(LocalDateTime.now());
-        user.setLoginBrowser(userAgent);
-        userRepository.save(user);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("userId", user.getUserId());
-
-        response.sendRedirect("/");
+    if (user.getLastLogin().toLocalDate().isBefore(LocalDate.now())) {
+      user.setPoint(user.getPoint() + Point.LOGIN_POINT.getAmount());
+      user.setUserExp(user.getUserExp() + Exp.LOGIN_POINT.getAmount());
+      pointService.addPoints(user.getUserId(), Point.LOGIN_POINT.getAmount(), "일일 로그인 보너스");
     }
+
+    user.setLastLogin(LocalDateTime.now());
+    user.setLoginBrowser(userAgent);
+    userRepository.save(user);
+
+    HttpSession session = request.getSession();
+    session.setAttribute("userId", user.getUserId());
+
+    response.sendRedirect("/");
+  }
 }

@@ -22,20 +22,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class PointLog {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
+  @Column(name = "amount", nullable = false)
+  private Integer amount;
 
-    @Column(name = "description", nullable = false)
-    private String description;
+  @Column(name = "description", nullable = false)
+  private String description;
 
-    @CreatedDate
-    @Column(name = "time")
-    private LocalDateTime time;
+  @CreatedDate
+  @Column(name = "time")
+  private LocalDateTime time;
 }

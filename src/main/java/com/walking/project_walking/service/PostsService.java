@@ -43,6 +43,7 @@ public class PostsService {
     private final PointService pointService;
 
     private static final double THRESHOLD = 100.0;
+    private final PointService pointService;
 
     // 특정 게시판, 특정 페이지의 게시물을 가져오는 메소드 (가져오는 게시글 갯수는 6개로 정의)
     public List<PostResponseDto> getPostsByBoardId(Long boardId, PageRequest pageRequest) {
@@ -236,9 +237,12 @@ public class PostsService {
         String postNickname = userRepository.getNicknameByUserId(post.getUserId());
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(postId);
 
+        post.setViewCount(post.getViewCount() + 1);
+        postsRepository.save(post);
+
         return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
     }
-  
+
     // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
     public boolean hasLiked(Long userId, Long postId) {
         return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();

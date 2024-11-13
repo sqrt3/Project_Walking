@@ -7,6 +7,7 @@ import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public boolean validateLogin(String email, String password) {
+        // 이메일로 유저 조회
+        Optional<Users> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return false; // 이메일이 존재하지 않으면 로그인 실패
+        }
+
+        Users user = userOpt.get();
+        return encoder.matches(password, user.getPassword());
+    }
+
     // 이메일로 사용자 찾기
     public Optional<Users> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -71,6 +84,11 @@ public class UserService {
     // 닉네임 등록 여부 확인
     public boolean checkNicknameExists(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    // 폰번호 등록 여부 확인
+    public boolean checkPhoneExists(String phone) {
+        return userRepository.existsByPhone(phone);
     }
 
     // 유저 정보 전체 조회
@@ -199,7 +217,23 @@ public class UserService {
         }
     }
 
+
+    @Transactional
+    public void updateUserRole(Long userId, String roleName) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당하는 유저 ID를 찾을 수 없습니다."));
+        Role role = Role.valueOf(roleName.toUpperCase());
+        user.setRole(role);
+        userRepository.save(user);
+
+
+    public Long getLastViewedPostId(Long userId) {
+        return recentPostRepository.findPostIdByUserId(userId);
+    }
+
+
     public Role getRoleByUserId(Long userId) {
         return userRepository.getRoleByUserId(userId);
+
     }
+
 }

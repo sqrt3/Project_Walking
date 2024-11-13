@@ -1,10 +1,12 @@
 package com.walking.project_walking.service;
 
 import com.walking.project_walking.domain.Comments;
+import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.CommentRequestDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.repository.CommentsRepository;
 import com.walking.project_walking.repository.UserRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class CommentsService {
                 .user(userRepository.findById(request.getUserId()).orElse(null))
                 .content(request.getContent())
                 .parentCommentId(request.getParentCommentId())
+                .createdAt(LocalDateTime.now())
+                .isDeleted(Boolean.FALSE)
                 .build();
 
         Comments savedComment = commentRepository.save(comment);
@@ -41,13 +45,13 @@ public class CommentsService {
 
 
     //댓글, 답글 삭제 (작성자만 가능)
-    public void deleteComment(Long commentId,Long userId) {
+    public void deleteComment(Long commentId, Long userId) {
         Comments comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
-        comment.setIsDeleted(true);
-        commentRepository.save(comment);
 
-        if (!comment.getUser().getUserId().equals(userId)) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다."));
+
+        if (!comment.getUser().getUserId().equals(user.getUserId()) && !user.getRole().name().equals("ROLE_ADMIN")) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 
@@ -79,13 +83,6 @@ public class CommentsService {
                 updatedComment.getIsDeleted(),
                 updatedComment.getUser().getNickname()
         );
-    }
-
-    // 최신순 댓글 조회
-    public List<CommentResponseDto> getCommentsByPostIdLatest(Long postId) {
-        return commentRepository.findCommentsByPostIdOrderByCreatedAtDesc(postId)
-                .stream().map(CommentResponseDto::new)
-                .toList();
     }
 
     // 등록순 댓글 조회

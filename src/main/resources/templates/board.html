@@ -13,17 +13,20 @@
       <td th:text="${board.getBoardId()}"></td>
       <td th:text="${board.getName()}"></td>
       <td>
-        <a href="#" class="btn btn-success edit-button" th:data-board-id="${board.getBoardId()}">수정</a>
+        <a href="#" class="btn btn-success edit-button"
+           th:data-board-id="${board.getBoardId()}">수정</a>
       </td>
       <td>
-        <a href="#" class="btn btn-danger delete-button" th:data-board-id="${board.getBoardId()}">삭제</a>
+        <a href="#" class="btn btn-danger delete-button"
+           th:data-board-id="${board.getBoardId()}">삭제</a>
       </td>
     </tr>
     </tbody>
   </table>
 </div>
 
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -41,7 +44,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -59,7 +63,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -81,10 +86,10 @@
 </div>
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     let currentBoardId;
 
-    $(document).on('click', '.edit-button', function(e) {
+    $(document).on('click', '.edit-button', function (e) {
       e.preventDefault();
       currentBoardId = $(this).data('board-id');
 
@@ -92,64 +97,64 @@
       $('#editModal').modal('show');
     });
 
-    $('#saveChanges').on('click', function() {
+    $('#saveChanges').on('click', function () {
       const newName = $('#editBoardName').val();
 
       $.ajax({
         url: '/api/admin/boards/' + currentBoardId,
         method: 'PUT',
         contentType: 'application/json',
-        data: JSON.stringify({ boardId: currentBoardId, name: newName }),
-        success: function() {
+        data: JSON.stringify({boardId: currentBoardId, name: newName}),
+        success: function () {
           $('#editModal').modal('hide');
 
-          const row = $('tr').filter(function() {
+          const row = $('tr').filter(function () {
             return $(this).find('.edit-button').data('board-id') === currentBoardId;
           });
 
           row.find('td:nth-child(2)').text(newName);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
           console.error('수정 오류:', error);
         }
       });
     });
   });
 
-  $(document).on('click', '.delete-button', function(e) {
+  $(document).on('click', '.delete-button', function (e) {
     e.preventDefault();
     currentBoardId = $(this).data('board-id');
     $('#deleteModal').modal('show');
   });
 
-  $('#confirmDelete').on('click', function() {
+  $('#confirmDelete').on('click', function () {
     $.ajax({
       url: '/api/admin/boards/' + currentBoardId,
       method: 'DELETE',
-      success: function() {
+      success: function () {
         $('tr').has('a[data-board-id="' + currentBoardId + '"]').remove();
         $('#deleteModal').modal('hide');
       },
-      error: function(xhr, status, error) {
+      error: function (xhr, status, error) {
         console.error('삭제 오류:', error);
       }
     });
   });
 
-  $(document).on('click', '.add-button', function(e) {
+  $(document).on('click', '.add-button', function (e) {
     e.preventDefault();
     $('#addModal').modal('show');
   });
 
-  $('#addBoard').on('click', function() {
+  $('#addBoard').on('click', function () {
     const newBoardName = $('#newBoardName').val();
 
     $.ajax({
       url: '/api/admin/boards',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ name: newBoardName }),
-      success: function(response) {
+      data: JSON.stringify({name: newBoardName}),
+      success: function (response) {
         $('#addModal').modal('hide');
 
         const newRow = `
@@ -162,7 +167,7 @@
 
         $('table tbody').append(newRow);
       },
-      error: function(xhr, status, error) {
+      error: function (xhr, status, error) {
         console.error('추가 오류:', error);
       }
     });

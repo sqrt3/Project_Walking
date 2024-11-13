@@ -54,7 +54,8 @@ public class GoodsService {
   @Transactional
   public Boolean deleteGoods(Long id) {
     GoodsResponseDto goods = getGoodsById(id);
-    imageService.deleteImageFromS3(goods.getGoodsImage());
+    if (goods.getGoodsImage() != null)
+      imageService.deleteImageFromS3(goods.getGoodsImage());
     if (goods != null) {
       goodsRepository.deleteById(id);
       return Boolean.TRUE;

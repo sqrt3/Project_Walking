@@ -154,7 +154,7 @@
                         data.forEach(post => {
                             const postItem = $(`
                     <div class="post-item mb-3 p-3 border rounded">
-                        <h5><a href="/view/posts/${post.postId}">${post.title}</a></h5>
+                        <h5><a href="/posts/${post.postId}">${post.title}</a></h5>
                         <p>${post.createdAt}</p>
                         <p>댓글 : ${post.commentsCount} 개</p>
                     </div>

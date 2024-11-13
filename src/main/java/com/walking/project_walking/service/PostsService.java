@@ -15,14 +15,27 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
+import com.walking.project_walking.domain.dto.NoticeResponseDto;
+import com.walking.project_walking.domain.dto.PostCreateResponseDto;
+import com.walking.project_walking.domain.dto.PostRequestDto;
+import com.walking.project_walking.domain.dto.PostResponseDto;
+import com.walking.project_walking.domain.dto.PostSummuryResponseDto;
+import com.walking.project_walking.repository.CommentsRepository;
+import com.walking.project_walking.repository.PostImagesRepository;
+import com.walking.project_walking.repository.PostsRepository;
+import com.walking.project_walking.repository.UserLikeLogRepository;
+import com.walking.project_walking.repository.UserRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
 
-
 public class PostsService {
-
-
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
@@ -37,9 +50,11 @@ public class PostsService {
 
         return postsRepository.findByBoardId(boardId, pageRequest)
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 }).toList();
     }
@@ -52,14 +67,18 @@ public class PostsService {
     }
 
     // boardId와 제목, 내용, 글쓴이를 통해 특정 게시물을 조회하는 메소드
-    public List<PostResponseDto> searchPosts(Long boardId, String title, String content, String nickname, PageRequest pageRequest) {
+    public List<PostResponseDto> searchPosts(Long boardId, String title, String content,
+            String nickname, PageRequest pageRequest) {
         Long userId = userRepository.getUserIdByNickname(nickname);
-        Page<Posts> postsPage = postsRepository.searchPosts(boardId, title, content, userId, pageRequest);
+        Page<Posts> postsPage = postsRepository.searchPosts(boardId, title, content, userId,
+                pageRequest);
         return postsPage.getContent().stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
@@ -70,9 +89,11 @@ public class PostsService {
         List<Posts> hotPosts = postsRepository.findHotPosts(THRESHOLD);
         return hotPosts.stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .toList();
@@ -86,9 +107,11 @@ public class PostsService {
                 .filter(post -> post.getBoardId().equals(boardId))
                 .max(Comparator.comparing(Posts::getWeightValue))
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     String postNickname = userRepository.getNicknameByUserId(post.getUserId());
-                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(post.getPostId());
+                    List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(
+                            post.getPostId());
                     return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
                 })
                 .orElse(null);
@@ -99,14 +122,16 @@ public class PostsService {
         List<Posts> posts = postsRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return posts.stream()
                 .map(post -> {
-                    Integer commentsNumber = commentsRepository.countCommentsByPostId(post.getPostId());
+                    Integer commentsNumber = commentsRepository.countCommentsByPostId(
+                            post.getPostId());
                     return PostSummuryResponseDto.fromEntity(post, commentsNumber);
                 })
                 .toList();
     }
 
     // 검색 시 결과의 페이지를 구하는 메소드
-    public int getTotalPages(Long boardId, String title, String content, String nickname, int pageSize) {
+    public int getTotalPages(Long boardId, String title, String content, String nickname,
+            int pageSize) {
         Long userId = userRepository.getUserIdByNickname(nickname);
         long totalPosts = postsRepository.countBySearchCriteria(boardId, title, content, userId);
         return (int) Math.ceil((double) totalPosts / pageSize);
@@ -149,7 +174,6 @@ public class PostsService {
         }
     }
 
-
     //게시글 수정 (작성자만 가능, 기본 이미지 유지/삭제 가능)
     public void modifyPost(Long postId, Long userId, PostRequestDto postRequestDto,
                                             List<MultipartFile> files) {
@@ -174,8 +198,6 @@ public class PostsService {
         postsRepository.save(post);
 
     }
-
-
 
     //게시글 삭제 (작성자만 가능)
     public void deletePost(Long postId, Long userId) {
@@ -203,8 +225,7 @@ public class PostsService {
 
         return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
     }
-
-
+  
     // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
     public boolean hasLiked(Long userId, Long postId) {
         return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();
@@ -236,4 +257,5 @@ public class PostsService {
         // 게시글 정보 저장
         postsRepository.save(post);  // 게시글 저장
     }
+
 }

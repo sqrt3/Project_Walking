@@ -7,6 +7,7 @@ import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.userdto.*;
 import com.walking.project_walking.repository.*;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -216,7 +217,23 @@ public class UserService {
         }
     }
 
+
+    @Transactional
+    public void updateUserRole(Long userId, String roleName) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당하는 유저 ID를 찾을 수 없습니다."));
+        Role role = Role.valueOf(roleName.toUpperCase());
+        user.setRole(role);
+        userRepository.save(user);
+
+
+    public Long getLastViewedPostId(Long userId) {
+        return recentPostRepository.findPostIdByUserId(userId);
+    }
+
+
     public Role getRoleByUserId(Long userId) {
         return userRepository.getRoleByUserId(userId);
+
     }
+
 }

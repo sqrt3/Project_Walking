@@ -1,10 +1,18 @@
 package com.walking.project_walking.domain;
 
-import lombok.*;
-import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @Data
 @Entity
@@ -12,6 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comments {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
@@ -23,7 +32,6 @@ public class Comments {
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-//    @Column(name = "user_id", nullable = false)
     @OneToOne
     @JoinColumn(name = "user_id")
     private Users user;

@@ -7,7 +7,8 @@
       <th scope="col" class="text-center">설명</th>
       <th scope="col" class="text-center">가격</th>
       <th scope="col"></th>
-      <th scope="col"><a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGoodsModal">추가하기</a></th>
+      <th scope="col"><a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal"
+                         data-bs-target="#addGoodsModal">추가하기</a></th>
     </tr>
     </thead>
     <tbody>
@@ -16,14 +17,17 @@
       <td th:text="${goods.getName()}"></td>
       <td th:text="${goods.getDescription()}"></td>
       <td th:text="${#numbers.formatInteger(goods.getPrice(), 0, 'COMMA')}"></td>
-      <td><a href="#" class="btn btn-success" th:onclick="'editGoods(' + ${goods.goodsId} + ')'">수정</a></td>
-      <td><a href="#" class="btn btn-danger" th:onclick="'deleteGoods(' + ${goods.goodsId} + ')'">삭제</a></td>
+      <td><a href="#" class="btn btn-success"
+             th:onclick="'editGoods(' + ${goods.goodsId} + ')'">수정</a></td>
+      <td><a href="#" class="btn btn-danger"
+             th:onclick="'deleteGoods(' + ${goods.goodsId} + ')'">삭제</a></td>
     </tr>
     </tbody>
   </table>
 </div>
 
-<div class="modal fade" id="addGoodsModal" tabindex="-1" aria-labelledby="addGoodsModalLabel" aria-hidden="true">
+<div class="modal fade" id="addGoodsModal" tabindex="-1" aria-labelledby="addGoodsModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -37,6 +41,7 @@
             <select class="form-select" id="GoodsType" required>
               <option value="1">소모성</option>
               <option value="2">치장</option>
+              <option value="3">특별</option>
             </select>
           </div>
           <div class="mb-3">
@@ -69,7 +74,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel" aria-hidden="true">
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -86,7 +92,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="deleteGoodsModal" tabindex="-1" aria-labelledby="deleteGoodsModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteGoodsModal" tabindex="-1" aria-labelledby="deleteGoodsModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -105,7 +112,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="editGoodsModal" tabindex="-1" aria-labelledby="editGoodsModalLabel" aria-hidden="true">
+<div class="modal fade" id="editGoodsModal" tabindex="-1" aria-labelledby="editGoodsModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -143,12 +151,12 @@
     $.ajax({
       url: `/api/goods/${goodsId}`,
       type: 'GET',
-      success: function(response) {
+      success: function (response) {
         $('#editGoodsName').val(response.name);
         $('#editGoodsDescription').val(response.description);
         $('#editGoodsPrice').val(response.price);
 
-        $('#saveEditBtn').off('click').on('click', function() {
+        $('#saveEditBtn').off('click').on('click', function () {
           var updatedData = {
             name: $('#editGoodsName').val(),
             description: $('#editGoodsDescription').val(),
@@ -160,14 +168,15 @@
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(updatedData),
-            success: function(response) {
+            success: function (response) {
               $(`#GoodsRow${goodsId} td:nth-child(2)`).text(response.name);
               $(`#GoodsRow${goodsId} td:nth-child(3)`).text(response.description);
-              $(`#GoodsRow${goodsId} td:nth-child(4)`).text(Intl.NumberFormat().format(response.price));
+              $(`#GoodsRow${goodsId} td:nth-child(4)`).text(
+                  Intl.NumberFormat().format(response.price));
 
               $('#editGoodsModal').modal('hide');
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
               $('#failureMessage').text(`아이템 수정 실패: ${error}`);
               $('#failureModal').modal('show');
             }
@@ -182,15 +191,15 @@
   function deleteGoods(goodsId) {
     $('#deleteGoodsModal').modal('show');
 
-    $('#confirmDeleteBtn').off('click').on('click', function() {
+    $('#confirmDeleteBtn').off('click').on('click', function () {
       $.ajax({
         url: `/api/goods/${goodsId}`,
         type: 'DELETE',
-        success: function(response) {
+        success: function (response) {
           $(`#GoodsRow${goodsId}`).remove();
           $('#deleteGoodsModal').modal('hide');
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
           $('#failureMessage').text(`아이템 삭제 실패: ${error}`);
           $('#failureModal').modal('show');
           $('#deleteGoodsModal').modal('hide');
@@ -199,8 +208,8 @@
     });
   }
 
-  $(document).ready(function() {
-    $('#submitGoods').click(function() {
+  $(document).ready(function () {
+    $('#submitGoods').click(function () {
       const GoodsType = $('#GoodsType').val();
       const GoodsCode = $('#GoodsCode').val();
       const GoodsName = $('#GoodsName').val();
@@ -224,7 +233,7 @@
           data: formData,
           processData: false,
           contentType: false,
-          success: function(response) {
+          success: function (response) {
             console.log(response)
 
             const newGoods = {
@@ -240,7 +249,7 @@
               type: 'POST',
               contentType: 'application/json',
               data: JSON.stringify(newGoods),
-              success: function(response) {
+              success: function (response) {
                 const newRow = `
                 <tr id="GoodsRow${response.goodsId}">
                   <td>${response.goodsId}</td>
@@ -256,13 +265,13 @@
                 $('#addGoodsModal').modal('hide');
                 $('#addGoodsForm')[0].reset();
               },
-              error: function(xhr, status, error) {
+              error: function (xhr, status, error) {
                 $('#failureMessage').text(`아이템 추가 실패: ${error}`);
                 $('#failureModal').modal('show');
               }
             });
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             $('#failureMessage').text(`이미지 업로드 실패: ${error}`);
             $('#failureModal').modal('show');
           }
@@ -280,7 +289,7 @@
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(newGoods),
-          success: function(response) {
+          success: function (response) {
             const newRow = `
             <tr id="GoodsRow${response.goodsId}">
               <td>${response.goodsId}</td>
@@ -296,7 +305,7 @@
             $('#addGoodsModal').modal('hide');
             $('#addGoodsForm')[0].reset();
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             $('#failureMessage').text(`아이템 추가 실패: ${error}`);
             $('#failureModal').modal('show');
           }

@@ -224,7 +224,7 @@ public class UserService {
         Role role = Role.valueOf(roleName.toUpperCase());
         user.setRole(role);
         userRepository.save(user);
-
+    }
 
     public Long getLastViewedPostId(Long userId) {
         return recentPostRepository.findPostIdByUserId(userId);

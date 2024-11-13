@@ -8,8 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,40 +26,41 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "posts")
 public class Posts {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private Long postId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "post_id")
+  private Long postId;
 
-    @Column(name = "board_id", nullable = false)
-    private Long boardId;
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-    @Column(name = "title", nullable = false, length = 256)
-    private String title;
+  @Column(name = "board_id", nullable = false)
+  private Long boardId;
 
-    @Column(name = "content", nullable = false, length = 512)
-    private String content;
+  @Column(name = "title", nullable = false, length = 256)
+  private String title;
 
-    @Column(name = "view_count")
-    private Integer viewCount;
+  @Column(name = "content", nullable = false, length = 512)
+  private String content;
 
-    @Column(name = "likes")
-    private Integer likes;
+  @Column(name = "view_count")
+  private Integer viewCount;
 
-    @Column(name = "weight_value")
-    private Integer weightValue;
+  @Column(name = "likes")
+  private Integer likes;
 
-    @CreatedDate
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+  @Column(name = "weight_value")
+  private Integer weightValue;
 
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
+  @CreatedDate
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+  @LastModifiedDate
+  @Column(name = "modified_at")
+  private LocalDateTime modifiedAt;
+
+  @Column(name = "is_deleted")
+  private Boolean isDeleted;
 }

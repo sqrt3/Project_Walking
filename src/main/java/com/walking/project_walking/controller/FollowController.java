@@ -4,66 +4,70 @@ import com.walking.project_walking.domain.Follow;
 import com.walking.project_walking.domain.followdto.FollowProfileDto;
 import com.walking.project_walking.domain.followdto.FollowerProfileDto;
 import com.walking.project_walking.service.FollowService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class FollowController {
-    private final FollowService followService;
 
-    // 팔로우/언팔로우 토글
-    @PostMapping("/users/{followerId}/toggle-follow/{followingId}")
-    public ResponseEntity<String> toggleFollowUser(
-            @PathVariable Long followerId,
-            @PathVariable Long followingId
-    ) {
-        return followService.toggleFollowUser(followerId, followingId);
-    }
+  private final FollowService followService;
 
-    // 팔로잉을 조회 - 에러메시지 프로트에서 출력되도록 하기!
-    @GetMapping("/users/{userId}/following")
-    public ResponseEntity<List<FollowProfileDto>> getFollowing(
-            @PathVariable Long userId
-    ) {
-        List<Follow> followings = followService.getFollowing(userId);
+  // 팔로우/언팔로우 토글
+  @PostMapping("/users/{followerId}/toggle-follow/{followingId}")
+  public ResponseEntity<String> toggleFollowUser(
+      @PathVariable Long followerId,
+      @PathVariable Long followingId
+  ) {
+    return followService.toggleFollowUser(followerId, followingId);
+  }
 
-        List<FollowProfileDto> followingDto = followings.stream()
-                .map(FollowProfileDto::new)
-                .toList();
+  // 팔로잉을 조회 - 에러메시지 프로트에서 출력되도록 하기!
+  @GetMapping("/users/{userId}/following")
+  public ResponseEntity<List<FollowProfileDto>> getFollowing(
+      @PathVariable Long userId
+  ) {
+    List<Follow> followings = followService.getFollowing(userId);
 
-        return ResponseEntity.ok(followingDto);
-    }
+    List<FollowProfileDto> followingDto = followings.stream()
+        .map(FollowProfileDto::new)
+        .toList();
 
-    // 팔로워를 조회 - "
-    @GetMapping("/users/{userId}/follower")
-    public ResponseEntity<List<FollowerProfileDto>> getFollower(
-            @PathVariable Long userId
-    ) {
-        List<FollowerProfileDto> followers = followService.getFollowers(userId);
-        return ResponseEntity.ok(followers);
-    }
+    return ResponseEntity.ok(followingDto);
+  }
 
-    // 팔로잉 수 조회
-    @GetMapping("/users/{userId}/count-following")
-    public ResponseEntity<Long> getFollowingCount(
-            @PathVariable Long userId
-    ) {
-        Long followingCount = followService.countFollowing(userId);
-        return ResponseEntity.ok(followingCount);
-    }
+  // 팔로워를 조회 - "
+  @GetMapping("/users/{userId}/follower")
+  public ResponseEntity<List<FollowerProfileDto>> getFollower(
+      @PathVariable Long userId
+  ) {
+    List<FollowerProfileDto> followers = followService.getFollowers(userId);
+    return ResponseEntity.ok(followers);
+  }
 
-    // 팔로워 수 조회
-    @GetMapping("/users/{userId}/count-followers")
-    public ResponseEntity<Long> getFollowerCount(
-            @PathVariable Long userId
-    ) {
-        Long followerCount = followService.countFollowers(userId);
-        return ResponseEntity.ok(followerCount);
-    }
+  // 팔로잉 수 조회
+  @GetMapping("/users/{userId}/count-following")
+  public ResponseEntity<Long> getFollowingCount(
+      @PathVariable Long userId
+  ) {
+    Long followingCount = followService.countFollowing(userId);
+    return ResponseEntity.ok(followingCount);
+  }
+
+  // 팔로워 수 조회
+  @GetMapping("/users/{userId}/count-followers")
+  public ResponseEntity<Long> getFollowerCount(
+      @PathVariable Long userId
+  ) {
+    Long followerCount = followService.countFollowers(userId);
+    return ResponseEntity.ok(followerCount);
+  }
 
 }

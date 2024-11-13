@@ -15,29 +15,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 public class BoardViewController {
-    private final UserService userService;
-    private final UserRepository userRepository;
 
-    @GetMapping("/boardList")
-    public String getBoard2(@RequestParam(defaultValue = "1") Long boardId,
-                            HttpSession session,
-                            Model model) {
+  private final UserService userService;
+  private final UserRepository userRepository;
 
-        Long userId = (Long) session.getAttribute("userId");
+  @GetMapping("/boardList")
+  public String getBoard2(@RequestParam(defaultValue = "1") Long boardId,
+      HttpSession session,
+      Model model) {
 
-        Users user = null;
-        String userNickname = null;
-        Role role = null;
-        if (userId != null) {
-            user = userService.findById(userId);
-            userNickname = userRepository.getNicknameByUserId(userId);
-            role = userService.getRoleByUserId(userId);
-        }
+    Long userId = (Long) session.getAttribute("userId");
 
-        model.addAttribute("boardId", boardId);
-        model.addAttribute("user", user);
-        model.addAttribute("userNickname", userNickname);
-        model.addAttribute("role", role);
-        return "board-list";
+    Users user = null;
+    String userNickname = null;
+    Role role = null;
+    if (userId != null) {
+      user = userService.findById(userId);
+      userNickname = userRepository.getNicknameByUserId(userId);
+      role = userService.getRoleByUserId(userId);
     }
+
+    model.addAttribute("boardId", boardId);
+    model.addAttribute("user", user);
+    model.addAttribute("userNickname", userNickname);
+    model.addAttribute("role", role);
+    return "board-list";
+  }
 }

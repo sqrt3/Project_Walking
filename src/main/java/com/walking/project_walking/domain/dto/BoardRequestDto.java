@@ -7,10 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BoardRequestDto {
-    private Long boardId;
-    private String name;
 
-    public Board toEntity() {
-        return new Board(this.boardId, this.name);
-    }
+  private Long boardId;
+  private String name;
+
+  public Board toEntity() {
+    return new Board(this.boardId, this.name);
+  }
 }

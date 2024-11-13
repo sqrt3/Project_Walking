@@ -4,13 +4,14 @@ import lombok.Getter;
 
 @Getter
 public class UserGoodsDto {
-    private Long goodsId;
-    private String name;
-    private Integer amount;
 
-    public UserGoodsDto(Long goodsId, String name, Integer amount) {
-        this.goodsId = goodsId;
-        this.name = name;
-        this.amount = amount;
-    }
+  private final Long goodsId;
+  private final String name;
+  private final Integer amount;
+
+  public UserGoodsDto(Long goodsId, String name, Integer amount) {
+    this.goodsId = goodsId;
+    this.name = name;
+    this.amount = amount;
+  }
 }

@@ -1,9 +1,9 @@
 package com.walking.project_walking.domain.dto;
 
-import lombok.*;
-
-
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 
 public class PostCreateResponseDto {
 
-    private Long postId;
-    private Long userId;
-    private Long boardId;
-    private String title;
-    private String content;
-    private int viewCount;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private Boolean isDeleted;
+  private Long postId;
+  private Long userId;
+  private Long boardId;
+  private String title;
+  private String content;
+  private int viewCount;
+  private LocalDateTime createdAt;
+  private LocalDateTime modifiedAt;
+  private Boolean isDeleted;
 }
 

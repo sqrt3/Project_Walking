@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserDetailDto {
-    private final String nickname;
-    private final String profileImage;
-    private final Long followerCount;
-    private final Long followingCount;
+
+  private final String nickname;
+  private final String profileImage;
+  private final Long followerCount;
+  private final Long followingCount;
 }

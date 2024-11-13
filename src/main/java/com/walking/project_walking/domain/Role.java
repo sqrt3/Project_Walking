@@ -5,5 +5,5 @@ public enum Role {
   ROLE_ADMIN,
   PATHFINDER,
   PIONEER,
-  WALKER_HOLIC;
+  WALKER_HOLIC
 }

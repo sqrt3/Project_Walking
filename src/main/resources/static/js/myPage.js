@@ -124,6 +124,8 @@ function loadUserItems() {
                 const useButton = document.createElement("button");
                 useButton.textContent = "사용";
                 useButton.classList.add("use-button");
+                useButton.classList.add("btn");
+                useButton.classList.add("btn-success");
 
                 // 아이템 사용 확인 후 useItem 호출
                 useButton.onclick = () => {
@@ -165,13 +167,13 @@ function loadPointLogs() {
         .then(response => response.json())
         .then(data => {
             data.forEach(log => {
-                const div = document.createElement("div");
+                const div = document.createElement("tr");
 
-                const descriptionSpan = document.createElement("span");
+                const descriptionSpan = document.createElement("td");
                 descriptionSpan.textContent = log.description;
                 div.appendChild(descriptionSpan);
 
-                const amountSpan = document.createElement("span");
+                const amountSpan = document.createElement("td");
                 amountSpan.textContent = log.amount;
                 div.appendChild(amountSpan);
 

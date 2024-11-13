@@ -106,7 +106,6 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
     - 댓글 (Comments)
     - 게시글 (Posts)
 
----
 
 ## 🚀 일반 유저 API
 
@@ -224,10 +223,8 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 ## 화면 구성
 
 
+### [ 회원가입 및 로그인 화면 ]
 
-### 주요 화면 구성
-
-[ 회원가입 및 로그인 화면 ]
 
 
 | ![image](https://github.com/user-attachments/assets/db57a188-844a-4175-94f1-c41da545684b) | ![image](https://github.com/user-attachments/assets/4ca72716-a002-4a55-a5bd-b19c00a9b93c) | ![image](https://github.com/user-attachments/assets/897870d7-ac2b-4d0d-ae84-a8b741892c4d) |
@@ -243,7 +240,7 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 ------------------------------------
 
-[ 마이페이지 ]
+### [ 마이페이지 ]
 
 | ![image](https://github.com/user-attachments/assets/c4160238-c40d-4596-9782-e4ae43ab0091) | ![image](https://github.com/user-attachments/assets/1bd0738e-1d69-44fc-bac6-9579fb72f013) | ![image](https://github.com/user-attachments/assets/0ce92e93-1f76-4638-935e-450488db8016) |
 | --- | --- | --- |
@@ -258,7 +255,7 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 ------------------------------------
 
-[ 인기 게시글 선정 ]
+### [ 인기 게시글 선정 ]
 
 ![image](https://github.com/user-attachments/assets/2eb5c026-c332-4d98-a4c0-8ab7aede3f80)
 
@@ -269,8 +266,7 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 ------------------------------------
 
-[ 1:1 문의 게시판 ]
----
+### [ 1:1 문의 게시판 ]
 | ![image](https://github.com/user-attachments/assets/fa055a0a-4b1a-4b1a-93f5-2151685defe9) | ![image](https://github.com/user-attachments/assets/f0890fee-66d2-4648-a023-de4e16e28f53) |
 | --- | --- |
 유저의 1대1 문의 화면 | 관리자의 1대1문의 화면
@@ -281,8 +277,7 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 ------------------------------------
 
-[ 관리자 페이지 ]
----
+### [ 관리자 페이지 ]
 | ![image](https://github.com/user-attachments/assets/5a95454d-38f5-4225-84c6-1b2b472c132b) | ![image](https://github.com/user-attachments/assets/16b48547-b066-4193-b7da-fb997388f8e7) | ![image](https://github.com/user-attachments/assets/d601a852-ed41-418a-9c09-ca2d64f9b29a) |
 | --- | --- | --- |
 관리자 페이지 (유저관리) | 관리자 페이지 (게시판 관리) | 관리자 페이지 (아이템 관리)

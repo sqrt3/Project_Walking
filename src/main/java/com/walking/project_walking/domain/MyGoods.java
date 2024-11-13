@@ -19,22 +19,22 @@ import lombok.Setter;
 @Table(name = "my_goods")
 public class MyGoods {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-    @Column(name = "goods_id", nullable = false)
-    private Long goodsId;
+  @Column(name = "goods_id", nullable = false)
+  private Long goodsId;
 
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
+  @Column(name = "amount", nullable = false)
+  private Integer amount;
 
-    public MyGoods(Long users, Long goodsId, Integer amount) {
-        this.setUserId(users);
-        this.setGoodsId(goodsId);
-        this.amount = amount;
-    }
+  public MyGoods(Long users, Long goodsId, Integer amount) {
+    this.setUserId(users);
+    this.setGoodsId(goodsId);
+    this.amount = amount;
+  }
 }

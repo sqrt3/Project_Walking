@@ -19,11 +19,11 @@ import lombok.Setter;
 @Table(name = "boards")
 public class Board {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id") // 컬럼명 추가
-    private Long boardId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "board_id") // 컬럼명 추가
+  private Long boardId;
 
-    @Column(name = "name", nullable = false, length = 256)
-    private String name;
+  @Column(name = "name", nullable = false, length = 256)
+  private String name;
 }

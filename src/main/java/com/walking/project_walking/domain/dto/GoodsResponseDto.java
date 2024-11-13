@@ -10,22 +10,22 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GoodsResponseDto {
 
-    private Long goodsId;
-    private String name;
-    private String description;
-    private Integer price;
-    private String goodsImage;
+  private Long goodsId;
+  private String name;
+  private String description;
+  private Integer price;
+  private String goodsImage;
 
-    public GoodsResponseDto(Goods goods) {
-        this.goodsId = goods.getGoodsId();
-        this.name = goods.getName();
-        this.description = goods.getDescription();
-        this.price = goods.getPrice();
-        this.goodsImage = goods.getGoodsImage();
-    }
+  public GoodsResponseDto(Goods goods) {
+    this.goodsId = goods.getGoodsId();
+    this.name = goods.getName();
+    this.description = goods.getDescription();
+    this.price = goods.getPrice();
+    this.goodsImage = goods.getGoodsImage();
+  }
 
-    public Goods toEntity() {
-        return new Goods(this.getGoodsId(), this.getName(), this.getDescription(), this.getPrice(),
-                this.getGoodsImage());
-    }
+  public Goods toEntity() {
+    return new Goods(this.getGoodsId(), this.getName(), this.getDescription(), this.getPrice(),
+        this.getGoodsImage());
+  }
 }

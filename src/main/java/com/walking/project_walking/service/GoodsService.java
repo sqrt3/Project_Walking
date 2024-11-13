@@ -79,7 +79,7 @@ public class GoodsService {
             return Boolean.FALSE;
         }
 
-        if (goodsId / 100000 == 3 && user.getRole().name().equals("ROLE_USER")) {
+        if (goodsId / 100000 == 3 && user.getRole().name().equals("ROLE_USER") || user.getRole().name().equals("PATHFINDER")) {
             return Boolean.FALSE;
         }
 
@@ -114,6 +114,10 @@ public class GoodsService {
 
         if (user == null || targetUser == null)                       // 유저가 null 일때
         {
+            return Boolean.FALSE;
+        }
+
+        if (!user.getRole().name().equals("PIONEER") && !user.getRole().name().equals("ROLE_ADMIN")) {
             return Boolean.FALSE;
         }
 

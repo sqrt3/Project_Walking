@@ -204,7 +204,7 @@
 
   <div class="d-flex justify-content-end m-3 gap-2 p-3">
     <a th:href="@{/posts/modify/{postId}(postId=${post.getPostId()})}" class="btn btn-primary"
-       th:if="${user.getRole().name().equals('ROLE_ADMIN') || user.nickname.equals(post.nickname)}">수정</a>
+       th:if="${user.nickname.equals(post.nickname)}">수정</a>
     <button type="submit" class="btn btn-danger" onclick="deletepost();" th:if="${user.getRole().name().equals('ROLE_ADMIN') or user.nickname.equals(post.nickname)}">삭제
     </button>
     <a th:href="@{/boardList}" class="btn btn-secondary">목록으로</a>

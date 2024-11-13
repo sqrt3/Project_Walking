@@ -1,7 +1,6 @@
 package com.walking.project_walking.domain.dto;
 
 import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

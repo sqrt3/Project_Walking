@@ -38,8 +38,9 @@
       });
     }
 
-    document.getElementById('post-delete-btn').addEventListener('click', function () {
-      const postId = [[${post.getPostId()}]];
+    function deletepost() {
+      const postId = [[${post.postId}]];
+
       if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
         fetch(`/api/posts/${postId}`, {
           method: 'DELETE',

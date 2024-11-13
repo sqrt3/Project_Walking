@@ -39,6 +39,7 @@ public class UserResponse {
     private Role role;
     private List<Follow> followers;
     private List<Follow> followings;
+    private String message;
 
     public UserResponse(Users users) {
         id = users.getUserId();
@@ -63,8 +64,8 @@ public class UserResponse {
         followings = users.getFollowings();
     }
 
-    public UserResponse(Users user, String redirectUri) {
+    public UserResponse(Users user, String message) {
         this.user = user;
-        this.redirectUri = redirectUri;
+        this.message = message;
     }
 }

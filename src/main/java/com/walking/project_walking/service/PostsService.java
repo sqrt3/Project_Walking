@@ -140,6 +140,7 @@ public class PostsService {
         .boardId(postRequestDto.getBoardId())
         .title(postRequestDto.getTitle())
         .content(postRequestDto.getContent())
+        .modifiedAt(LocalDateTime.now())
         .viewCount(0)
         .likes(0)
         .weightValue(0)

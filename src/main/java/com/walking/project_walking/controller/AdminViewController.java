@@ -1,4 +1,5 @@
 package com.walking.project_walking.controller;
+
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.dto.GoodsResponseDto;
@@ -10,8 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class AdminViewController {
+
     private final UserService userService;
     private final BoardService boardService;
     private final GoodsService goodsService;
@@ -29,7 +29,7 @@ public class AdminViewController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public String adminView(Model model, HttpSession session) {
-        Long userId = (Long)session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("userId");
         Users user = userService.findById(userId);
 
         model.addAttribute("user", user);

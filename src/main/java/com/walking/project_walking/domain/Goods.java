@@ -1,6 +1,9 @@
 package com.walking.project_walking.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +11,12 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter // <- 필요할 시 활성화
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "goods")
 public class Goods {
+
     @Id
     @Column(name = "goods_id", nullable = false)
     private Long goodsId;

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/goods")
 public class GoodsViewController {
+
     private final GoodsService goodsService;
     private final UserService userService;
 
@@ -23,7 +24,7 @@ public class GoodsViewController {
     public String goods(Model model, HttpSession session) {
         List<GoodsResponseDto> goodsList = goodsService.getAllGoods();
 
-        Long userId = (Long)session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("userId");
         if (userId != null) {
             Users user = userService.findById(userId);
             model.addAttribute("user", user);

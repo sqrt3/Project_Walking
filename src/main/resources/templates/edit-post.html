@@ -6,7 +6,12 @@
 </head>
 <body>
 <h2>게시글 수정</h2>
-<form th:action="@{/posts/{postId}(postId=${post.id})}" method="post" enctype="multipart/form-data">
+<form th:action="@{/api/posts/modify}" method="post" enctype="multipart/form-data">
+
+    <!-- postId와 userId를 hidden input으로 포함하여 전송 -->
+    <input type="hidden" name="postId" th:value="${post.id}">
+    <input type="hidden" name="userId" th:value="${user.id}">
+
     <!-- 게시판 선택 -->
     <div>
         <label for="board">게시판 선택:</label>
@@ -37,8 +42,8 @@
 
     <!-- 이미지 업로드 -->
     <div>
-        <label for="image">이미지 업로드:</label>
-        <input type="file" id="image" name="image">
+        <label for="uploadFiles">이미지 업로드:</label>
+        <input type="file" id="uploadFiles" name="uploadFiles">
         <!-- 기존 이미지가 있다면 표시 -->
         <div th:if="${post.imagePath}">
             <p>현재 이미지:</p>

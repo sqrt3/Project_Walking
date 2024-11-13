@@ -53,12 +53,8 @@
             alert('삭제 실패: ' + data.message);
           }
         })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('삭제 중 오류가 발생했습니다.');
-        });
       }
-    });
+    }
 
     function deleteComment(commentId) {
       if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
@@ -121,9 +117,9 @@
   </div>
 
   <div class="d-flex justify-content-end m-3 gap-2 p-3">
-    <a th:href="@{/posts/{postId}/edit(postId=${post.getPostId()})}" class="btn btn-primary"
-       th:if="${session.userId}">수정</a>
-    <button type="submit" class="btn btn-danger" id="post-delete-btn" th:if="${session.userId}">삭제
+    <a th:href="@{/posts/modify/{postId}(postId=${post.getPostId()})}" class="btn btn-primary"
+       th:if="${user.getRole().name().equals('ROLE_ADMIN') || user.nickname.equals(post.nickname)}">수정</a>
+    <button type="submit" class="btn btn-danger" onclick="deletepost();" th:if="${user.getRole().name().equals('ROLE_ADMIN') or user.nickname.equals(post.nickname)}">삭제
     </button>
     <a th:href="@{/boardList}" class="btn btn-secondary">목록으로</a>
   </div>

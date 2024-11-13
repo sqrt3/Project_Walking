@@ -2,6 +2,7 @@ package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.RecentPost;
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
 import com.walking.project_walking.repository.RecentPostRepository;
@@ -78,7 +79,7 @@ public class PostsViewController {
             return "post";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
-            return "redirect:/view/posts";  // 오류 시 목록 페이지로 리디렉션
+            return "redirect:/boardList";  // 오류 시 목록 페이지로 리디렉션
         }
     }
 
@@ -95,6 +96,7 @@ public class PostsViewController {
             model.addAttribute("user", user);
 
             PostResponseDto post = postsService.getPostById(postId);
+            List<BoardResponseDto> boards = boardService.getBoardsList();
             model.addAttribute("post", post);
             model.addAttribute("userId", userId);
             model.addAttribute("boards", boards);
@@ -102,7 +104,7 @@ public class PostsViewController {
             return "modify-post";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
-            return "redirect:/view/posts";
+            return "redirect:/boardList";
         }
     }
 }

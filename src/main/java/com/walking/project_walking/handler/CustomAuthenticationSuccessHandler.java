@@ -33,8 +33,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     user.setLoginCount(user.getLoginCount() + 1);
 
     if (user.getLastLogin().toLocalDate().isBefore(LocalDate.now())) {
-      if(user.getRole().name().equals("USER_ROLE") || user.getRole().name().equals("PATHFINDER"))
-      {
+      if (user.getRole().name().equals("USER_ROLE") || user.getRole().name().equals("PATHFINDER")) {
         user.setPoint(user.getPoint() + Point.LOGIN_POINT.getAmount());
         user.setUserExp(user.getUserExp() + Exp.LOGIN_POINT.getAmount());
         pointService.addPoints(user.getUserId(), Point.LOGIN_POINT.getAmount(), "일일 로그인 보너스");

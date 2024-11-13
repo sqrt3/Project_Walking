@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BoardResponseDto {
-    private Long boardId;
-    private String name;
+
+  private Long boardId;
+  private String name;
 }

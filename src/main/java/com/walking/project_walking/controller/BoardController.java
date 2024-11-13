@@ -5,77 +5,80 @@ import com.walking.project_walking.domain.dto.NoticeResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.PostsService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/boards")
 @RequiredArgsConstructor
 public class BoardController {
-    private final BoardService boardService;
-    private final PostsService postsService;
 
-    private static final int PAGE_SIZE = 6;
+  private final BoardService boardService;
+  private final PostsService postsService;
 
-    // 게시판 목록 조회
-    @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> getBoardsList() {
-        List<BoardResponseDto> boardList = boardService.getBoardsList();
+  private static final int PAGE_SIZE = 6;
 
-        if (boardList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
+  // 게시판 목록 조회
+  @GetMapping
+  public ResponseEntity<List<BoardResponseDto>> getBoardsList() {
+    List<BoardResponseDto> boardList = boardService.getBoardsList();
 
-        return ResponseEntity.ok(boardList);
+    if (boardList.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    // 특정 게시판, 특정 페이지의 게시글 조회
-    @GetMapping("/posts")
-    public ResponseEntity<List<PostResponseDto>> getPostsByBoard(
-            @RequestParam Long boardId,
-            @RequestParam(defaultValue = "1") int page) {
+    return ResponseEntity.ok(boardList);
+  }
 
-        int board_page = boardService.getPageCount(boardId);
+  // 특정 게시판, 특정 페이지의 게시글 조회
+  @GetMapping("/posts")
+  public ResponseEntity<List<PostResponseDto>> getPostsByBoard(
+      @RequestParam Long boardId,
+      @RequestParam(defaultValue = "1") int page) {
 
-        if (page < 1 || page > board_page) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    int board_page = boardService.getPageCount(boardId);
 
-        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-        List<PostResponseDto> postsList = postsService.getPostsByBoardId(boardId, pageRequest);
-
-        if (postsList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
-        }
-
-        return ResponseEntity.ok(postsList);
+    if (page < 1 || page > board_page) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    // 공지사항 조회
-    @GetMapping("/notices")
-    public ResponseEntity<List<NoticeResponseDto>> getNoticesByBoard(){
-        PageRequest pageRequest = PageRequest.of(0, 2);
-        List<NoticeResponseDto> noticesList = postsService.getNoticePosts(pageRequest);
+    PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+    List<PostResponseDto> postsList = postsService.getPostsByBoardId(boardId, pageRequest);
 
-        if (noticesList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(noticesList);
+    if (postsList.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
     }
 
-    // 특정 게시판의 페이지 갯수 조회
-    @GetMapping("/{boardId}/pagescount")
-    public ResponseEntity<Integer> getPostsCount(@PathVariable Long boardId) {
-        if (!boardService.existsById(boardId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .build();
-        }
+    return ResponseEntity.ok(postsList);
+  }
 
-        return ResponseEntity.ok(boardService.getPageCount(boardId));
+  // 공지사항 조회
+  @GetMapping("/notices")
+  public ResponseEntity<List<NoticeResponseDto>> getNoticesByBoard() {
+    PageRequest pageRequest = PageRequest.of(0, 2);
+    List<NoticeResponseDto> noticesList = postsService.getNoticePosts(pageRequest);
+
+    if (noticesList.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    return ResponseEntity.ok(noticesList);
+  }
+
+  // 특정 게시판의 페이지 갯수 조회
+  @GetMapping("/{boardId}/pagescount")
+  public ResponseEntity<Integer> getPostsCount(@PathVariable Long boardId) {
+    if (!boardService.existsById(boardId)) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .build();
+    }
+    return ResponseEntity.ok(boardService.getPageCount(boardId));
+  }
 }

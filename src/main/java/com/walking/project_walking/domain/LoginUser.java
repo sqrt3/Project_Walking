@@ -6,34 +6,35 @@ import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 public class LoginUser extends Users {
-    private final Users user;
 
-    public LoginUser(Users user) {
-        super(user.getEmail(), user.getPassword(), user.getRole());
-        this.user = user;
-    }
+  private final Users user;
 
-    @Override
-    public List<GrantedAuthority> getAuthorities() {
-        return user.getAuthorities();
-    }
+  public LoginUser(Users user) {
+    super(user.getEmail(), user.getPassword(), user.getRole());
+    this.user = user;
+  }
 
-    @Override
-    public String getEmail() {
-        return user.getEmail();
-    }
+  @Override
+  public List<GrantedAuthority> getAuthorities() {
+    return user.getAuthorities();
+  }
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
+  @Override
+  public String getEmail() {
+    return user.getEmail();
+  }
 
-    @Override
-    public Boolean getIsActive() {
-        return user.getIsActive();
-    }
+  @Override
+  public String getPassword() {
+    return user.getPassword();
+  }
 
-    public Long getUserId() {
-        return this.user.getUserId();
-    }
+  @Override
+  public Boolean getIsActive() {
+    return user.getIsActive();
+  }
+
+  public Long getUserId() {
+    return this.user.getUserId();
+  }
 }

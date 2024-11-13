@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GoodsRepository extends JpaRepository<Goods, Long> {
-    @Query("SELECT g.name FROM Goods g WHERE g.goodsId = :goodsId")
-    String findNameByGoodsId(@Param("goodsId") Long goodsId);
+
+  @Query("SELECT g.name FROM Goods g WHERE g.goodsId = :goodsId")
+  String findNameByGoodsId(@Param("goodsId") Long goodsId);
 }

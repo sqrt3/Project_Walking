@@ -184,6 +184,8 @@ function fetchRecentPosts(boardId, page = 1) {
   .then(response => {
     if (response.status === 204) {
       displayNoPostsMessage('게시판이 비어 있습니다.');
+      pageCount = 1;
+      displayPagination(true);
       return null;
     }
     return handleResponse(response);

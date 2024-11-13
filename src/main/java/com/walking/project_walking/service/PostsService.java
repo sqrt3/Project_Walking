@@ -3,7 +3,10 @@ package com.walking.project_walking.service;
 import com.walking.project_walking.domain.LikeLog;
 import com.walking.project_walking.domain.PostImages;
 import com.walking.project_walking.domain.Posts;
+import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.*;
+import com.walking.project_walking.enums.Exp;
+import com.walking.project_walking.enums.Point;
 import com.walking.project_walking.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +42,7 @@ public class PostsService {
     private final ImageService imageService;
 
     private static final double THRESHOLD = 100.0;
+    private final PointService pointService;
 
     // 특정 게시판, 특정 페이지의 게시물을 가져오는 메소드 (가져오는 게시글 갯수는 6개로 정의)
     public List<PostResponseDto> getPostsByBoardId(Long boardId, PageRequest pageRequest) {
@@ -218,9 +222,12 @@ public class PostsService {
         String postNickname = userRepository.getNicknameByUserId(post.getUserId());
         List<String> imageUrl = postImagesRepository.findImageUrlsByPostId(postId);
 
+        post.setViewCount(post.getViewCount() + 1);
+        postsRepository.save(post);
+
         return PostResponseDto.fromEntity(post, commentsNumber, postNickname, imageUrl);
     }
-  
+
     // 유저가 해당 게시글에 좋아요를 눌렀는지 확인하는 메소드
     public boolean hasLiked(Long userId, Long postId) {
         return userLikeLogRepository.findByUserIdAndPostId(userId, postId).isPresent();

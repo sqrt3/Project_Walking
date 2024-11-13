@@ -277,6 +277,17 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 ------------------------------------
 
+### [ 게시글 상세보기 ]
+| ![image](https://github.com/user-attachments/assets/2701c270-1494-4c06-9ba7-8af98b88f796) | ![image](https://github.com/user-attachments/assets/1aea4c73-250e-417b-91af-403be087e355) |
+| --- | --- |
+게시글 상세보기 페이지 | 게시글 하위 댓글 리스트
+
+- 특정 게시글을 클릭하면 상세 보기 페이지로 이동하여 게시글의 제목, 내용, 좋아요 수, 조회수, 댓글 등을 노출합니다.
+- 게시글 작성자만이 게시글을 수정 및 삭제가 가능합니다.
+- 관리자는 게시글 삭제만 가능하며, 삭제된 댓글을 열람할 수 있습니다.
+
+------------------------------------
+
 ### [ 관리자 페이지 ]
 | ![image](https://github.com/user-attachments/assets/5a95454d-38f5-4225-84c6-1b2b472c132b) | ![image](https://github.com/user-attachments/assets/16b48547-b066-4193-b7da-fb997388f8e7) | ![image](https://github.com/user-attachments/assets/d601a852-ed41-418a-9c09-ca2d64f9b29a) |
 | --- | --- | --- |

@@ -90,6 +90,9 @@
       <h2 th:text="${post.getTitle()}" class="p-3">게시글 제목</h2>
       <p class="d-flex justify-content-between"><span th:text="${post.getNickname()}">작성자 닉네임</span><span>조회수: [[${post.getViewCount()}]]회</span>
       </p>
+      <p th:text="'작성 시간 : ' + ${post.createdAt}"></p>
+      <p th:text="'수정 시간 : ' + ${post.modifiedAt}"></p>
+
       <div class="d-flex justify-content-end">
         <div id="like-count" th:text="${post.getLikes()} + '👍'">좋아요 갯수</div>
       </div>

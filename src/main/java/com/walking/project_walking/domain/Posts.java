@@ -57,7 +57,6 @@ public class Posts {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
-  @LastModifiedDate
   @Column(name = "modified_at")
   private LocalDateTime modifiedAt;
 

@@ -216,7 +216,14 @@ public class UserService {
         }
     }
 
+
+    public Long getLastViewedPostId(Long userId) {
+        return recentPostRepository.findPostIdByUserId(userId);
+    }
+
+
     public Role getRoleByUserId(Long userId) {
         return userRepository.getRoleByUserId(userId);
     }
+
 }

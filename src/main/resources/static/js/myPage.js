@@ -11,6 +11,8 @@ function loadUserInfo() {
             document.getElementById("profileImg").src = data.profileImage;
             document.getElementById("userEmail").innerText = data.email;
             document.getElementById("userPhone").innerText = data.phone;
+            document.getElementById("userLevel").innerText = data.userLevel;
+            document.getElementById("userExp").innerText = data.userExp;
         });
 }
 
@@ -180,16 +182,47 @@ function loadPointLogs() {
 
 function loadRecentPosts() {
     fetch(`/api/users/${userId}/recent-post`)
-        .then(response => response.text())
-        .then(title => {
-            console.log(title);
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
             const recentPostsList = document.getElementById("recentPostsList");
             recentPostsList.innerHTML = "";
 
-            // 제목이 있으면 출력, 없으면 "최근 본 게시글이 없습니다" 출력
             const div = document.createElement("div");
-            div.textContent = title || "최근 본 게시글이 없습니다.";
+
+            if (data.message) {
+                div.textContent = data.message;
+            } else {
+                const postLink = document.createElement("a");
+                postLink.href = `/view/posts/${data.postId}`;  // 해당 게시글 상세 페이지로 링크
+                postLink.textContent = data.title;
+                div.appendChild(postLink);
+            }
+
             recentPostsList.appendChild(div);
+        });
+}
+
+function loadUserPosts() {
+    fetch(`/api/posts?userId=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            const userPostsList = document.getElementById("userPostsList");
+            userPostsList.innerHTML = ""; // 요소 초기화
+
+            if (data) {
+                data.forEach(post => {
+                    const postDiv = document.createElement("div");
+                    const postLink = document.createElement("a");
+                    postLink.href = `/view/posts/${post.postId}`;
+                    postLink.textContent = post.title;
+                    postDiv.appendChild(postLink);
+                    userPostsList.appendChild(postDiv);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("게시글 불러오기 실패 :", error);
         });
 }
 
@@ -218,14 +251,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("followingLink").onclick = () => loadFollowingList();
 
     document.getElementById("myItemsModal").addEventListener("shown.bs.modal", () => {
-        console.log("My Items Modal shown");
-        loadUserItems(userId);
+        loadUserItems();
     });
 
     document.getElementById("myPointLogsModal").addEventListener("shown.bs.modal", () => {
-        console.log("My Point Logs Modal shown");
-        loadPointLogs(userId);
+        loadPointLogs();
     });
-
-    loadRecentPosts(userId);
+    loadRecentPosts();
+    loadUserPosts()
 });

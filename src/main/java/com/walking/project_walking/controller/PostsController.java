@@ -9,6 +9,7 @@ import com.walking.project_walking.repository.PostImagesRepository;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.PostsService;
 import com.walking.project_walking.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +96,6 @@ public class PostsController {
     if (hotPost == null) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
     return ResponseEntity.ok(hotPost);
   }
 
@@ -111,14 +111,15 @@ public class PostsController {
     if (userPosts.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
     return ResponseEntity.ok(userPosts);
   }
 
   //게시글 생성 (이미지 파일 업로드 포함)
   @PostMapping
-  public ResponseEntity<?> savePosts(@RequestPart("postRequest") @Valid PostRequestDto postRequest
+  public ResponseEntity<?> savePosts(
+      @RequestPart("postRequest") @Valid PostRequestDto postRequest
       , @RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles) {
+
     PostCreateResponseDto dto = postsService.savePost(postRequest);
 
     if (multipartFiles == null) {
@@ -131,22 +132,24 @@ public class PostsController {
   }
 
   // 게시글 수정 (작성자만 가능)
+  //@PutMapping("/{postId})")
   @PostMapping("/modify")
   public ResponseEntity<String> modifyPosts(
       @RequestParam Long postId,
       @RequestParam Long userId,
       @RequestPart("postRequest") @Valid PostRequestDto postRequestDto,
-      @RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles) {
-    postImagesRepository.deleteByPostId(postId);
+      @RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles,
+      @RequestPart(value = "deleteFiles", required = false) List<String> deleteFiles) {
+    postImagesRepository.deleteByPostIdAndImageUrlIn(postId, deleteFiles);
     postsService.modifyPost(postId, userId, postRequestDto, multipartFiles);
     return ResponseEntity.ok("수정됐습니다.");
-
   }
 
   // 게시글 삭제 (작성자만 가능)
-  @DeleteMapping("/delete")
-  public ResponseEntity<String> deletePosts(@RequestParam Long postId, @RequestParam Long userId) {
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<String> deletePosts(@PathVariable Long postId, HttpSession session) {
     try {
+      Long userId = (Long) session.getAttribute("userId");
       postsService.deletePost(postId, userId);
       return ResponseEntity.ok("게시글과 이미지가 삭제되었습니다.");
     } catch (IllegalArgumentException e) {

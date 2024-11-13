@@ -15,10 +15,10 @@ public interface PostImagesRepository extends JpaRepository<PostImages, Long> {
     @Query("SELECT p.imageUrl FROM PostImages p WHERE p.postId = :postId")
     List<String> findImageUrlsByPostId(@Param("postId") Long postId);
 
-    // postId와 연관된 모든 이미지 삭제
-    @Transactional
     @Modifying
-    @Query("DELETE FROM PostImages p WHERE p.postId = :postId")
-    void deleteByPostId(@Param("postId") Long postId);
+    @Transactional
+    @Query("DELETE FROM PostImages pi WHERE pi.postId = :postId AND pi.imageUrl IN :imageUrls")
+    void deleteByPostIdAndImageUrlIn(Long postId, List<String> imageUrls);
+
 }
 

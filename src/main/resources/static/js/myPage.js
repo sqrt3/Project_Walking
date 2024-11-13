@@ -21,7 +21,7 @@ function loadFollowerList() {
         .then(response => response.json())
         .then(data => {
             const followerList = document.getElementById("followerList");
-            followerList.innerHTML = ""; // 기존 리스트 초기화
+            followerList.innerHTML = "";
             data.forEach(follower => {
                 const div = document.createElement("div");
                 div.classList.add("follower-item");
@@ -34,9 +34,7 @@ function loadFollowerList() {
                 name.textContent = follower.nickname;
                 name.classList.add("nickname");
 
-                // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    console.log(follower.userId);
                     window.location.href = `/myPage/info/${follower.userId}`;
                 });
 
@@ -65,9 +63,7 @@ function loadFollowingList() {
                 name.textContent = following.nickname;
                 name.classList.add("nickname");
 
-                // 클릭 시 해당 사용자의 마이페이지로 이동
                 div.addEventListener("click", () => {
-                    console.log(following.userId);
                     window.location.href = `/myPage/info/${following.userId}`;
                 });
 
@@ -82,14 +78,12 @@ function updateUserInfo() {
     const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value;
     const nickname = document.getElementById("nicknameInput").value;
-    const profileImageFile = document.getElementById("profileImage").files[0]; // 파일 선택
+    const profileImageFile = document.getElementById("profileImage").files[0];
 
-    // JSON 데이터를 문자열로 직렬화하여 FormData에 추가
     const formData = new FormData();
-    const updateData = JSON.stringify({password, phone, nickname});
-    formData.append("update", new Blob([updateData], {type: "application/json"}));
+    const updateData = JSON.stringify({ password, phone, nickname });
+    formData.append("update", new Blob([updateData], { type: "application/json" }));
 
-    // 이미지 파일을 FormData에 추가
     if (profileImageFile) {
         formData.append("profileImage", profileImageFile);
     }
@@ -105,7 +99,6 @@ function updateUserInfo() {
         })
         .catch(error => console.error("오류 발생:", error));
 }
-
 
 function loadUserItems() {
     const itemList = document.getElementById("itemList");
@@ -123,11 +116,8 @@ function loadUserItems() {
 
                 const useButton = document.createElement("button");
                 useButton.textContent = "사용";
-                useButton.classList.add("use-button");
-                useButton.classList.add("btn");
-                useButton.classList.add("btn-success");
+                useButton.classList.add("use-button", "btn", "btn-success");
 
-                // 아이템 사용 확인 후 useItem 호출
                 useButton.onclick = () => {
                     const confirmUse = confirm(`정말로 ${item.name}을(를) 사용하시겠습니까?`);
                     if (confirmUse) {
@@ -142,14 +132,13 @@ function loadUserItems() {
 }
 
 function useItem(goodsId) {
-    // 아이템 사용 API 호출
     fetch(`/api/${userId}/items/${goodsId}/use`, {
         method: "POST"
     })
         .then(response => {
             if (response.ok) {
                 alert("아이템을 사용했습니다!");
-                loadUserItems(); // 아이템 리스트를 다시 불러와 업데이트
+                loadUserItems();
             } else {
                 alert("아이템 사용에 실패했습니다.");
             }
@@ -167,17 +156,17 @@ function loadPointLogs() {
         .then(response => response.json())
         .then(data => {
             data.forEach(log => {
-                const div = document.createElement("tr");
+                const row = document.createElement("tr");
 
-                const descriptionSpan = document.createElement("td");
-                descriptionSpan.textContent = log.description;
-                div.appendChild(descriptionSpan);
+                const descriptionTd = document.createElement("td");
+                descriptionTd.textContent = log.description;
+                row.appendChild(descriptionTd);
 
-                const amountSpan = document.createElement("td");
-                amountSpan.textContent = log.amount;
-                div.appendChild(amountSpan);
+                const amountTd = document.createElement("td");
+                amountTd.textContent = log.amount;
+                row.appendChild(amountTd);
 
-                pointLogs.appendChild(div);
+                pointLogs.appendChild(row);
             });
         });
 }
@@ -186,7 +175,6 @@ function loadRecentPosts() {
     fetch(`/api/users/${userId}/recent-post`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             const recentPostsList = document.getElementById("recentPostsList");
             recentPostsList.innerHTML = "";
 
@@ -194,34 +182,38 @@ function loadRecentPosts() {
 
             if (data.message) {
                 div.textContent = data.message;
-            } else {
+            } else if (data.postId && data.title) {
                 const postLink = document.createElement("a");
-                postLink.href = `/posts/${data.postId}`;  // 해당 게시글 상세 페이지로 링크
+                postLink.href = `/posts/${data.postId}`;
                 postLink.textContent = data.title;
                 div.appendChild(postLink);
+            } else {
+                div.textContent = "최근 본 게시물이 없습니다.";
             }
 
             recentPostsList.appendChild(div);
+        })
+        .catch(error => {
+            console.error("게시물을 불러오는 데 실패했습니다.:", error);
         });
 }
+
 
 function loadUserPosts() {
     fetch(`/api/posts?userId=${userId}`)
         .then(response => response.json())
         .then(data => {
             const userPostsList = document.getElementById("userPostsList");
-            userPostsList.innerHTML = ""; // 요소 초기화
+            userPostsList.innerHTML = "";
 
-            if (data) {
-                data.forEach(post => {
-                    const postDiv = document.createElement("div");
-                    const postLink = document.createElement("a");
-                    postLink.href = `/posts/${post.postId}`;
-                    postLink.textContent = post.title;
-                    postDiv.appendChild(postLink);
-                    userPostsList.appendChild(postDiv);
-                });
-            }
+            data.forEach(post => {
+                const postDiv = document.createElement("div");
+                const postLink = document.createElement("a");
+                postLink.href = `/posts/${post.postId}`;
+                postLink.textContent = post.title;
+                postDiv.appendChild(postLink);
+                userPostsList.appendChild(postDiv);
+            });
         })
         .catch(error => {
             console.error("게시글 불러오기 실패 :", error);
@@ -246,19 +238,22 @@ function deleteAccount() {
         });
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     loadUserInfo();
+    loadRecentPosts();
+    loadUserPosts();
+
     document.getElementById("followerLink").onclick = () => loadFollowerList();
     document.getElementById("followingLink").onclick = () => loadFollowingList();
 
-    document.getElementById("myItemsModal").addEventListener("shown.bs.modal", () => {
-        loadUserItems();
-    });
+    const myItemsModal = document.getElementById("myItemsModal");
+    const myPointLogsModal = document.getElementById("myPointLogsModal");
 
-    document.getElementById("myPointLogsModal").addEventListener("shown.bs.modal", () => {
-        loadPointLogs();
-    });
-    loadRecentPosts();
-    loadUserPosts()
+    if (myItemsModal) {
+        myItemsModal.addEventListener("shown.bs.modal", loadUserItems);
+    }
+
+    if (myPointLogsModal) {
+        myPointLogsModal.addEventListener("shown.bs.modal", loadPointLogs);
+    }
 });

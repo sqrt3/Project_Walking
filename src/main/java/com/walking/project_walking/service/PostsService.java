@@ -40,6 +40,7 @@ public class PostsService {
     private final PostImagesRepository postImagesRepository;
     private final UserLikeLogRepository userLikeLogRepository;
     private final ImageService imageService;
+    private final PointService pointService;
 
     private static final double THRESHOLD = 100.0;
     private final PointService pointService;
@@ -149,6 +150,16 @@ public class PostsService {
                 .isDeleted(false)
                 .build();
 
+        Users user = userRepository.findById(post.getUserId()).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 유저 ID 입니다."));
+        if (user.getRole().name().equals("ROLE_USER")) {
+            user.setUserExp(user.getUserExp() + Exp.WRITE_ARTICLE_POINT.getAmount());
+            user.setPoint(user.getPoint() + Point.WRITE_ARTICLE_POINT.getAmount());
+            pointService.addPoints(user.getUserId(), Point.WRITE_ARTICLE_POINT.getAmount(), "게시글 작성으로 포인트 지급");
+        } else {
+            user.setUserExp(user.getUserExp() + Exp.WRITE_ARTICLE_POINT.getAmount() * 2);
+            user.setPoint(user.getPoint() + Point.WRITE_ARTICLE_POINT.getAmount() * 2);
+            pointService.addPoints(user.getUserId(), Point.WRITE_ARTICLE_POINT.getAmount() * 2, "게시글 작성으로 포인트 지급");
+        }
         // 게시글 저장
         Posts savedPost = postsRepository.save(post);
 
@@ -189,6 +200,7 @@ public class PostsService {
         post.setUserId(postRequestDto.getUserId());
         post.setModifiedAt(LocalDateTime.now()); // 수정 시간 업데이트
 
+
         // 새 파일 업로드 처리
         if (files != null && !files.isEmpty()) {
             uploadFileToS3(postId, files); // 파일 업로드 메서드 호출
@@ -203,7 +215,10 @@ public class PostsService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
-        if (!post.getUserId().equals(userId)) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 유저 ID를 찾을 수 없습니다."));
+        if (!post.getUserId().equals(userId) && !user.getRole().name()
+                .equals("ROLE_ADMIN")) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 

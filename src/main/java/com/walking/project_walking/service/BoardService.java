@@ -72,10 +72,4 @@ public class BoardService {
         return new BoardResponseDto(updatedBoard.getBoardId(), updatedBoard.getName());
     }
 
-    //모든 게시판을 조회하여 반환하는 메소드 (게시글 작성 페이지로 이동)
-
-    public List<Board> getAllBoards() {
-        return boardRepository.findAll();
-    }
-
 }

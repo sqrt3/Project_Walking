@@ -2,6 +2,7 @@ package com.walking.project_walking.controller;
 
 import com.walking.project_walking.domain.RecentPost;
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.dto.CommentResponseDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
 import com.walking.project_walking.repository.RecentPostRepository;
@@ -19,13 +20,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 
 public class PostsViewController {
-
   private final UserService userService;
   private final PostsService postsService;
   private final BoardService boardService;
@@ -33,11 +32,17 @@ public class PostsViewController {
   private final RecentPostRepository recentPostRepository;
 
   // 게시글 작성 페이지로 이동
-  @GetMapping("/create")
-  public String createPostPage(Model model) {
-    model.addAttribute("boards", boardService.getAllBoards());
-    return "create-post";
-  }
+    @GetMapping("/create")
+    public String createPostPage(Model model, HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        List<BoardResponseDto> boards = boardService.getBoardsList();
+        model.addAttribute("userId", userId);
+        model.addAttribute("boards", boards);
+        Users user = userService.findById(userId);
+        model.addAttribute("user", user);
+        return "create-post";
+    }
 
   // 게시글 상세 페이지로 이동
   @GetMapping("/{postId}")
@@ -72,24 +77,35 @@ public class PostsViewController {
       }
       model.addAttribute("commentsSize", commentListsSize);
 
-      return "post";
-    } catch (IllegalArgumentException e) {
-      redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
-      return "redirect:/view/posts";  // 오류 시 목록 페이지로 리디렉션
-    }
+            return "post";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
+            return "redirect:/boardList";  // 오류 시 목록 페이지로 리디렉션
+        }
   }
 
   // 게시글 수정 페이지로 이동
-  @GetMapping("/{postId}/edit")
-  public String editPostPage(@PathVariable Long postId, Model model,
-      RedirectAttributes redirectAttributes) {
-    try {
-      PostResponseDto post = postsService.getPostById(postId);
-      model.addAttribute("post", post);
-      return "edit-post";
-    } catch (IllegalArgumentException e) {
-      redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
-      return "redirect:/view/posts";
+    @GetMapping("/modify/{postId}")
+    public String editPostPage(@PathVariable Long postId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        try {
+            Long userId = (Long)session.getAttribute("userId");
+            if (userId == null) {
+                redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+                return "redirect:/auth/login";
+            }
+            Users user = userService.findById(userId);
+            model.addAttribute("user", user);
+
+            PostResponseDto post = postsService.getPostById(postId);
+            List<BoardResponseDto> boards = boardService.getBoardsList();
+            model.addAttribute("post", post);
+            model.addAttribute("userId", userId);
+            model.addAttribute("boards", boards);
+
+            return "modify-post";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
+            return "redirect:/boardList";
+        }
     }
-  }
 }

@@ -42,14 +42,4 @@ public class CommentsController {
     commentsService.deleteComment(commentId, userId);
     return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다");
   }
-
-  //댓글, 답글 수정 (작성자만 가능)
-  @PutMapping("/{commentId}")
-  public ResponseEntity<CommentResponseDto> modifyComment(@PathVariable Long commentId,
-      @RequestParam Long userId, @Valid @RequestBody CommentRequestDto dto) {
-    CommentResponseDto updatedComment = commentsService.modifyComment(commentId, userId, dto);
-    return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
-  }
-
-
 }

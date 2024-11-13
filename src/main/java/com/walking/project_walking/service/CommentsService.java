@@ -34,8 +34,14 @@ public class CommentsService {
         Comments savedComment = commentRepository.save(comment);
 
         Users user = comment.getUser();
-        user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount());
-        user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount());
+        if (user.getRole().name().equals("ROLE_USER"))
+        {
+            user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount());
+            user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount());
+        } else {
+            user.setPoint(user.getPoint() + Point.WRITE_COMMENT_POINT.getAmount() * 2);
+            user.setUserExp(user.getUserExp() + Exp.WRITE_COMMENT_POINT.getAmount() * 2);
+        }
         userRepository.save(user);
 
         return new CommentResponseDto(

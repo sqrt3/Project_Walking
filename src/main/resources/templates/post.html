@@ -48,13 +48,7 @@
         .then(response => response.text())
         .then(message => {
           alert(message);
-
-          if (message === "댓글이 삭제되었습니다.") {
-            const commentElement = document.getElementById('comment-' + commentId);
-            if (commentElement) {
-              commentElement.remove();
-            }
-          }
+          location.reload();
         })
         .catch(error => {
           console.error('Error:', error);

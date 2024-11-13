@@ -9,6 +9,7 @@ import com.walking.project_walking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,16 +24,23 @@ public class UserController {
     private final UserService userService;
     private final PasswordResetService passwordResetService;
 
+    @PostMapping("/auth/login")
+    public String login(@RequestParam String email, @RequestParam String password, Model model) {
+        boolean isValid = userService.validateLogin(email, password);
+
+        if (!isValid) {
+            return "redirect:/auth/login?error=true";
+        }
+        return "redirect:/dashboard";
+    }
+
     @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> createUser(@ModelAttribute UserSignUpDto request) {
         Users user = userService.saveUser(request);
-        String redirectUri = "/auth/login";
 
-        UserResponse response = new UserResponse(user, redirectUri);
+        UserResponse response = new UserResponse(user, "회원가입이 완료되었습니다.");
 
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", redirectUri)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/auth/check-email")
@@ -51,6 +59,15 @@ public class UserController {
             return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 닉네임 입니다.\"}");
         }
         return ResponseEntity.ok("{\"message\": \"사용 가능한 닉네임 입니다.\"}");
+    }
+
+    @GetMapping("/auth/check-phone")
+    public ResponseEntity<String> checkPhone(@RequestParam String phone) {
+        boolean exists = userService.checkPhoneExists(phone);
+        if (exists) {
+            return ResponseEntity.badRequest().body("{\"error\": \"이미 사용 중인 휴대전화 번호 입니다.\"}");
+        }
+        return ResponseEntity.ok("{\"message\": \"사용 가능한 휴대전화 번호 입니다.\"}");
     }
 
     // 비밀번호 재설정
@@ -143,17 +160,18 @@ public class UserController {
 
     // 최근 게시물 조회
     @GetMapping("/users/{userId}/recent-post")
-    public ResponseEntity<String> getRecentPost(@PathVariable Long userId) {
+    public ResponseEntity<Map<String, Object>> getRecentPost(@PathVariable Long userId) {
+        Long postId = userService.getLastViewedPostId(userId); // postId는 Long 타입
         String title = userService.getLastViewedPostTitle(userId);
 
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         if (title == null) {
-            response.put("message", "최근 본 게시글이 없습니다.");
+            response.put("message", "최근 본 게시글이 없습니다."); // String 타입 message
         } else {
+            response.put("postId", postId); // Long 타입 postId
             response.put("title", title);
         }
 
-        return ResponseEntity.ok(title);
+        return ResponseEntity.ok(response);
     }
-
 }

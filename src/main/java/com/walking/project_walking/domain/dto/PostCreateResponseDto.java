@@ -10,7 +10,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-@Transactional
 
 public class PostCreateResponseDto {
 

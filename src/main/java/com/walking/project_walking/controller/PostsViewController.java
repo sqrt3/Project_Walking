@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 import java.util.List;
 
 
@@ -32,8 +33,14 @@ public class PostsViewController {
 
     // 게시글 작성 페이지로 이동
     @GetMapping("/create")
-    public String createPostPage(Model model) {
-        model.addAttribute("boards", boardService.getAllBoards());
+    public String createPostPage(Model model, HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        List<BoardResponseDto> boards = boardService.getBoardsList();
+        model.addAttribute("userId", userId);
+        model.addAttribute("boards", boards);
+        Users user = userService.findById(userId);
+        model.addAttribute("user", user);
         return "create-post";
     }
 
@@ -76,12 +83,23 @@ public class PostsViewController {
     }
 
     // 게시글 수정 페이지로 이동
-    @GetMapping("/{postId}/edit")
-    public String editPostPage(@PathVariable Long postId, Model model, RedirectAttributes redirectAttributes) {
+    @GetMapping("/modify/{postId}")
+    public String editPostPage(@PathVariable Long postId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
+            Long userId = (Long)session.getAttribute("userId");
+            if (userId == null) {
+                redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+                return "redirect:/auth/login";
+            }
+            Users user = userService.findById(userId);
+            model.addAttribute("user", user);
+
             PostResponseDto post = postsService.getPostById(postId);
             model.addAttribute("post", post);
-            return "edit-post";
+            model.addAttribute("userId", userId);
+            model.addAttribute("boards", boards);
+
+            return "modify-post";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", "해당 게시글을 찾을 수 없습니다.");
             return "redirect:/view/posts";

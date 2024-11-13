@@ -22,53 +22,53 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminViewController {
 
-    private final UserService userService;
-    private final BoardService boardService;
-    private final GoodsService goodsService;
+  private final UserService userService;
+  private final BoardService boardService;
+  private final GoodsService goodsService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping
-    public String adminView(Model model, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
-        Users user = userService.findById(userId);
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping
+  public String adminView(Model model, HttpSession session) {
+    Long userId = (Long) session.getAttribute("userId");
+    Users user = userService.findById(userId);
 
-        model.addAttribute("user", user);
+    model.addAttribute("user", user);
 
-        return "admin";
-    }
+    return "admin";
+  }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/users")
-    public String manageUsers(Model model) {
-        List<UserResponse> usersList = userService.findAll().stream()
-                .map(UserResponse::new)
-                .toList();
-        model.addAttribute("userList", usersList);
-        return "users";
-    }
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/users")
+  public String manageUsers(Model model) {
+    List<UserResponse> usersList = userService.findAll().stream()
+        .map(UserResponse::new)
+        .toList();
+    model.addAttribute("userList", usersList);
+    return "users";
+  }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/users/{userId}")
-    public String manageUser(@PathVariable Long userId, Model model) {
-        UserResponse userResponse = new UserResponse(userService.findById(userId));
-        model.addAttribute("user", userResponse);
-        return "user";
-    }
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/users/{userId}")
+  public String manageUser(@PathVariable Long userId, Model model) {
+    UserResponse userResponse = new UserResponse(userService.findById(userId));
+    model.addAttribute("user", userResponse);
+    return "user";
+  }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/board")
-    public String manageBoard(Model model) {
-        List<BoardResponseDto> boardList = boardService.getBoardsList();
-        model.addAttribute("boardList", boardList);
-        return "board";
-    }
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/board")
+  public String manageBoard(Model model) {
+    List<BoardResponseDto> boardList = boardService.getBoardsList();
+    model.addAttribute("boardList", boardList);
+    return "board";
+  }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/goods")
-    public String manageGoods(Model model) {
-        List<GoodsResponseDto> goodsList = goodsService.getAllGoods().stream()
-                .toList();
-        model.addAttribute("goodsList", goodsList);
-        return "goods-manager";
-    }
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/goods")
+  public String manageGoods(Model model) {
+    List<GoodsResponseDto> goodsList = goodsService.getAllGoods().stream()
+        .toList();
+    model.addAttribute("goodsList", goodsList);
+    return "goods-manager";
+  }
 }

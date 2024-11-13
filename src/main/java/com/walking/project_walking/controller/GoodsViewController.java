@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/goods")
 public class GoodsViewController {
 
-    private final GoodsService goodsService;
-    private final UserService userService;
+  private final GoodsService goodsService;
+  private final UserService userService;
 
-    @GetMapping
-    public String goods(Model model, HttpSession session) {
-        List<GoodsResponseDto> goodsList = goodsService.getAllGoods();
+  @GetMapping
+  public String goods(Model model, HttpSession session) {
+    List<GoodsResponseDto> goodsList = goodsService.getAllGoods();
 
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId != null) {
-            Users user = userService.findById(userId);
-            model.addAttribute("user", user);
-        }
-
-        model.addAttribute("goodsList", goodsList);
-        return "goods";
+    Long userId = (Long) session.getAttribute("userId");
+    if (userId != null) {
+      Users user = userService.findById(userId);
+      model.addAttribute("user", user);
     }
+
+    model.addAttribute("goodsList", goodsList);
+    return "goods";
+  }
 }

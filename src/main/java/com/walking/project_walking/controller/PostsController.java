@@ -39,6 +39,15 @@ public class PostsController {
 
   private static final int PAGE_SIZE = 6;
 
+  @GetMapping("/all")
+  public ResponseEntity<List<PostResponseDto>> getAllPosts() {
+    List<PostResponseDto> posts = postsService.getAllPost();
+    if (posts.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    return ResponseEntity.ok(posts);
+  }
+
   // 제목, 글쓴이, 내용을 조합하여 특정 게시글 조회
   @GetMapping("/search")
   public ResponseEntity<PostSearchResultDto> searchPosts(
@@ -125,6 +134,7 @@ public class PostsController {
     if (multipartFiles == null) {
       return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
     if (!multipartFiles.isEmpty()) {
       postsService.uploadFileToS3(dto.getPostId(), multipartFiles);
     }

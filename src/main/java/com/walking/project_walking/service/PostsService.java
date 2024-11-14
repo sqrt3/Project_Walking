@@ -22,6 +22,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -131,6 +132,17 @@ public class PostsService {
     Long userId = userRepository.getUserIdByNickname(nickname);
     long totalPosts = postsRepository.countBySearchCriteria(boardId, title, content, userId);
     return (int) Math.ceil((double) totalPosts / pageSize);
+  }
+
+  public List<PostResponseDto> getAllPost() {
+    return postsRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+        .map(post -> PostResponseDto.fromEntity(
+            post,
+            commentsRepository.countCommentsByPostId(post.getPostId()),
+            userRepository.getNicknameByUserId(post.getUserId()),
+            postImagesRepository.findImageUrlsByPostId(post.getPostId())
+        ))
+        .toList();
   }
 
   //게시글 생성

@@ -3,9 +3,11 @@ package com.walking.project_walking.controller;
 import com.walking.project_walking.domain.Users;
 import com.walking.project_walking.domain.dto.BoardResponseDto;
 import com.walking.project_walking.domain.dto.GoodsResponseDto;
+import com.walking.project_walking.domain.dto.ManagePostResponseDto;
 import com.walking.project_walking.domain.userdto.UserResponse;
 import com.walking.project_walking.service.BoardService;
 import com.walking.project_walking.service.GoodsService;
+import com.walking.project_walking.service.PostsService;
 import com.walking.project_walking.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -25,6 +27,7 @@ public class AdminViewController {
   private final UserService userService;
   private final BoardService boardService;
   private final GoodsService goodsService;
+  private final PostsService postsService;
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
@@ -70,5 +73,13 @@ public class AdminViewController {
         .toList();
     model.addAttribute("goodsList", goodsList);
     return "goods-manager";
+  }
+
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @GetMapping("/posts")
+  public String managePosts(Model model) {
+    List<ManagePostResponseDto> postList = postsService.getAllPost();
+    model.addAttribute("postList", postList);
+    return "post-manager";
   }
 }

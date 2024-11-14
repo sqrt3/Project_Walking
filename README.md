@@ -6,8 +6,9 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 
 - Language : `Java 17`
 - Framework : `Spring Boot v3.2.10`
-- Database : `MySQL`, `JDBC`, `s3`, `Spring Data JPA`
+- Database : `MySQL`
 - Frontend : `HTML`, `CSS`, `JS`, `Thymeleaf`
+- Storage : `s3`
 
 ## 팀원 소개
 

@@ -1,5 +1,6 @@
 package com.walking.project_walking.controller;
 
+import com.walking.project_walking.domain.dto.ManagePostResponseDto;
 import com.walking.project_walking.domain.dto.PostCreateResponseDto;
 import com.walking.project_walking.domain.dto.PostRequestDto;
 import com.walking.project_walking.domain.dto.PostResponseDto;
@@ -40,8 +41,8 @@ public class PostsController {
   private static final int PAGE_SIZE = 6;
 
   @GetMapping("/all")
-  public ResponseEntity<List<PostResponseDto>> getAllPosts() {
-    List<PostResponseDto> posts = postsService.getAllPost();
+  public ResponseEntity<List<ManagePostResponseDto>> getAllPosts() {
+    List<ManagePostResponseDto> posts = postsService.getAllPost();
     if (posts.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

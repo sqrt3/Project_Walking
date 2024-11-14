@@ -4,6 +4,7 @@ import com.walking.project_walking.domain.LikeLog;
 import com.walking.project_walking.domain.PostImages;
 import com.walking.project_walking.domain.Posts;
 import com.walking.project_walking.domain.Users;
+import com.walking.project_walking.domain.dto.ManagePostResponseDto;
 import com.walking.project_walking.domain.dto.NoticeResponseDto;
 import com.walking.project_walking.domain.dto.PostCreateResponseDto;
 import com.walking.project_walking.domain.dto.PostRequestDto;
@@ -134,14 +135,9 @@ public class PostsService {
     return (int) Math.ceil((double) totalPosts / pageSize);
   }
 
-  public List<PostResponseDto> getAllPost() {
+  public List<ManagePostResponseDto> getAllPost() {
     return postsRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
-        .map(post -> PostResponseDto.fromEntity(
-            post,
-            commentsRepository.countCommentsByPostId(post.getPostId()),
-            userRepository.getNicknameByUserId(post.getUserId()),
-            postImagesRepository.findImageUrlsByPostId(post.getPostId())
-        ))
+        .map(ManagePostResponseDto::fromEntity)
         .toList();
   }
 

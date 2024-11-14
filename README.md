@@ -8,7 +8,6 @@ http://ec2-43-201-90-83.ap-northeast-2.compute.amazonaws.com:8080/
 - Framework : `Spring Boot v3.2.10`
 - Database : `MySQL`
 - Frontend : `HTML`, `CSS`, `JS`, `Thymeleaf`
-- Storage : `AWS s3`
 - Deployment : `AWS`
 
 ## 팀원 소개
